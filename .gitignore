@@ -1,0 +1,32 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+/freepik-image-store/node_modules
+/freepik-image-store/Frontend/node_modules
+.env/
+/freepik-image-store/.env
+/freepik-image-store/Frontend/.env
+
+/.idea/
+/.vscode/
+/*.suo
+/*.ntvs*
+/*.njsproj
+/*.sln
+/*.sw?
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+/freepik-image-store/node_modules

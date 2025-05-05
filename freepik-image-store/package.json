@@ -1,0 +1,38 @@
+{
+  "name": "freepik-image-store",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "description": "",
+  "dependencies": {
+    "@hookform/resolvers": "^4.1.3",
+    "@types/mongoose": "^5.11.96",
+    "axios": "^1.8.4",
+    "bullmq": "^5.52.1",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "express-validator": "^7.2.1",
+    "jimp": "^0.22.12",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.10.1",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "playwright": "^1.51.1",
+    "puppeteer": "^24.7.2",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "react-hook-form": "^7.55.0",
+    "stripe": "^17.7.0",
+    "user-agents": "^1.1.509",
+    "zod": "^3.24.2"
+  }
+}
