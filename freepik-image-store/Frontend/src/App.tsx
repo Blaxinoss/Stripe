@@ -10,6 +10,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import ProfilerUser from "./pages/ProfilerUser";
 import SignIn from "./pages/SignIn";
+import ImageDownloaded from "./Components/ImageDownloaded";
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
                             <Route path='/signup' element={<SignIn />} />
                             <Route path='/login' element={<Login />} />
                             <Route path='/profile' element={<ProfilerUser />} />
+                            <Route path='/images' element={<ImageDownloaded />} />
 
                             <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
                             <Route path="/browse" element={<ProtectedRoute><Browse /> </ProtectedRoute>} />

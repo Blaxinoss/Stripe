@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useJobPolling } from '../customeHooks/useJobPolling';
+import ImageDownloaded from './ImageDownloaded';
 
 interface ImageData {
     id: number;
@@ -19,6 +21,11 @@ const Search = () => {
     const [error, setError] = useState<string | null>(null);
     const [message, setMessage] = useState<string | null>(null);
     const [showConfirm, setShowConfirm] = useState<{ id: number; amount: number; title: string } | null>(null);
+    const [jobId, setJobId] = useState<string | null>(null);
+    const [title, setTitle] = useState<string | null>(null);
+
+
+
 
     const searchImages = async () => {
         if (!link.trim()) {
@@ -74,19 +81,17 @@ const Search = () => {
 
                 }
             );
-            console.log(response.data);
-            const { downloadUrl } = response.data;
-            const url = new URL(downloadUrl);
-            const filename = url.searchParams.get('filename');
-            const link = document.createElement('a');
-            link.href = downloadUrl;
-            link.download = filename || `${title}.jpg`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            return true;
+
+
+            const {jobId} = response.data;
+
+            console.log('we got the Job ID:', jobId);
+          if (jobId){
+            setJobId(jobId);
+          } 
+     
         } catch (err) {
-            console.error('Download error:', err);
+            console.error('Download error:',err.message);
             throw new Error('Failed to download image.');
         }
     };
@@ -138,6 +143,7 @@ const Search = () => {
             const image = images.find((img) => img.id === showConfirm.id);
             if (image) {
                 handlePurchase(showConfirm.id, showConfirm.amount, showConfirm.title);
+                setTitle(showConfirm.title);
             }
             closeConfirmDialog();
         }
@@ -186,6 +192,13 @@ const Search = () => {
                 </p>
             )}
 
+            {jobId && 
+            (
+                console.log('jobId:', jobId),
+            <ImageDownloaded jobId={jobId} />)}
+
+            {/* No Images Found */}
+            
             {/* Image Grid */}
             {images.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

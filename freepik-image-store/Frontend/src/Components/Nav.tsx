@@ -27,6 +27,9 @@ const NavBar = () => {
                     <Link to="/profile" className="text-white hover:text-amber-500">
                         Profile
                     </Link>
+                    <Link to="/images" className="text-white hover:text-amber-500">
+                        Images
+                    </Link>
                     {isHost() && (
                         <Link to="/administration" className="text-white hover:text-amber-500">
                             Administration

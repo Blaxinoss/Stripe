@@ -1,10 +1,7 @@
 const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
-    userId: {
-        type: mongoose.Types.ObjectId,
-        required: true,
-    },
+
     email: {
         type: String,
         unique: [true, "this email has an account already signed in"],

@@ -4,26 +4,23 @@ const { CreateSuper } = require('../utils/helpers');
 
 const connectDB = async () => {
     try {
-        if (!process.env.DATABASE_URL) {
+        const dbURI = process.env.DATABASE_URL || 'mongodb://localhost:27017/behive-dump';
+        if (!dbURI) {
             throw new Error('DATABASE_URL is not defined in .env file');
         }
 
         console.log('Connecting to database ....');
-
-        await mongoose.connect(process.env.DATABASE_URL, {
-            serverSelectionTimeoutMS: 5000,
-            socketTimeoutMS: 45000
-        });
+        mongoose.set('bufferCommands', false);
+        await mongoose.connect(dbURI);
 
         try {
             await CreateSuper();
-
         } catch (error) {
-            console.log('error while creating the super account', error.message)
+            console.log('Error while creating the super account:', error.message);
         }
     } catch (error) {
         console.error('Error connecting to database or creating super user:', error.message);
-        process.exit(1); // 
+        process.exit(1);
     }
 };
 
@@ -39,7 +36,4 @@ mongoose.connection.on('disconnected', () => {
     console.log('Database disconnected');
 });
 
-
-connectDB();
-
-module.exports = mongoose;
+module.exports = { mongoose, connectDB };

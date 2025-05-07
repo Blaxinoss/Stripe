@@ -1,0 +1,59 @@
+const { Worker } = require('bullmq');
+const { createBrowserPool } = require('./cluster');
+const { connection } = require('./queue');
+const Redis = require('ioredis');
+const redis = new Redis('redis://localhost:6379'); // Ensure REDIS_URL is set in your .env
+
+let cluster;
+
+async function initializeCluster() {
+  if (!cluster) {
+    cluster = await createBrowserPool();
+  }
+}
+
+const worker = new Worker(
+  'downloadQueue',
+  async job => {
+    const { userId, downloadLink } = job.data;
+    const jobId = job.id;
+    console.log(`Worker started for job: ${job.id}`);
+
+    try {
+      if (!downloadLink) {
+        throw new Error('Invalid download link');
+      }
+
+      console.log(`Processing download link: ${downloadLink}`);
+      await initializeCluster();
+      console.log('Cluster initialized successfully');
+
+      const response = await cluster.execute({ userId, downloadLink, jobId });
+      console.log(`Cluster execute response:`, response);
+
+      // Publish the result to Redis
+      await redis.publish(
+        'download:completed',
+        JSON.stringify({
+          userId,
+          imageUrl: response.imageUrl,
+          jobId,
+        })
+      );
+
+      return response;
+    } catch (error) {
+      console.error('Error processing job:', error.message);
+      throw error;
+    }
+  },
+  { connection }
+);
+
+worker.on('completed', (job, result) => {
+  console.log(`Job ${job.id} completed with result:`, result);
+});
+
+worker.on('failed', (job, err) => {
+  console.error(`Job ${job.id} failed with error: ${err.message}`);
+});

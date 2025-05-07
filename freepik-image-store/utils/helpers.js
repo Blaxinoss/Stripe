@@ -49,7 +49,7 @@ async function CreateSuper() {
                 console.log('✅ Superadmin created successfully', data);
             })
             .catch((err) => {
-                console.error('❌ Error saving SuperAdmin:', err.message);
+                console.error('! Superadmin already exists');
             });
 
     } catch (error) {

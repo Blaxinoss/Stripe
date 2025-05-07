@@ -1,35 +1,59 @@
-require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
-const crypto = require('crypto');
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const http = require('http');
 const passport = require('passport');
-const rateLimit = require('express-rate-limit')
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 دقيقة
-    max: 10, // 10 طلبات لكل IP في كل نافذة زمنية
-    message: 'Too many requests from this IP, please try again later.'
-});
-
+const rateLimit = require('express-rate-limit');
+const { initSocket, getSocketInstance } = require('./socket');
+const { connectDB } = require('./configurations/database');
+const Redis = require('ioredis');
+const redis = new Redis('redis://localhost:6379');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-
-require('./configurations/database');
+connectDB();
 require('./configurations/passport');
-app.use(passport.initialize());
 
-
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 60,
+  message: 'Too many requests from this IP, please try again later.',
+});
 
 app.use('/api/', limiter);
 
-app.use('/api/users', require('./routes/userRoutes'))
-app.use('/api/coins', require('./routes/coinRoutes'))
-app.use('/api/payment', require('./routes/paymentRoutes'))
-app.use('/api/freepik', require('./routes/downloadRoutes'))
-app.use('/api/search', require('./routes/searchRoutes'))
+const server = http.createServer(app);
+const io = initSocket(server);
+app.use(passport.initialize());
 
+app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api/coins', require('./routes/coinRoutes'));
+app.use('/api/payment', require('./routes/paymentRoutes'));
+app.use('/api/freepik', require('./routes/downloadRoutes'));
+app.use('/api/search', require('./routes/searchRoutes'));
+app.use('/api/images', require('./routes/userImagesRoutes'));
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+// Subscribe to Redis channel
+redis.subscribe('download:completed', (err) => {
+  if (err) {
+    console.error('Failed to subscribe to Redis channel:', err);
+  } else {
+    console.log('Subscribed to download:completed channel');
+  }
+});
+
+// Listen for messages from Redis
+redis.on('message', (channel, message) => {
+  if (channel === 'download:completed') {
+    const io = getSocketInstance();
+    const { userId, imageUrl, jobId } = JSON.parse(message);
+    console.log(`Emitting downloadedImage to user ${userId}`);
+    io.to(userId).emit('downloadedImage', { userId, imageUrl, jobId });
+  }
+});
+
+server.listen(5000, () => console.log('Server running on port 5000'));
+
+exports.io = io;
