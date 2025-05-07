@@ -4,8 +4,7 @@ const passport = require('passport');
 const { USER } = require('../models/User');
 const fs = require('fs');
 const path = require('path');
-
-const PUB_KEY = process.env.PUBLIC_KEY || fs.readFileSync(path.join(__dirname, '../utils/id_rsa_pub.pem'), 'utf8');
+const PUB_KEY =fs.readFileSync(path.join(__dirname, '../utils/id_rsa_pub.pem'), 'utf8');
 
 const options = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

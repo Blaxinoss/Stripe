@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const { USER } = require('../models/User');
 const jsonwebtoken = require('jsonwebtoken');
+const { fstat } = require('fs');
 
 
 const validatePassword = (password, hash, salt) => {
@@ -60,7 +61,7 @@ async function CreateSuper() {
 
 function issueJWT(user) {
 
-    const PRIV_KEY = process.env.PRIV_KEY
+    const PRIV_KEY = fs.readFileSync(path.join(__dirname, '../utils/id_rsa_priv.pem'), 'utf8');
 
     const _id = user._id;
 
