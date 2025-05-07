@@ -5,15 +5,13 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
 import { z } from "zod";
 
-type Props = {}
-
 type FormData = {
     email: string;
     password: string;
     username: string;
 };
 
-const SignIn = (props: Props) => {
+const SignIn = () => {
 
 const navigate = useNavigate();
     const [isError, setIsError] = useState('')
@@ -54,7 +52,11 @@ const navigate = useNavigate();
 
         } catch (err) {
 
-            setIsError(`An error occurred with the server, ${err.response.data.error}`);
+            if (axios.isAxiosError(err) && err.response && err.response.data) {
+                setIsError(`An error occurred with the server, ${err.response.data.error}`);
+            } else {
+                setIsError('An unknown error occurred.');
+            }
             setMessage("");
 
         }

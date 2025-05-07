@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import ImageDownloaded from './ImageDownloaded';
 import DownloadedNotify from './DownloadedNotify';
 
 interface ImageData {
@@ -22,7 +21,6 @@ const Search = () => {
     const [message, setMessage] = useState<string | null>(null);
     const [showConfirm, setShowConfirm] = useState<{ id: number; amount: number; title: string } | null>(null);
     const [jobId, setJobId] = useState<string | null>(null);
-    const [title, setTitle] = useState<string | null>(null);
 
 
 
@@ -86,7 +84,7 @@ const downloadImage = async (imageId: number) => {
             setJobId(jobId);
           } 
     } catch (err) {
-            console.error('Download error:',err.message);
+            console.error('Download error:', (err as Error).message);
             throw new Error('Failed to download image.');
         }
 };
@@ -96,7 +94,7 @@ const downloadImage = async (imageId: number) => {
 
 // Start the handlePurchase function
 
-    const handlePurchase = async (imageId: number, amount: number, title: string) => {
+    const handlePurchase = async (imageId: number, amount: number) => {
         if (!token) {
             setError('You must be logged in to make a purchase.');
             return;
@@ -141,8 +139,7 @@ const downloadImage = async (imageId: number) => {
         if (showConfirm) {
             const image = images.find((img) => img.id === showConfirm.id);
             if (image) {
-                handlePurchase(showConfirm.id, showConfirm.amount, showConfirm.title);
-                setTitle(showConfirm.title);
+                handlePurchase(showConfirm.id, showConfirm.amount);
             }
             closeConfirmDialog();
         }

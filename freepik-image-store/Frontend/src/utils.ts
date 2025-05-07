@@ -1,6 +1,6 @@
 import moment from "moment";
 
-export const setLocalStorage = (responseObj) => {
+export const setLocalStorage = (responseObj: { expiresIn: string; user: string; token: string }) => {
   try {
     if (!responseObj?.expiresIn) {
       throw new Error("Expiration time not provided in response");
@@ -15,7 +15,7 @@ export const setLocalStorage = (responseObj) => {
     localStorage.setItem("user", responseObj.user);
     localStorage.setItem("token", responseObj.token);
     localStorage.setItem("expires", JSON.stringify(expires.valueOf()));
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error setting localStorage:", error.message);
   }
 };
@@ -38,7 +38,7 @@ export const getExpiration = () => {
       throw new Error("Invalid expiration format");
     }
     return moment(expireAt);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error parsing expiration:", error.message);
     return null;
   }

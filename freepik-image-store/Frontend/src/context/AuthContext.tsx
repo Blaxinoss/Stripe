@@ -86,22 +86,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         localStorage.removeItem('expires');
     };
 
-    const getExpiration = () => {
-        const expiration = localStorage.getItem('expires');
-        if (!expiration) {
-            return null;
-        }
-        try {
-            const expireAt = JSON.parse(expiration);
-            if (typeof expireAt !== 'number') {
-                throw new Error('Invalid expiration format');
-            }
-            return moment(expireAt);
-        } catch (error) {
-            console.error('Error parsing expiration:', error);
-            return null;
-        }
-    };
+    // const getExpiration = () => {
+    //     const expiration = localStorage.getItem('expires');
+    //     if (!expiration) {
+    //         return null;
+    //     }
+    //     try {
+    //         const expireAt = JSON.parse(expiration);
+    //         if (typeof expireAt !== 'number') {
+    //             throw new Error('Invalid expiration format');
+    //         }
+    //         return moment(expireAt);
+    //     } catch (error) {
+    //         console.error('Error parsing expiration:', error);
+    //         return null;
+    //     }
+    // };
 
     const isLoggedIn = () => {
         return !!user && !!token; // بنعتمد على الـ state بدل localStorage
