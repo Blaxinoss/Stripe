@@ -8,6 +8,8 @@ interface User {
     email: string;
     role: string;
     coins: number;
+    downloadsCount?: number;
+    username?: string;
 }
 
 interface AuthContextType {
@@ -67,6 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             const expires = moment().add(parseInt(expiresIn), 'day');
             setUser(user);
             setToken(token);
+            console.log('User:', user);
             localStorage.setItem('user', JSON.stringify(user));
             localStorage.setItem('token', token);
             localStorage.setItem('expires', JSON.stringify(expires.valueOf()));

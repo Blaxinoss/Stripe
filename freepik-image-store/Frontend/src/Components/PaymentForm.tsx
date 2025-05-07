@@ -26,7 +26,7 @@ interface billingDataInterface {
 }
 
 
-function Form({ selectedImage }: Props) {
+function PaymentForm({ selectedImage }: Props) {
 
     const [loading, setLoading] = useState(false);
 
@@ -118,4 +118,4 @@ function Form({ selectedImage }: Props) {
     )
 }
 
-export default Form
+export default PaymentForm

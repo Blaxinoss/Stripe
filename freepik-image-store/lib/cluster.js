@@ -8,7 +8,7 @@ async function createBrowserPool() {
         maxConcurrency: 3,  // تحديد العدد الأقصى للصفحات المفتوحة في نفس الوقت
         puppeteerOptions: {
             headless: true,  // تشغيل المتصفح في وضع الـ headless
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
         },
         timeout: 120000, 
     });
@@ -17,7 +17,7 @@ async function createBrowserPool() {
     await cluster.task(async ({ page, data: { userId, downloadLink,jobId } }) => {
         try {
             if (!userId ) {
-                throw new Error('Invalid userId clusttttttttttttttter');
+                throw new Error('Message from the cluster task: userId is required go back and check the task you add to the queue and make sure you pass the userId');
             }
             const result = await downloadWorkerLogic({ userId, downloadLink, jobId,page });
             return result;

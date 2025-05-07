@@ -1,15 +1,12 @@
-import { Component } from 'react'
+import React from 'react'
 
-type Props = {}
 
-type State = {}
+function Cart () {
 
-export default class Cart extends Component<Props, State> {
-    state = {}
 
-    render() {
         return (
-            <div>Cart</div>
+            <div>Cart is under implementation :) </div>
         )
     }
-}
+
+export default Cart

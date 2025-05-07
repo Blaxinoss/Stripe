@@ -62,8 +62,8 @@ export default function Administration({ }: Props) {
 
 
     return (
-        <div className="max-w-xl mx-auto mt-12 p-8 bg-gradient-to-br from-sky-600-200 to-gray-800 shadow-2xl rounded-3xl shadow-emerald-200 text-white">
-            <h1 className="text-3xl font-extrabold mb-8 font-Peach  text-center tracking-tight">
+        <div className="max-w-xl mx-auto mt-12 p-16 bg-gradient-to-br from-sky-600-200 to-gray-800 shadow-2xl rounded-3xl shadow-emerald-200 text-white">
+            <h1 className="text-4xl font-extrabold mb-8 font-Peach  text-center tracking-tight">
                 Administration Panel
             </h1>
 

@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { z } from "zod";
 
 type Props = {}
@@ -15,6 +15,7 @@ type FormData = {
 
 const SignIn = (props: Props) => {
 
+const navigate = useNavigate();
     const [isError, setIsError] = useState('')
     const [message, setMessage] = useState('')
 
@@ -43,6 +44,7 @@ const SignIn = (props: Props) => {
             if (!success) {
                 setIsError(message);
                 setMessage("");
+                navigate('/login');
             } else {
 
                 setMessage(message);

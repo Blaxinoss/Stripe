@@ -1,4 +1,5 @@
 require('dotenv').config();
+require('./configurations/passport');
 const express = require('express');
 const cors = require('cors');
 const http = require('http');
@@ -14,7 +15,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 connectDB();
-require('./configurations/passport');
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -53,6 +53,7 @@ redis.on('message', (channel, message) => {
     io.to(userId).emit('downloadedImage', { userId, imageUrl, jobId });
   }
 });
+
 
 server.listen(5000, () => console.log('Server running on port 5000'));
 

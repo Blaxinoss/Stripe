@@ -85,19 +85,12 @@ const ImageDownloaded: React.FC = () => {
               {image.downloadUrl}
             </p>
             <div style={{ padding: '10px' }}>
-              <button
+                <button
                 onClick={() => handleDownload(image.downloadUrl)}
-                style={{
-                  backgroundColor: '#007bff',
-                  color: 'white',
-                  border: 'none',
-                  padding: '8px 16px',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                }}
-              >
-                Download ${image.downloadCount} 
-              </button>
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                >
+                Download {image.downloadCount}
+                </button>
             </div>
           </div>
         ))}

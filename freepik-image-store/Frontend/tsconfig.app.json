@@ -22,5 +22,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src", "FlagForDeletion/useJobPolling.ts", "FlagForDeletion/App.old.tsx", "FlagForDeletion/UserProfile.tsx"]
 }

@@ -33,7 +33,8 @@ Router.get('/', async (req, res) => {
             params: {
                 filters: {
                     ids: PhotoID
-                }
+                },
+                limit :5
             },
             headers: {
                 'x-freepik-api-key': FREEPIK_API_KEY,

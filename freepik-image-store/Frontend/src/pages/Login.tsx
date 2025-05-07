@@ -55,7 +55,7 @@ const Login = () => {
                 reset();
 
                 if (user.role === 'admin') {
-                    navigate('/settings');
+                    navigate('/administration');
                 } else {
                     navigate('/');
                 }
@@ -68,7 +68,7 @@ const Login = () => {
     };
 
     return (
-        <div className="bg-gray-900 gap-20 [0_4px_4px_rgba(255,255,255,0.2)] w-[24rem] p-10 text-white space-y-4 rounded-lg">
+        <div className="bg-gray-900 gap-20 [0_4px_4px_rgba(255,255,255,0.2)] w-[24rem] p-14 text-center text-white space-y-4 rounded-lg">
 
             {errors.email && <p className="text-red-400">{errors.email.message}</p>}
             {errors.password && <p className="text-red-400">{errors.password.message}</p>}

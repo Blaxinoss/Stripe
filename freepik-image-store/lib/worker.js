@@ -18,16 +18,17 @@ const worker = new Worker(
     const { userId, downloadLink } = job.data;
     const jobId = job.id;
     console.log(`Worker started for job: ${job.id}`);
-
     try {
       if (!downloadLink) {
-        throw new Error('Invalid download link');
+        throw new Error('Worker Says : Invalid download link, check the downloadRoutes to ensure that you are adding the task to BullMQ queue with the right body that have the userId and downloadLink');
       }
 
       console.log(`Processing download link: ${downloadLink}`);
       await initializeCluster();
       console.log('Cluster initialized successfully');
 
+      //send a task to puppetter cluster with the body that has userId , downloadLink and jobId
+      //.execute is better if you deal with workers not 100% sure
       const response = await cluster.execute({ userId, downloadLink, jobId });
       console.log(`Cluster execute response:`, response);
 

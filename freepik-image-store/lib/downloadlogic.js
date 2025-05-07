@@ -52,6 +52,7 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
  
         try {
             page = await browser.newPage();
+            
         } catch (err) {
             throw new Error('Failed to open new page: ' + err.message);
         }
@@ -158,7 +159,8 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
             throw new Error('Failed to capture image download URL: ' + err.message);
         }
 
-        
+        // after making sure the downloadLink has been grabed and ready then 
+        // add the Image to the database model and link it to the user who downloaded it 
         try {
             if (!imageUrlDownload) {
                 throw new Error('Image URL is not set. Cannot save to database.');
