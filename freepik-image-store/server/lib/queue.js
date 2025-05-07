@@ -112,3 +112,5 @@ const queueEvents = new QueueEvents('downloadQueue', {
 module.exports.connection = connection;
 module.exports.downloadQueue = downloadQueue;
 module.exports.queueEvents = queueEvents;
+
+// Moved to server/lib/queue.js

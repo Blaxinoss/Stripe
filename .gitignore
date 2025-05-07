@@ -17,7 +17,8 @@ dist-ssr
 .env/
 /freepik-image-store/.env
 /freepik-image-store/Frontend/.env
-
+/freepik-image-store/server/.env
+/freepik-image-store/server/node_modules
 /.idea/
 /.vscode/
 /*.suo

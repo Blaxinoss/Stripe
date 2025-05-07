@@ -1,8 +1,7 @@
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const ImageModel = require('../models/ImageModel');
-const { connectDB } = require('../configurations/database');
-connectDB();
+
 
 puppeteer.use(StealthPlugin());
 
@@ -159,26 +158,7 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
             throw new Error('Failed to capture image download URL: ' + err.message);
         }
 
-        // after making sure the downloadLink has been grabed and ready then 
-        // add the Image to the database model and link it to the user who downloaded it 
-        try {
-            if (!imageUrlDownload) {
-                throw new Error('Image URL is not set. Cannot save to database.');
-            }
-
-            const newImage = new ImageModel({
-                userId,
-                downloadUrl: imageUrlDownload,
-                downloadCount: 0,
-                maxDownloads: 3,
-            });
-            await newImage.save();
-
-        
-
-        } catch (err) {
-            throw new Error('Failed to save image in DB: ' + err.message);
-        }
+      
 
         return { success: true, imageUrl: imageUrlDownload };
 

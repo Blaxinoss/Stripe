@@ -4,7 +4,7 @@ const { CreateSuper } = require('../utils/helpers');
 
 const connectDB = async () => {
     try {
-        const dbURI = process.env.DATABASE_URL || 'mongodb://localhost:27017/behive-dump';
+        const dbURI = process.env.DATABASE_URL;
         if (!dbURI) {
             throw new Error('DATABASE_URL is not defined in .env file');
         }

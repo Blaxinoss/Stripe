@@ -1,12 +1,12 @@
 require('dotenv').config();
-require('./configurations/passport');
+require('../server/configurations/passport');
 const express = require('express');
 const cors = require('cors');
 const http = require('http');
 const passport = require('passport');
 const rateLimit = require('express-rate-limit');
 const { initSocket, getSocketInstance } = require('./socket');
-const { connectDB } = require('./configurations/database');
+const { connectDB } = require('../server/configurations/database');
 const Redis = require('ioredis');
 const redis = new Redis('redis://localhost:6379');
 
@@ -45,13 +45,33 @@ redis.subscribe('download:completed', (err) => {
 });
 
 // Listen for messages from Redis
-redis.on('message', (channel, message) => {
+redis.on('message', async(channel, message) => {
   if (channel === 'download:completed') {
     const io = getSocketInstance();
     const { userId, imageUrl, jobId } = JSON.parse(message);
     console.log(`Emitting downloadedImage to user ${userId}`);
-    io.to(userId).emit('downloadedImage', { userId, imageUrl, jobId });
+    
+ // Save to MongoDB
+ try {
+  if (!downloadUrl) {
+    throw new Error('Download URL is not set. Cannot save to database.');
   }
+
+  const newImage = new Download({
+    userId,
+    downloadUrl,
+    downloadCount: 0,
+    maxDownloads: 3,
+  });
+  await newImage.save();
+  console.log(`Image saved to database for user ${userId}`);
+
+  // Emit to Frontend via Socket.IO
+  io.to(userId).emit('downloadedImage', { userId, downloadUrl, jobId });
+} catch (error) {
+  console.error('Error saving image to database:', error.message);
+}}
+  
 });
 
 

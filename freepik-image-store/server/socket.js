@@ -1,4 +1,4 @@
-// lib/socket.js
+// server/socket.js
 let ioInstance = null;
 
 function initSocket(server) {

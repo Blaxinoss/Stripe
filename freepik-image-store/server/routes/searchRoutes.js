@@ -2,6 +2,7 @@ const express = require('express')
 const Router = express.Router();
 const axios = require('axios')
 const Jimp = require('jimp')
+const { connectDB } = require('../configurations/database');
 
 const extractId = (searchLink) => {
     const match = searchLink.match(/_(\d+)\.htm/);
