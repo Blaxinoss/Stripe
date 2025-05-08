@@ -8,7 +8,10 @@ const rateLimit = require('express-rate-limit');
 const { initSocket, getSocketInstance } = require('./socket');
 const { connectDB } = require('../server/configurations/database');
 const Redis = require('ioredis');
-const redis = new Redis(process.env.REDIS_URL);
+const redis = new Redis({
+  host: process.env.REDIS_URL,
+  maxRetriesPerRequest: null,
+});
 
 const app = express();
 
