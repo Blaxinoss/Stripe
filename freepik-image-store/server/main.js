@@ -7,12 +7,13 @@ const passport = require('passport');
 const rateLimit = require('express-rate-limit');
 const { initSocket, getSocketInstance } = require('./socket');
 const { connectDB } = require('../server/configurations/database');
+const { ImageModel } = require('../server/models/ImageModel');
 const Redis = require('ioredis');
 const redis = new Redis({
   host: process.env.REDIS_URL,
   maxRetriesPerRequest: null,
 });
-
+require('./lib/worker')
 const app = express();
 
 const corsOptions = {
@@ -71,7 +72,7 @@ redis.on('message', async(channel, message) => {
     throw new Error('Download URL is not set. Cannot save to database.');
   }
 
-  const newImage = new Download({
+  const newImage = new ImageModel({
     userId,
     downloadUrl,
     downloadCount: 0,

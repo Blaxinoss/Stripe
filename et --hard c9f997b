@@ -1,0 +1,121 @@
+[33mcommit 9651aab4260d5049d5794a1d9b21cafd7eb5fe74[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: BlaxLinux <abdullahismael078@gmail.com>
+Date:   Thu May 8 14:43:11 2025 +0300
+
+    last fix for vercel json
+
+[33mcommit 252d0fc2ef9c87189fae985bb147a7092d925a80[m
+Author: BlaxLinux <abdullahismael078@gmail.com>
+Date:   Thu May 8 14:26:01 2025 +0300
+
+    debugging
+
+[33mcommit 88e395a1a5fac8adcffbd892cc038e70ae97cca6[m
+Author: BlaxLinux <abdullahismael078@gmail.com>
+Date:   Thu May 8 14:13:44 2025 +0300
+
+    added databased connection
+
+[33mcommit a0180610f28d493eb316c55af0c7d02e95027f72[m
+Author: BlaxLinux <abdullahismael078@gmail.com>
+Date:   Thu May 8 14:00:09 2025 +0300
+
+    last try
+
+[33mcommit 3cbaf5bccc3c0cc8f6d6d61db3ea0f3bd1d7361b[m
+Author: BlaxLinux <abdullahismael078@gmail.com>
+Date:   Thu May 8 13:56:51 2025 +0300
+
+    please work
+
+[33mcommit 398f43c0d0433b0e9b4338b66935adb5f9f78108[m
+Author: BlaxLinux <abdullahismael078@gmail.com>
+Date:   Thu May 8 13:16:27 2025 +0300
+
+    update the main
+
+[33mcommit f8c2e327908e9cc309c6df4210d90ae710970f8b[m
+Author: BlaxLinux <abdullahismael078@gmail.com>
+Date:   Thu May 8 13:10:25 2025 +0300
+
+    Fix main
+
+[33mcommit e6f82d558fe110a81b2c1c069317429311b5c4fa[m
+Author: BlaxLinux <abdullahismael078@gmail.com>
+Date:   Thu May 8 13:04:09 2025 +0300
+
+    reinit server
+
+[33mcommit 894a25bd149316a74028de49651ce32112512995[m
+Author: BlaxLinux <abdullahismael078@gmail.com>
+Date:   Thu May 8 12:57:06 2025 +0300
+
+    await DB
+
+[33mcommit e06e67d49ff0c7a24b524a545871c05bd711dc67[m
+Author: BlaxLinux <abdullahismael078@gmail.com>
+Date:   Thu May 8 12:44:03 2025 +0300
+
+    Adding trust proxy
+
+[33mcommit 52af6f38883cccbb14d58ec133a8d3137620b1a1[m
+Author: BlaxLinux <abdullahismael078@gmail.com>
+Date:   Thu May 8 04:16:30 2025 +0300
+
+    Revert "trust proxy"
+    
+    This reverts commit d69f5997f0e54e3e2883fcd4d1a7adc529a90e18.
+
+[33mcommit d69f5997f0e54e3e2883fcd4d1a7adc529a90e18[m
+Author: BlaxLinux <abdullahismael078@gmail.com>
+Date:   Thu May 8 04:11:49 2025 +0300
+
+    trust proxy
+
+[33mcommit c9f997b99ab44631818795898800b48d1cc960b6[m
+Author: BlaxLinux <abdullahismael078@gmail.com>
+Date:   Thu May 8 03:57:59 2025 +0300
+
+    redis max retries ?
+
+[33mcommit a999a06839623c6f60d4966fdd99ffcf0520031b[m
+Author: BlaxLinux <abdullahismael078@gmail.com>
+Date:   Thu May 8 03:52:49 2025 +0300
+
+    Cloud Redis
+
+[33mcommit dfa627b3b39dd03123288672209988279801d71a[m
+Author: BlaxLinux <abdullahismael078@gmail.com>
+Date:   Thu May 8 03:39:40 2025 +0300
+
+    slash diff ?
+
+[33mcommit 8bca98197e67711fe71b8dc5aed170ec032e58fa[m
+Author: BlaxLinux <abdullahismael078@gmail.com>
+Date:   Thu May 8 03:33:58 2025 +0300
+
+    Cors
+
+[33mcommit 417b2ebfd47a8d4869055091a7074d5f8ad9f740[m
+Author: BlaxLinux <abdullahismael078@gmail.com>
+Date:   Thu May 8 03:29:00 2025 +0300
+
+    export app
+
+[33mcommit 84238ff29f4acd6529c3c9dd2d68343d65dcdf71[m
+Author: BlaxLinux <abdullahismael078@gmail.com>
+Date:   Thu May 8 03:24:23 2025 +0300
+
+    adding vercel.json
+
+[33mcommit 40d5c1c3ce0519978021a01e3cafcc23ab5bdc6f[m
+Author: BlaxLinux <abdullahismael078@gmail.com>
+Date:   Thu May 8 03:11:50 2025 +0300
+
+    port and idk
+
+[33mcommit 5e5860efd66fbeb6451fbf59e6bc839cf1168404[m
+Author: BlaxLinux <abdullahismael078@gmail.com>
+Date:   Thu May 8 03:01:14 2025 +0300
+
+    Updated all clients to ask the backend
