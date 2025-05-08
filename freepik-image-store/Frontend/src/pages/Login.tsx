@@ -62,7 +62,7 @@ const Login = () => {
             }
 
         } catch (err: any) {
-            setIsError(`An error occurred with the server, ${err.response?.data?.message}`);
+            setIsError(`An error occurred with the server, ${err.response?.data?.message}, ${err.message}`);
             setMessage("");
         }
     };
