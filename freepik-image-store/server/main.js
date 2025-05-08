@@ -11,7 +11,15 @@ const Redis = require('ioredis');
 const redis = new Redis('redis://localhost:6379');
 
 const app = express();
-app.use(cors());
+
+const corsOptions = {
+  origin: 'https://stripe-nu-ruby.vercel.app/', // Replace with your actual frontend domain
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+};
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 connectDB();
