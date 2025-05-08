@@ -23,7 +23,7 @@ const ImageDownloaded: React.FC = () => {
 
     const fetchImages = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/images/user-images`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/images/user-images`, {
           headers: {
             Authorization: `${token}`,
                   },

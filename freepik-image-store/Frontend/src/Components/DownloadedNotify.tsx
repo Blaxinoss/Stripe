@@ -18,7 +18,7 @@ const DownloadedNotify: React.FC<{ jobId: string }> = ({ jobId }) => {
       return;
     }
 
-    const socket = io('http://localhost:5000', {
+    const socket = io(import.meta.env.VITE_BACKEND_URL || 'https://stripeback.vercel.app/', {
       withCredentials: true,
       transports: ['websocket', 'polling'],
     });

@@ -41,7 +41,7 @@ const Login = () => {
 
     const onSubmit = async (data: FormData) => {
         try {
-            const response = await axios.post("http://localhost:5000/api/users/login", data);
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/users/login`, data);
             const { success, message, token, user, expiresIn } = response.data;
             if (!success) {
                 setIsError(message);
