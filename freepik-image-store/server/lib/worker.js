@@ -2,7 +2,7 @@ const { Worker } = require('bullmq');
 const { createBrowserPool } = require('./cluster');
 const { connection } = require('./queue');
 const Redis = require('ioredis');
-const redis = new Redis('redis://localhost:6379'); // Ensure REDIS_URL is set in your .env
+const redis = new Redis(process.env.REDIS_URL);
 
 let cluster;
 

@@ -3,11 +3,7 @@ const Redis = require('ioredis');
 
 
 // إعداد الاتصال بـ Redis
-const connection = new Redis({
-    host: 'localhost',
-    port: 6379,
-    maxRetriesPerRequest: null 
-});
+const connection = new Redis(process.env.REDIS_URL);
 connection.on('connect', () => {
     console.log('Connected to Redis');
 });
