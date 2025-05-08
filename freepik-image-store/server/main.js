@@ -13,7 +13,7 @@ const redis = new Redis('redis://localhost:6379');
 const app = express();
 
 const corsOptions = {
-  origin: 'https://stripe-nu-ruby.vercel.app/', // Replace with your actual frontend domain
+  origin: 'https://stripe-nu-ruby.vercel.app', // Allow requests from your frontend domain
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
