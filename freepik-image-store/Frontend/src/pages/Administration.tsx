@@ -20,7 +20,7 @@ export default function Administration({ }: Props) {
 
     const fetchUsers = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/users/users', {
+            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/users/users`, {
                 headers: {
                     Authorization: `${token}`, // Or your token logic
                 },
@@ -38,7 +38,7 @@ export default function Administration({ }: Props) {
         } try {
             setLoading(true);
             const res = await axios.post(
-                `http://localhost:5000/api/coins/increase_coins/${selectedUserId}`,
+                `${import.meta.env.VITE_BACKEND_URL}/api/coins/increase_coins/${selectedUserId}`,
                 { amount },
                 {
                     headers: {

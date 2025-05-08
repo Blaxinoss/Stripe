@@ -9,15 +9,18 @@ const { initSocket, getSocketInstance } = require('./socket');
 const { connectDB } = require('../server/configurations/database');
 const { ImageModel } = require('../server/models/ImageModel');
 const Redis = require('ioredis');
+
 const redis = new Redis({
   host: process.env.REDIS_URL,
   maxRetriesPerRequest: null,
 });
+
+const corsOrigin = process.env.FRONTEND_URL
 require('./lib/worker')
 const app = express();
 
 const corsOptions = {
-  origin: 'https://stripe-nu-ruby.vercel.app', // Allow requests from your frontend domain
+  origin:  corsOrigin, // Allow requests from your frontend domain
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -37,6 +40,8 @@ const limiter = rateLimit({
 app.get('/',(req,res)=>{
   res.send('hello from the server')
 })
+
+
 app.use('/api/', limiter);
 
 const server = http.createServer(app);

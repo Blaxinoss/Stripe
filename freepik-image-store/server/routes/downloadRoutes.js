@@ -1,6 +1,5 @@
 require('dotenv').config();
 const express = require('express');
-const { timeout } = require('puppeteer');
 const Router = express.Router();
 const passport = require('passport');
 const { USER } = require('../models/User');

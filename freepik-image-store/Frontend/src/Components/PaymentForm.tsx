@@ -60,7 +60,7 @@ function PaymentForm({ selectedImage }: Props) {
 
         try {
 
-            const response = await axios.post("http://localhost:5000/api/create-payment", { billingData, imageUrl: selectedImage });
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/create-payment`, { billingData, imageUrl: selectedImage });
             window.open(response.data.url, "_blank");
 
 

@@ -36,7 +36,7 @@ const searchImages = async () => {
         setImages([]);
         try {
             const response = await axios.get(
-                `http://localhost:5000/api/search`,
+                `${import.meta.env.VITE_BACKEND_URL}/api/search`,
                 {
                     params: { searchLink: searchLink },
                     headers: {
@@ -68,7 +68,7 @@ const downloadImage = async (imageId: number) => {
     try {
             console.log(user)
             const response = await axios.post(
-                `http://localhost:5000/api/freepik/download/${imageId}`,
+                `${import.meta.env.VITE_BACKEND_URL}/api/freepik/download/${imageId}`,
                 { downloadLink: downloadLink, userId: user?._id },
                 {
 
@@ -106,7 +106,7 @@ const downloadImage = async (imageId: number) => {
 
         try {
             const response = await axios.post(
-                `http://localhost:5000/api/payment/pay`,
+                `${import.meta.env.VITE_BACKEND_URL}/api/payment/pay`,
                 { imageId, amount },
                 {
                     headers: {

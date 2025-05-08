@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 if (moment().utc().isBefore(expires.utc())) {
                     try {
                         // تحقق من التوكين في السيرفر
-                        const response = await axios.get('/users/me', {
+                        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/users/me`, {
                             headers: {
                                 Authorization: `${token}`
                             }
