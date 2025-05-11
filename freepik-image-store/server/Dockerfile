@@ -1,36 +1,42 @@
 FROM node:alpine
+
+# Set working directory
 WORKDIR /app
+
+# Copy package files and install dependencies
 COPY package*.json ./
 RUN npm install --verbose
-RUN apk add  \
-chromium \
-wget \
-nss \
-freetype \
-harfbuzz \
-ttf-freefont \
-ca-certificates \
-fonts-liberation \
-libappindicator3-1 \
-libasound2 \
-libatk-bridge2.0-0 \
-libatk1.0-0 \
-libcups2 \
-libdbus-1-3 \
-libdrm2 \
-libgbm1 \
-libgtk-3-0 \
-libnspr4 \
-libnss3 \
-libx11-xcb1 \
-libxcomposite1 \
-libxdamage1 \
-libxrandr2 \
-xdg-utils \
-redis
-# Dockerfile
-COPY . .
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
-EXPOSE 5000
-CMD ["node", "main.js"]
 
+# Install Chromium, wget, and required dependencies
+RUN apk update && apk add --no-cache \
+    chromium \
+    wget \
+    nss \
+    freetype \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont \
+    xdg-utils \
+    redis \
+    bash \
+    dumb-init \
+    libgomp \
+    libcups \
+    libx11 \
+    libxcomposite \
+    libxrandr \
+    libxtst \
+    alsa-lib \
+    ttf-freefont
+
+# Copy the rest of the application
+COPY . .
+
+# Set Puppeteer executable path to Chromium binary
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+
+# Expose the application port
+EXPOSE 5000
+
+# Start the application
+CMD ["node", "main.js"]
