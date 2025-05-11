@@ -8,7 +8,15 @@ async function createBrowserPool() {
         maxConcurrency: 3,  // تحديد العدد الأقصى للصفحات المفتوحة في نفس الوقت
         puppeteerOptions: {
             headless: true,  // تشغيل المتصفح في وضع الـ headless
-            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            args: [
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage',
+    '--disable-gpu',
+    '--no-zygote',
+    '--single-process'
+  ]
+,
         },
         timeout: 120000, 
     });
