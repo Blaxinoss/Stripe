@@ -6,7 +6,7 @@ WORKDIR /app
 # Copy package files and install dependencies
 COPY package*.json ./
 RUN npm install --verbose
-
+#Triget
 # Install Chromium, wget, and required dependencies
 RUN apk update && apk add --no-cache \
     chromium \
