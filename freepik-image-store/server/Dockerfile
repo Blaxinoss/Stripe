@@ -21,13 +21,11 @@ RUN apk update && apk add --no-cache \
     bash \
     dumb-init \
     libgomp \
-    libcups \
     libx11 \
     libxcomposite \
     libxrandr \
     libxtst \
-    alsa-lib \
-    ttf-freefont
+    alsa-lib
 
 # Copy the rest of the application
 COPY . .
