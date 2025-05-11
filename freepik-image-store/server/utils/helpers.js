@@ -1,8 +1,8 @@
 const crypto = require('crypto');
 const { USER } = require('../models/User');
 const jsonwebtoken = require('jsonwebtoken');
-const { fstat } = require('fs');
-
+const fs = require('fs');
+const path = require('path');
 
 const validatePassword = (password, hash, salt) => {
 

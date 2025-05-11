@@ -36,7 +36,7 @@ const navigate = useNavigate();
 
     const onSubmit = async (data: FormData) => {
         try {
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL || 'https://stripeback.vercel.app/'}/api/users/create_user`, data);
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/users/create_user`, data);
             const { success, message } = response.data;
 
             if (!success) {

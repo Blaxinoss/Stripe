@@ -6,24 +6,32 @@ const http = require('http');
 const passport = require('passport');
 const rateLimit = require('express-rate-limit');
 const { initSocket, getSocketInstance } = require('./socket');
-const { connectDB } = require('../server/configurations/database');
-const { ImageModel } = require('../server/models/ImageModel');
+const { connectDB } = require('./configurations/database');
+const { ImageModel } = require('./models/ImageModel');
 const Redis = require('ioredis');
+const PORTLOCAL = process.env.PORTLOCAL;
 
 const redis = new Redis({
-  host: process.env.REDIS_URL,
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT,
+  password: process.env.REDIS_PASSWORD,
+  username: process.env.REDIS_USERNAME,
   maxRetriesPerRequest: null,
 });
+
+redis.on('error', (err) => {
+  console.error('Redis connection error:', err.message);
+});
+
+redis.on('connect', () => {
+  console.log('Connected to Redis Iam the servevr');});
 
 const corsOrigin = process.env.FRONTEND_URL
 require('./lib/worker')
 const app = express();
 
 const corsOptions = {
-  origin:  corsOrigin, // Allow requests from your frontend domain
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
+  origin: '*'
 };
 app.use(cors(corsOptions));
 
@@ -40,7 +48,6 @@ const limiter = rateLimit({
 app.get('/',(req,res)=>{
   res.send('hello from the server')
 })
-
 
 app.use('/api/', limiter);
 
@@ -91,8 +98,11 @@ redis.on('message', async(channel, message) => {
 } catch (error) {
   console.error('Error saving image to database:', error.message);
 }}
-  
+});
+server.listen(PORTLOCAL, () => {
+  console.log(`Server running on http://localhost:${PORTLOCAL}`);
 });
 
 module.exports = app;
 exports.io = io;
+

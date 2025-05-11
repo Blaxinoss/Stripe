@@ -1,6 +1,5 @@
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
-const ImageModel = require('../models/ImageModel');
 
 
 puppeteer.use(StealthPlugin());

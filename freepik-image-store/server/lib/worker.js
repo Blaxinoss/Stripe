@@ -2,8 +2,12 @@ const { Worker } = require('bullmq');
 const { createBrowserPool } = require('./cluster');
 const { connection } = require('./queue');
 const Redis = require('ioredis');
-const redis = new Redis({
-  host: process.env.REDIS_URL,
+
+const redis =new Redis({
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT,
+  password: process.env.REDIS_PASSWORD,
+  username: process.env.REDIS_USERNAME,
   maxRetriesPerRequest: null,
 });
 

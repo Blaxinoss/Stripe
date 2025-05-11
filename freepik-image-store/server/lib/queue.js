@@ -4,12 +4,16 @@ const Redis = require('ioredis');
 
 // إعداد الاتصال بـ Redis
 const connection = new Redis({
-  host: process.env.REDIS_URL,
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT,
+  password: process.env.REDIS_PASSWORD,
+  username: process.env.REDIS_USERNAME,
   maxRetriesPerRequest: null,
 });
 
+
 connection.on('connect', () => {
-    console.log('Connected to Redis');
+    console.log('Connected to Redis Iam the queue');
 });
 
 connection.on('error', (err) => {
