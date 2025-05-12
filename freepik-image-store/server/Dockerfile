@@ -1,12 +1,11 @@
 FROM node:20-slim
-WORKDIR /app
+
+# Install necessary dependencies for Chromium
 RUN apt-get update && apt-get install -y \
     chromium \
-    dbus \
-    ca-certificates \
-    redis \
     fonts-liberation \
     libappindicator3-1 \
+    libasound2 \
     libatk-bridge2.0-0 \
     libatk1.0-0 \
     libcairo2 \
@@ -16,15 +15,12 @@ RUN apt-get update && apt-get install -y \
     libexpat1 \
     libfontconfig1 \
     libgbm1 \
-    libgcc-s1 \
-    libgdk-pixbuf-2.0-0 \
     libglib2.0-0 \
     libgtk-3-0 \
     libnspr4 \
     libnss3 \
     libpango-1.0-0 \
     libpangocairo-1.0-0 \
-    libstdc++6 \
     libx11-6 \
     libx11-xcb1 \
     libxcb1 \
@@ -39,16 +35,32 @@ RUN apt-get update && apt-get install -y \
     libxss1 \
     libxtst6 \
     xdg-utils \
+    ca-certificates \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Verify Chromium exists
 RUN which chromium || (echo "Chromium not found" && exit 1)
 RUN chromium --version
+
+# Set Puppeteer to use system Chromium
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-RUN useradd -m appuser && chown -R appuser:appuser /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
+
+# Create a non-root user
+RUN useradd -m appuser
 USER appuser
+
+# Create working dir
+WORKDIR /app
+
+# Copy and install Node.js dependencies
+COPY --chown=appuser:appuser package*.json ./
+RUN npm ci
+
+# Copy application code
+COPY --chown=appuser:appuser . .
+
+# Expose port and run app
 EXPOSE 5000
 CMD ["node", "main.js"]
