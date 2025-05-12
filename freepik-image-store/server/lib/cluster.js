@@ -7,14 +7,16 @@ async function createBrowserPool() {
         concurrency: Cluster.CONCURRENCY_PAGE, // One page per browser instance
         maxConcurrency: 3, // Limit to 3 concurrent pages
         puppeteerOptions: {
-            headless: true, // Ensure headless mode
-            executablePath: '/usr/bin/chromium', // Use system Chromium
+        headless: 'new', // Use new headless mode for better compatibility
+            executablePath: '/usr/bin/chromium',
             args: [
                 '--disable-gpu',
                 '--disable-setuid-sandbox',
                 '--no-sandbox',
                 '--no-zygote',
-                '--disable-dev-shm-usage'
+                '--disable-dev-shm-usage',
+                '--disable-features=DialMediaRouteProvider', // Disable features requiring D-Bus
+                '--headless=new' // Explicitly enforce headless mode
             ],
             timeout: 120000, // 120 seconds timeout
         },
