@@ -1,8 +1,4 @@
-const puppeteer = require('puppeteer-extra');
-const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
-
-puppeteer.use(StealthPlugin());
 
 function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
