@@ -10,6 +10,7 @@ async function createBrowserPool() {
     puppeteer, // ✅ هنا بتمرر puppeteer-extra المعدّل
     concurrency: Cluster.CONCURRENCY_PAGE,
     maxConcurrency: 3,
+   timeout: 120000,
     puppeteerOptions: {
         headless: 'new',
         executablePath: '/usr/bin/chromium',
@@ -22,7 +23,6 @@ async function createBrowserPool() {
             '--disable-features=DialMediaRouteProvider',
             '--headless=new'
         ],
-        timeout: 120000,
     },
     retryLimit: 2,
     retryDelay: 1000,
