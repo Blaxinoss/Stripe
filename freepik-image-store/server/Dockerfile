@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y \
     libfontconfig1 \
     libgbm1 \
     libgcc1 \
+    libgdk-pixbuf-2.0-0 \
     libglib2.0-0 \
     libgtk-3-0 \
     libnspr4 \
@@ -39,6 +40,7 @@ RUN apt-get update && apt-get install -y \
     libxi6 \
     libxrandr2 \
     libxrender1 \
+    libxshmfence1 \
     libxss1 \
     libxtst6 \
     lsb-release \
@@ -46,16 +48,26 @@ RUN apt-get update && apt-get install -y \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Verify Chromium installation
+RUN which chromium || (echo "Chromium not found at /usr/bin/chromium" && exit 1)
+RUN chromium --version
+
 # Set Puppeteer to use system Chromium
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
+# Create non-root user
+RUN useradd -m appuser && chown -R appuser:appuser /app
+
 # Copy package files and install Node.js dependencies
 COPY package*.json ./
-RUN npm install --verbose
+RUN npm ci --verbose
 
 # Copy app source code
 COPY . .
+
+# Switch to non-root user
+USER appuser
 
 # Expose app port
 EXPOSE 5000
