@@ -4,25 +4,39 @@ const { downloadWorkerLogic } = require('./downloadlogic');  // يجب أن يك
 // دالة لإنشاء المسبح (cluster)
 async function createBrowserPool() {
     const cluster = await Cluster.launch({
-        concurrency: Cluster.CONCURRENCY_PAGE,  // تعيين نوع الـ concurrency (تعدد الصفحات)
-        maxConcurrency: 3,  // تحديد العدد الأقصى للصفحات المفتوحة في نفس الوقت
+        concurrency: Cluster.CONCURRENCY_PAGE, // One page per browser instance
+        maxConcurrency: 3, // Limit to 3 concurrent pages
         puppeteerOptions: {
-            headless: true,  // تشغيل المتصفح في وضع الـ headless
+            headless: true, // Ensure headless mode
+            executablePath: '/usr/bin/chromium', // Use system Chromium
             args: [
-    '--no-sandbox',
-    '--disable-setuid-sandbox',
-    '--disable-dev-shm-usage',
-    '--disable-gpu',
-    '--no-zygote',
-    '--single-process',
-    '--headless=new'
-                
-  ]
-,
+                '--no-sandbox', // Required for Docker
+                '--disable-setuid-sandbox', // Required for Docker
+                '--disable-dev-shm-usage', // Avoid shared memory issues
+                '--disable-gpu', // Disable GPU in headless mode
+                '--disable-background-networking', // Reduce resource usage
+                '--disable-background-timer-throttling',
+                '--disable-breakpad',
+                '--disable-client-side-phishing-detection',
+                '--disable-default-apps',
+                '--disable-extensions',
+                '--disable-hang-monitor',
+                '--disable-popup-blocking',
+                '--disable-prompt-on-repost',
+                '--disable-sync',
+                '--disable-translate',
+                '--metrics-recording-only',
+                '--no-first-run',
+                '--safebrowsing-disable-auto-update'
+            ],
+            timeout: 120000, // 120 seconds timeout
         },
-        timeout: 120000, 
+        retryLimit: 2, // Retry failed tasks up to 2 times
+        retryDelay: 1000, // Wait 1 second between retries
     });
 
+    return cluster;
+}
     // تنفيذ الكود الذي يجب على الـ cluster فعله عند استقبال job
     await cluster.task(async ({ page, data: { userId, downloadLink,jobId } }) => {
         try {
