@@ -138,9 +138,7 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
 
     } catch (err) {
         throw err;
-    } finally {
-        if (browser) await browser.close();
-    }
+  
 }
 
 module.exports = { downloadWorkerLogic };
