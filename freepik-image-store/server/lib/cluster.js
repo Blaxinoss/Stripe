@@ -3,25 +3,26 @@ const { downloadWorkerLogic } = require('./downloadlogic'); // Ensure this file 
 
 // Function to create the browser pool (cluster)
 async function createBrowserPool() {
-    const cluster = await Cluster.launch({
-        concurrency: Cluster.CONCURRENCY_PAGE, // One page per browser instance
-        maxConcurrency: 3, // Limit to 3 concurrent pages
-        puppeteerOptions: {
-        headless: 'new', // Use new headless mode for better compatibility
-            executablePath: '/usr/bin/chromium',
-            args: [
-                '--disable-gpu',
-                '--disable-setuid-sandbox',
-                '--no-sandbox',
-                '--no-zygote',
-                '--disable-dev-shm-usage',
-                '--disable-features=DialMediaRouteProvider', // Disable features requiring D-Bus
-                '--headless=new' // Explicitly enforce headless mode
-            ],
-            timeout: 120000, // 120 seconds timeout
-        },
-        retryLimit: 2, // Retry failed tasks up to 2 times
-        retryDelay: 1000, // Wait 1 second between retries
+   const cluster = await Cluster.launch({
+    puppeteer, // ✅ هنا بتمرر puppeteer-extra المعدّل
+    concurrency: Cluster.CONCURRENCY_PAGE,
+    maxConcurrency: 3,
+    puppeteerOptions: {
+        headless: 'new',
+        executablePath: '/usr/bin/chromium',
+        args: [
+            '--disable-gpu',
+            '--disable-setuid-sandbox',
+            '--no-sandbox',
+            '--no-zygote',
+            '--disable-dev-shm-usage',
+            '--disable-features=DialMediaRouteProvider',
+            '--headless=new'
+        ],
+        timeout: 120000,
+    },
+    retryLimit: 2,
+    retryDelay: 1000,
     });
 
     // Define the task for the cluster
