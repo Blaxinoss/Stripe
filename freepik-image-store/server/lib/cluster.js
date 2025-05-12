@@ -3,29 +3,20 @@ const { downloadWorkerLogic } = require('./downloadlogic');  // يجب أن يك
 
 // دالة لإنشاء المسبح (cluster)
 async function createBrowserPool() {
-        const cluster = await Cluster.launch({
-            concurrency: Cluster.CONCURRENCY_PAGE,
-            maxConcurrency: 3,
-            puppeteerOptions: {
-                headless: true,
-                executablePath: '/usr/bin/chromium', // Adjust if needed (e.g., '/usr/bin/chromium-browser')
-                args: [
-                    '--disable-gpu',
-                    '--disable-setuid-sandbox',
-                    '--no-sandbox',
-                    '--no-zygote',
-                    '--disable-dev-shm-usage' // Add for Docker compatibility
-                ],
-                timeout: 120000
-            },
-            retryLimit: 2,
-            retryDelay: 1000
-        });
+    const cluster = await Cluster.launch({
+        concurrency: Cluster.CONCURRENCY_PAGE, // One page per browser instance
+        maxConcurrency: 3, // Limit to 3 concurrent pages
+        puppeteerOptions: {
+            headless: true, // Ensure headless mode
+            executablePath: '/usr/bin/chromium', // Use system Chromium
+         args: ['--disable-gpu', '--disable-setuid-sandbox', '--no-sandbox', '--no-zygote', '--disable-dev-shm-usage'],
+            timeout: 120000, // 120 seconds timeout
+        },
+        retryLimit: 2, // Retry failed tasks up to 2 times
+        retryDelay: 1000, // Wait 1 second between retries
+    });
 
-    
-
-        return cluster;
-
+    return cluster;
 }
     // تنفيذ الكود الذي يجب على الـ cluster فعله عند استقبال job
     await cluster.task(async ({ page, data: { userId, downloadLink,jobId } }) => {
