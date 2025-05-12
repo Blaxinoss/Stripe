@@ -43,6 +43,7 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
         }
 
         try {
+             await resizeFront(page);
             const buttons = await page.$$('.continue-with > button');
             let emailButton = null;
 
@@ -85,6 +86,7 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
         }
 
         try {
+            await resizeFront(page);
             await page.waitForSelector('input[name="password"]', { timeout: 10000 });
             await delay(500);
             await page.type('input[name="password"]', "Asdqwe123564@", { delay: 100 });
@@ -102,7 +104,7 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
         }
 
         try {
-            await resizeFront(page);
+            await resizeBack(page);
             console.log(`resizeFront (second time) took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
         } catch (err) {
             throw new Error('Viewport setup failed (second front): ' + err.message);
