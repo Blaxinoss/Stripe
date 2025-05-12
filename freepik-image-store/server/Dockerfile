@@ -7,6 +7,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     chromium \
     wget \
+    redis \
     ca-certificates \
     fonts-liberation \
     libappindicator3-1 \
