@@ -30,6 +30,7 @@ async function createBrowserPool() {
 
     // Define the task for the cluster
     await cluster.task(async ({ page, data: { userId, downloadLink, jobId } }) => {
+        const startTime = Date.now();
         try {
             if (!userId) {
                 throw new Error(
@@ -37,6 +38,7 @@ async function createBrowserPool() {
                 );
             }
             const result = await downloadWorkerLogic({ userId, downloadLink, jobId, page });
+            console.log(`Task execution took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
             return result;
         } catch (err) {
             console.error('Error processing job in cluster task:', err);
