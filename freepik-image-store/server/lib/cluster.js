@@ -1,5 +1,8 @@
 const { Cluster } = require('puppeteer-cluster');
 const { downloadWorkerLogic } = require('./downloadlogic'); // Ensure this file exists
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+puppeteer.use(StealthPlugin());
 
 // Function to create the browser pool (cluster)
 async function createBrowserPool() {
