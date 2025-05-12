@@ -134,11 +134,8 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
 
       
 
-        return { success: true, imageUrl: imageUrlDownload };
-
-    } catch (err) {
-        throw err;
-  
+     
+    return { success: true, imageUrl: imageUrlDownload };
 }
 
 module.exports = { downloadWorkerLogic };
