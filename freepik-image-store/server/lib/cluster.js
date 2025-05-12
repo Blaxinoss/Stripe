@@ -14,7 +14,9 @@ async function createBrowserPool() {
     '--disable-dev-shm-usage',
     '--disable-gpu',
     '--no-zygote',
-    '--single-process'
+    '--single-process',
+    '--headless=new'
+                
   ]
 ,
         },
