@@ -32,28 +32,7 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
     let browser;
     let imageUrlDownload = null;
 
-    try {
-        try {
-            browser = await puppeteer.launch({
-                headless: false,
-                args: [
-                    '--no-sandbox',
-                    '--disable-setuid-sandbox',
-                    '--disable-blink-features=AutomationControlled',
-                    '--disable-infobars',
-                ],
-                defaultViewport: null,
-            });
-        } catch (err) {
-            throw new Error('Failed to launch browser: ' + err.message);
-        }
  
-        try {
-            page = await browser.newPage();
-            
-        } catch (err) {
-            throw new Error('Failed to open new page: ' + err.message);
-        }
 
         try {
             await resizeFront(page);
