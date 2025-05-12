@@ -80,13 +80,13 @@ redis.on('message', async(channel, message) => {
     
  // Save to MongoDB
  try {
-  if (!downloadUrl) {
+  if (!imageUrl) {
     throw new Error('Download URL is not set. Cannot save to database.');
   }
 
   const newImage = new Image({
     userId,
-    downloadUrl,
+    downloadUrl : imageUrl,
     downloadCount: 0,
     maxDownloads: 3,
   });
@@ -94,7 +94,7 @@ redis.on('message', async(channel, message) => {
   console.log(`Image saved to database for user ${userId}`);
 
   // Emit to Frontend via Socket.IO
-  io.to(userId).emit('downloadedImage', { userId, downloadUrl, jobId });
+  io.to(userId).emit('downloadedImage', { userId, imageUrl, jobId });
 } catch (error) {
   console.error('Error saving image to database:', error.message);
 }}
