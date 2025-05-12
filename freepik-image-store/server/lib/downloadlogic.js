@@ -30,6 +30,7 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
 
         try {
             await resizeFront(page);
+            await page.mouse.move(200,300);
             console.log(`resizeFront took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
         } catch (err) {
             throw new Error('Viewport setup failed (front): ' + err.message);
@@ -46,6 +47,8 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
              await resizeFront(page);
             const buttons = await page.$$('.continue-with > button');
             let emailButton = null;
+            await page.mouse.move(120,340);
+
 
             for (const button of buttons) {
                 const span = await button.$('span');
@@ -63,6 +66,7 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
             }
 
             await delay(500 + Math.random() * 500);
+            await page.mouse.move(700,300);
             await emailButton.click();
             console.log(`Clicking email login button took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
         } catch (err) {
@@ -80,6 +84,7 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
 
         try {
             await resizeBack(page);
+            await page.mouse.move(200,1000);
             console.log(`resizeBack took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
         } catch (err) {
             throw new Error('Viewport setup failed (back): ' + err.message);
