@@ -22,6 +22,56 @@ async function resizeBack(page) {
     }
 }
 
+
+const fetch = require('node-fetch');
+
+async function solveRecaptcha2Captcha(page) {
+  console.log('Solving reCAPTCHA using 2Captcha...');
+  const sitekey = await page.$eval('.g-recaptcha', el => el.getAttribute('data-sitekey'));
+
+  if (!sitekey) throw new Error('Sitekey not found!');
+  const pageUrl = page.url();
+  // 2. ارسال طلب للـ 2Captcha مع sitekey و رابط الصفحة
+  const apiKey = '210a210b21e099460a8b88af8c7e06da';
+  const captchaIdRes = await fetch(`http://2captcha.com/in.php?key=${apiKey}&method=userrecaptcha&googlekey=${sitekey}&pageurl=${pageUrl}`);
+  const captchaIdText = await captchaIdRes.text();
+  if (!captchaIdText.startsWith('OK|')) throw new Error('Failed to send captcha to 2captcha: ' + captchaIdText);
+  const captchaId = captchaIdText.split('|')[1];
+  let recaptchaResponse;
+  for (let i = 0; i < 24; i++) { 
+    await new Promise(r => setTimeout(r, 5000));
+
+    const res = await fetch(`http://2captcha.com/res.php?key=${apiKey}&action=get&id=${captchaId}`);
+    const text = await res.text();
+
+    if (text === 'CAPCHA_NOT_READY') {
+      console.log('Captcha not ready, retrying...');
+      continue;
+    } else if (text.startsWith('OK|')) {
+      recaptchaResponse = text.split('|')[1];
+      break;
+    } else {
+      throw new Error('Error getting captcha response: ' + text);
+    }
+  }
+
+  if (!recaptchaResponse) throw new Error('Failed to solve captcha in time');
+
+  await page.evaluate(`document.getElementById("g-recaptcha-response").style.display = "block";`); // بعض الصفحات بتخفيه
+  await page.evaluate(`document.getElementById("g-recaptcha-response").value = "${recaptchaResponse}";`);
+
+  // 5. ممكن تحتاج تحفز حدث تغيير/ادخال
+  await page.evaluate(() => {
+    const recaptchaElem = document.getElementById("g-recaptcha-response");
+    recaptchaElem.dispatchEvent(new Event('input', { bubbles: true }));
+    recaptchaElem.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+
+  console.log('Captcha solved and token set');
+}
+
+
+
 async function downloadWorkerLogic({ userId, downloadLink ,page }) {
     let browser;
     let imageUrlDownload = null;
@@ -104,6 +154,7 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
 
             await page.click('button#submit');
             console.log(`Clicking login button took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
+            await solveRecaptcha2Captcha(page);
             await page.waitForNavigation({ waitUntil: 'networkidle2' });
             console.log(`Logging in and waiting for navigation took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
         } catch (err) {
