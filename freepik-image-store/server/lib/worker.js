@@ -20,7 +20,7 @@ async function initializeCluster() {
   }
 }
 
-await initializeCluster().then(() => {
+initializeCluster().then(() => {
   console.log('Cluster initialized successfully');
 });
 
