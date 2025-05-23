@@ -1,0 +1,28 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'freepik-image-store/server'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SSH to EC2 and deploy
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/Stripe/freepik-image-store/server 
+            sudo git pull origin main 
+            sudo docker build -t backend . 
+            sudo docker stop backend_container || true
+            sudo docker rm backend_container || true
+            sudo docker run --env-file .env -d -p 5000:5000 --name backend_container backend
+            sudo docker logs backend_container -f 
