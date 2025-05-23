@@ -26,7 +26,8 @@ async function resizeBack(page) {
 const fetch = require('node-fetch');
 async function solveRecaptcha2Captcha(page) {
     await delay(500 + Math.random() * 500);
-    await page.screenshot({ path: '/home/ubuntu/screens/debug-captcha.png', fullPage: true });
+    console.log('Working directory:', process.cwd());
+    await page.screenshot({ path: 'debug-captcha.png', fullPage: true });
   
     console.log('Solving reCAPTCHA using 2Captcha....');
   
