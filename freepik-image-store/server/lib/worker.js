@@ -11,8 +11,9 @@ const redis =new Redis({
   maxRetriesPerRequest: null,
 });
 
-let cluster;
 
+let cluster;
+console.log('Redis connection for workerrrr');
 async function initializeCluster() {
   if (!cluster) {
     cluster = await createBrowserPool();
