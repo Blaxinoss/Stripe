@@ -47,7 +47,7 @@ async function solveRecaptcha2Captcha(page) {
   
     const pageUrl = page.url();
   
-    const apiKey = '210a210b21e099460a8b88af8c7e06da';
+    const apiKey = '5b90d96ceb6d1f90c5c53e29dea93d1f';
     const captchaIdRes = await fetch(`http://2captcha.com/in.php?key=${apiKey}&method=userrecaptcha&googlekey=${sitekey}&pageurl=${pageUrl}`);
     const captchaIdText = await captchaIdRes.text();
     if (!captchaIdText.startsWith('OK|')) throw new Error('Failed to send captcha to 2captcha: ' + captchaIdText);
