@@ -18,6 +18,7 @@ async function initializeCluster() {
     cluster = await createBrowserPool();
   }
 }
+console.log("worker is ready and connected to redis");
 
 const worker = new Worker(
   'downloadQueue',
