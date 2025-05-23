@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 interface Image {
+  _id: string;
   userId: string;
   downloadUrl: string;
   jobId: string;
@@ -14,12 +15,15 @@ const ImageDownloaded: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  
+
   useEffect(() => {
     if (!user?._id) {
       setError('User not authenticated. Please log in.');
       setIsLoading(false);
       return;
     }
+
 
     const fetchImages = async () => {
       try {
@@ -42,16 +46,56 @@ const ImageDownloaded: React.FC = () => {
         setIsLoading(false);
       }
     };
-
     fetchImages();
   }, [user?._id]);
 
-  const handleDownload = (downloadUrl: string) => {
-    const link = document.createElement('a');
-    link.href = downloadUrl;
-    link.download = downloadUrl.split('/').pop() || 'image';
-    link.click();
+  const handleDownload = async(image: Image) => {
+    const urlCheckResponse = await fetch(image.downloadUrl, { method: 'HEAD' });
+
+    if (!urlCheckResponse.ok) {
+      setError('The download URL is no longer valid. Please try again later.');
+      return;
+    }
+
+    if(image.downloadCount >=3) {
+      setError('You have reached the maximum download limit for this image.');
+      return;
+    } 
+    else{
+      try{
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/images/user-images/${image._id}/downloadcounteradd`,
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: `${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to update download count');
+      }else{
+        const {downloadCount} = await response.json();
+        const link = document.createElement('a');
+        link.href = image.downloadUrl;
+        link.download = image.downloadUrl.split('/').pop() || 'image';
+        link.click();
+        setImages((prevImages) =>
+          prevImages.map((img ) =>
+            img._id === image._id ? { ...img, downloadCount} : img
+          )
+        );
+      }
+
+    } catch (err) {
+      console.error('Error updating download count:', err);
+      setError('Failed to download the image. Please try again.');
+    }
   };
+  }
+
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Your Image Gallery</h1>
@@ -75,19 +119,19 @@ const ImageDownloaded: React.FC = () => {
               borderRadius: '8px',
               overflow: 'hidden',
               boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-              textAlign: 'center',
+     
             }}
           >
             <p
-              style={{ width: '100%', height: '150px', objectFit: 'cover',fontSize: '3px' }}
+              className="w-100 h-[150px]  text-left p-2 font-bold text-sm text-wrap"
               onError={() => setError(`Failed to load image ${image.jobId}`)}
             >
               {image.downloadUrl}
             </p>
             <div style={{ padding: '10px' }}>
-                <button
-                onClick={() => handleDownload(image.downloadUrl)}
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                <button disabled={image.downloadCount >= 3}
+                onClick={() => handleDownload(image)}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50 disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
                 Download {image.downloadCount}
                 </button>

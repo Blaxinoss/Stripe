@@ -105,6 +105,8 @@ const downloadImage = async (imageId: number) => {
         setMessage(null);
 
         try {
+          await downloadImage(imageId);
+
             const response = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/api/payment/pay`,
                 { imageId, amount },
@@ -115,7 +117,6 @@ const downloadImage = async (imageId: number) => {
                 }
             );
             // Initiate download after successful purchase
-            await downloadImage(imageId);
             setMessage(response.data.message || 'Purchase and download completed successfully!');
         } catch (err: any) {
             console.error('Purchase or download error:', err);
