@@ -101,7 +101,9 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
         }
 
         try {
-            await page.click('.submit > button');
+
+            await page.click('button#submit');
+            console.log(`Clicking login button took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
             await page.waitForNavigation({ waitUntil: 'networkidle2' });
             console.log(`Logging in and waiting for navigation took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
         } catch (err) {
