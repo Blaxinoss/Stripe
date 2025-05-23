@@ -25,7 +25,7 @@ async function resizeBack(page) {
 
 const fetch = require('node-fetch');
 async function solveRecaptcha2Captcha(page) {
-    await page.waitForTimeout(3000); // لو الصفحة لسه بتجهز
+    await delay(500 + Math.random() * 500);
     await page.screenshot({ path: 'debug-captcha.png', fullPage: true });
   
     console.log('Solving reCAPTCHA using 2Captcha....');
