@@ -24,52 +24,74 @@ async function resizeBack(page) {
 
 
 const fetch = require('node-fetch');
-
 async function solveRecaptcha2Captcha(page) {
-  console.log('Solving reCAPTCHA using 2Captcha....');
-  const sitekey = await page.$eval('.g-recaptcha', el => el.getAttribute('data-sitekey'));
-
-  if (!sitekey) throw new Error('Sitekey not found!');
-  const pageUrl = page.url();
-  // 2. ارسال طلب للـ 2Captcha مع sitekey و رابط الصفحة
-  const apiKey = '210a210b21e099460a8b88af8c7e06da';
-  const captchaIdRes = await fetch(`http://2captcha.com/in.php?key=${apiKey}&method=userrecaptcha&googlekey=${sitekey}&pageurl=${pageUrl}`);
-  const captchaIdText = await captchaIdRes.text();
-  if (!captchaIdText.startsWith('OK|')) throw new Error('Failed to send captcha to 2captcha: ' + captchaIdText);
-  const captchaId = captchaIdText.split('|')[1];
-  let recaptchaResponse;
-  for (let i = 0; i < 24; i++) { 
-    await new Promise(r => setTimeout(r, 5000));
-
-    const res = await fetch(`http://2captcha.com/res.php?key=${apiKey}&action=get&id=${captchaId}`);
-    const text = await res.text();
-
-    if (text === 'CAPCHA_NOT_READY') {
-      console.log('Captcha not ready, retrying...');
-      continue;
-    } else if (text.startsWith('OK|')) {
-      recaptchaResponse = text.split('|')[1];
-      break;
-    } else {
-      throw new Error('Error getting captcha response: ' + text);
+    await page.waitForTimeout(3000); // لو الصفحة لسه بتجهز
+    await page.screenshot({ path: 'debug-captcha.png', fullPage: true });
+  
+    console.log('Solving reCAPTCHA using 2Captcha....');
+  
+    // حاول تجيب الـ sitekey من iframe مباشرة
+    const frames = await page.frames();
+    const recaptchaFrame = frames.find(f => f.url().includes('api2/bframe'));
+  
+    if (!recaptchaFrame) {
+      throw new Error('reCAPTCHA iframe not found');
     }
+  
+    // استخرج sitekey من الـ iframe src
+    const iframeUrl = recaptchaFrame.url();
+    const sitekeyMatch = iframeUrl.match(/[?&]k=([^&]+)/);
+    if (!sitekeyMatch) throw new Error('Sitekey not found in iframe URL');
+    const sitekey = sitekeyMatch[1];
+  
+    const pageUrl = page.url();
+  
+    const apiKey = '210a210b21e099460a8b88af8c7e06da';
+    const captchaIdRes = await fetch(`http://2captcha.com/in.php?key=${apiKey}&method=userrecaptcha&googlekey=${sitekey}&pageurl=${pageUrl}`);
+    const captchaIdText = await captchaIdRes.text();
+    if (!captchaIdText.startsWith('OK|')) throw new Error('Failed to send captcha to 2captcha: ' + captchaIdText);
+    const captchaId = captchaIdText.split('|')[1];
+  
+    let recaptchaResponse;
+    for (let i = 0; i < 24; i++) {
+      await new Promise(r => setTimeout(r, 5000));
+      const res = await fetch(`http://2captcha.com/res.php?key=${apiKey}&action=get&id=${captchaId}`);
+      const text = await res.text();
+      if (text === 'CAPCHA_NOT_READY') {
+        console.log('Captcha not ready, retrying...');
+        continue;
+      } else if (text.startsWith('OK|')) {
+        recaptchaResponse = text.split('|')[1];
+        break;
+      } else {
+        throw new Error('Error getting captcha response: ' + text);
+      }
+    }
+  
+    if (!recaptchaResponse) throw new Error('Failed to solve captcha in time');
+  
+    // Inject g-recaptcha-response if not present
+    await page.evaluate(() => {
+      if (!document.getElementById('g-recaptcha-response')) {
+        const textarea = document.createElement('textarea');
+        textarea.id = 'g-recaptcha-response';
+        textarea.name = 'g-recaptcha-response';
+        textarea.style.display = 'block';
+        document.body.appendChild(textarea);
+      }
+    });
+  
+    await page.evaluate((token) => {
+      const el = document.getElementById('g-recaptcha-response');
+      el.style.display = 'block';
+      el.value = token;
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+      el.dispatchEvent(new Event('change', { bubbles: true }));
+    }, recaptchaResponse);
+  
+    console.log('Captcha solved and token set');
   }
-
-  if (!recaptchaResponse) throw new Error('Failed to solve captcha in time');
-
-  await page.evaluate(`document.getElementById("g-recaptcha-response").style.display = "block";`); // بعض الصفحات بتخفيه
-  await page.evaluate(`document.getElementById("g-recaptcha-response").value = "${recaptchaResponse}";`);
-
-  // 5. ممكن تحتاج تحفز حدث تغيير/ادخال
-  await page.evaluate(() => {
-    const recaptchaElem = document.getElementById("g-recaptcha-response");
-    recaptchaElem.dispatchEvent(new Event('input', { bubbles: true }));
-    recaptchaElem.dispatchEvent(new Event('change', { bubbles: true }));
-  });
-
-  console.log('Captcha solved and token set');
-}
-
+  
 
 
 async function downloadWorkerLogic({ userId, downloadLink ,page }) {
