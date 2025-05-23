@@ -12,7 +12,7 @@ async function createBrowserPool() {
     maxConcurrency: 3,
    timeout: 120000,
     puppeteerOptions: {
-        headless: 'new',
+        headless: 'false',
         executablePath: '/usr/bin/chromium',
         args: [
             '--disable-gpu',
@@ -21,7 +21,7 @@ async function createBrowserPool() {
             '--no-zygote',
             '--disable-dev-shm-usage',
             '--disable-features=DialMediaRouteProvider',
-            '--headless=new'
+            // '--headless=new'
         ],
     },
     retryLimit: 2,

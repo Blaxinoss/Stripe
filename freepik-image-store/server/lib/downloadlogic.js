@@ -154,6 +154,8 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
 
             await page.click('button#submit');
             console.log(`Clicking login button took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
+            await delay(500 + Math.random() * 500);
+
             await solveRecaptcha2Captcha(page);
             await page.waitForNavigation({ waitUntil: 'networkidle2' });
             console.log(`Logging in and waiting for navigation took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
