@@ -118,6 +118,7 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
     const startTime = Date.now();
 
         try {
+            await page.setCahesEnabled(false);
             await resizeFront(page);
             await page.mouse.move(200,300);
             console.log(`resizeFront took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
