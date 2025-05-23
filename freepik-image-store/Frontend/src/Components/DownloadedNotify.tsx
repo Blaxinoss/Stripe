@@ -4,7 +4,12 @@ import io from 'socket.io-client';
 import { useAuth } from '../context/AuthContext';
 import { useCoins } from '../context/CoinsContextProvider';
 
-const DownloadedNotify: React.FC<{ jobId: string }> = ({ jobId }) => {
+interface DownloadedNotifyProps {
+  jobId: string;
+  onLoadingChange?: (isLoading: boolean) => void; // Callback to notify outer component
+}
+
+const DownloadedNotify: React.FC<DownloadedNotifyProps> = ({ jobId, onLoadingChange }) => {
   const { user } = useAuth();
   const {coins} = useCoins();
   const [imageDownloadUrl, setImageDownloadUrl] = useState<string | null>(null);
@@ -15,8 +20,10 @@ const DownloadedNotify: React.FC<{ jobId: string }> = ({ jobId }) => {
     if (!user?._id) {
       setError('User not authenticated. Please log in.');
       setIsLoading(false);
+      onLoadingChange?.(false); 
       return;
     }
+    onLoadingChange(true); // Set loading state to true when starting the effect
 
     const socket = io(import.meta.env.VITE_BACKEND_URL, {
       withCredentials: true,
@@ -34,6 +41,7 @@ const DownloadedNotify: React.FC<{ jobId: string }> = ({ jobId }) => {
       console.error('Socket.IO connection error:', err.message);
       setError(`Failed to connect to server: ${err.message}`);
       setIsLoading(false);
+      onLoadingChange?.(false); 
     });
 
     socket.on('downloadedImage', (data: { jobId: string, userId: string, imageUrl: string }) => {
@@ -43,6 +51,7 @@ const DownloadedNotify: React.FC<{ jobId: string }> = ({ jobId }) => {
         } else {
           setImageDownloadUrl(data.imageUrl);
           setIsLoading(false);
+          onLoadingChange?.(false); 
           toast.success('Image download complete!, your file has been added to the gallery');
           toast.warn(`You now have ${coins} coins.`);  // Show success toast
         }

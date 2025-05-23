@@ -21,7 +21,11 @@ const Search = () => {
     const [message, setMessage] = useState<string | null>(null);
     const [showConfirm, setShowConfirm] = useState<{ id: number; amount: number; title: string } | null>(null);
     const [jobId, setJobId] = useState<string | null>(null);
+    const [isLoadingInner, setIsLoadingInner] = useState<boolean>(false);
 
+    const handleLoadingChange = (loading: boolean) => {
+      setIsLoadingInner(loading);
+    };
 
 
 // Search for images
@@ -148,7 +152,7 @@ const downloadImage = async (imageId: number) => {
 
     return (
         <>  {jobId && (
-              <DownloadedNotify jobId={jobId} />
+              <DownloadedNotify jobId={jobId} onLoadingChange={handleLoadingChange} />
             
           )}      
 
@@ -230,10 +234,10 @@ const downloadImage = async (imageId: number) => {
                   </p>
                   <button
                     onClick={() => openConfirmDialog(img.id, 100, img.title)}
-                    disabled={loading}
+                    disabled={isLoadingInner}
                     className="w-full mt-3 bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white font-semibold py-2 px-4 rounded-lg shadow transition-all duration-300 transform hover:scale-105 disabled:opacity-50"
                   >
-                    {loading ? 'Processing...' : 'Buy for 100 Coins'}
+                    {isLoadingInner ? 'Processing...' : 'Buy for 100 Coins'}
                   </button>
                 </div>
               ))}
