@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'freepik-image-store/server'
+      - 'freepik-image-store/server/**'
 
 jobs:
   deploy:
