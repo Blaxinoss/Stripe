@@ -19,6 +19,12 @@ async function initializeCluster() {
     cluster = await createBrowserPool();
   }
 }
+
+await initializeCluster().then(() => {
+  console.log('Cluster initialized successfully');
+});
+
+
 console.log("worker is ready and connected to redis");
 
 const worker = new Worker(
@@ -33,9 +39,7 @@ const worker = new Worker(
       }
 
       console.log(`Processing download link: ${downloadLink}`);
-      await initializeCluster();
-      console.log('Cluster initialized successfully');
-
+  
       //send a task to puppetter cluster with the body that has userId , downloadLink and jobId
       //.execute is better if you deal with workers not 100% sure
       const response = await cluster.execute({ userId, downloadLink, jobId });
