@@ -26,7 +26,7 @@ async function resizeBack(page) {
 const fetch = require('node-fetch');
 async function solveRecaptcha2Captcha(page) {
     await delay(500 + Math.random() * 500);
-    await page.screenshot({ path: 'debug-captcha.png', fullPage: true });
+    await page.screenshot({ path: '/home/ubuntu/screens/debug-captcha.png', fullPage: true });
   
     console.log('Solving reCAPTCHA using 2Captcha....');
   
@@ -179,7 +179,7 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
             await delay(500 + Math.random() * 500);
 
             await solveRecaptcha2Captcha(page);
-            await page.waitForNavigation({ waitUntil: 'networkidle2' });
+            // await page.waitForNavigation({ waitUntil: 'networkidle2' });
             console.log(`Logging in and waiting for navigation took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
         } catch (err) {
             throw new Error('Failed to log in or wait for navigation: ' + err.message);
