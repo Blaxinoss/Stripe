@@ -23,8 +23,9 @@ const DownloadedNotify: React.FC<DownloadedNotifyProps> = ({ jobId, onLoadingCha
       onLoadingChange?.(false); 
       return;
     }
-    onLoadingChange(true); // Set loading state to true when starting the effect
-
+    if(onLoadingChange) {
+      onLoadingChange(true); // Notify outer component that loading has started
+    }
     const socket = io(import.meta.env.VITE_BACKEND_URL, {
       withCredentials: true,
       transports: ['websocket', 'polling'],
