@@ -22,10 +22,10 @@ jobs:
             cd ~/Stripe/freepik-image-store/server 
             sudo git pull origin main 
             for id in $(docker ps -q --filter "publish=5000"); do
-              docker stop $id || true
-              docker rm $id || true
+              sudo docker stop $id || true
+              sudo docker rm $id || true
             done
-            docker stop backend_container || true
-            docker rm backend_container || true
-            docker build -t backend_container .
-            docker run --env-file .env -d -p 5000:5000 --name backend_container backend_container
+            sudo docker stop backend_container || true
+            sudo docker rm backend_container || true
+            sudo docker build -t backend_container .
+            sudo docker run --env-file .env -d -p 5000:5000 --name backend_container backend_container
