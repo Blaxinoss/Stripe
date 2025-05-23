@@ -26,7 +26,7 @@ async function resizeBack(page) {
 const fetch = require('node-fetch');
 
 async function solveRecaptcha2Captcha(page) {
-  console.log('Solving reCAPTCHA using 2Captcha...');
+  console.log('Solving reCAPTCHA using 2Captcha....');
   const sitekey = await page.$eval('.g-recaptcha', el => el.getAttribute('data-sitekey'));
 
   if (!sitekey) throw new Error('Sitekey not found!');
