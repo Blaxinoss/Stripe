@@ -118,7 +118,6 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
     const startTime = Date.now();
 
         try {
-            await page.setCahesEnabled(false);
             await resizeFront(page);
             await page.mouse.move(200,300);
             console.log(`resizeFront took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
@@ -127,7 +126,7 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
         }
 
         try {
-            await page.goto('https://www.freepik.com/log-in?client_id=freepik&lang=en', { waitUntil: 'networkidle2' });
+            await page.goto('https://www.freepik.com/login?lang=en', { waitUntil: 'networkidle2' });
             console.log(`Navigation to login page took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
         } catch (err) {
             throw new Error('Failed to navigate to login page: ' + err.message);
