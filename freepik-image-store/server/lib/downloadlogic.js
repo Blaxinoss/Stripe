@@ -115,6 +115,11 @@ async function resizeBack(page) {
 
 
 async function downloadWorkerLogic({ userId, downloadLink ,page }) {
+
+    if(userId === "warmup"){
+        console.log('Warmup task executed successfully');
+        return { success: true, imageUrl: null };}
+    else{
     let browser;
     let imageUrlDownload = null;
 
@@ -264,6 +269,6 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
 
      
     return { success: true, imageUrl: imageUrlDownload };
-}
+}}
 
 module.exports = { downloadWorkerLogic };

@@ -27,7 +27,7 @@ async function initializeCluster() {
       jobId: 'warmup',
     });
     }catch(warmupError){
-      console.warn('⚠️ Warm-up failed (not critical):', warmupErr.message);
+      console.warn('⚠️ Warm-up failed (not critical):', warmupError.message);
     }
 
     startWorker(); // Start worker only AFTER cluster is ready
