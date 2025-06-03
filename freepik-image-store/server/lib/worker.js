@@ -10,22 +10,14 @@ const redis =new Redis({
   username: process.env.REDIS_USERNAME,
   maxRetriesPerRequest: null,
 });
-
-
-let cluster;
-console.log('Redis connection for workerrrr');
-async function initializeCluster() {
-  if (!cluster) {
-    cluster = await createBrowserPool();
-  }
-}
-
-initializeCluster().then(() => {
-  console.log('Cluster initialized successfully');
-});
-
-
 console.log("worker is ready and connected to redis");
+
+
+async function startWorker (){
+let cluster;
+    cluster = await createBrowserPool();
+    console.log('Cluster initialized successfully');
+
 
 const worker = new Worker(
   'downloadQueue',
@@ -80,3 +72,7 @@ worker.on('completed', (job, result) => {
 worker.on('failed', (job, err) => {
   console.error(`Job ${job.id} failed with error: ${err.message}`);
 });
+console.log('Worker is ready and listening for jobs...');
+}
+
+startWorker();
