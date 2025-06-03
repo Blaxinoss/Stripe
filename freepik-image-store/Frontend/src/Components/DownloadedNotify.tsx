@@ -21,6 +21,12 @@ const DownloadedNotify: React.FC<DownloadedNotifyProps> = ({ jobId, onLoadingCha
   const [isLoading, setIsLoading] = useState<boolean>(true);
 const linkref = React.useRef<HTMLAnchorElement>(null);
   
+useEffect(()=>{
+if(linkref.current && imageDownloadUrl) {
+              linkref.current?.click();
+
+}
+},[imageDownloadUrl])
 
   useEffect(() => {
     if (!user?._id) {
@@ -36,6 +42,7 @@ const linkref = React.useRef<HTMLAnchorElement>(null);
       withCredentials: true,
       transports: ['websocket', 'polling'],
     });
+    
 
     socket.emit('join', user._id);
 
@@ -63,7 +70,6 @@ const linkref = React.useRef<HTMLAnchorElement>(null);
           toast.success('Image download complete!, your file has been added to the gallery');
           toast.warn(`You now have ${coins - 100} coins.`);  // Show success toast
           setCoins(coins - 100); // Deduct coins after successful download
-          linkref.current?.click();
         }
       }
     });
