@@ -61,7 +61,7 @@ const DownloadedNotify: React.FC<DownloadedNotifyProps> = ({ jobId, onLoadingCha
           setIsLoading(false);
           onLoadingChange?.(false); 
           toast.success('Image download complete!, your file has been added to the gallery');
-          toast.warn(`You now have ${coins} coins.`);  // Show success toast
+          toast.warn(`You now have ${coins - 10} coins.`);  // Show success toast
         }
       }
     });
