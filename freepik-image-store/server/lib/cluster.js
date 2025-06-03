@@ -37,14 +37,7 @@ async function createBrowserPool() {
                     'Message from the cluster task: userId is required. Go back and check the task you added to the queue and make sure you pass the userId'
                 );
             }
-            const context = page.browserContext();
-            await context.deleteCookie();
-            
-
-        await page.evaluate(() => {
-  localStorage.clear();
-  sessionStorage.clear();
-});
+   
 
             const result = await downloadWorkerLogic({ userId, downloadLink, jobId, page });
             console.log(`Task execution took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
