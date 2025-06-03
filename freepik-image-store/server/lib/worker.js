@@ -19,11 +19,16 @@ async function initializeCluster() {
   try {
     cluster = await createBrowserPool();
     console.log('✅ Cluster initialized successfully');
+
+    try{
         await cluster.execute({
       userId: 'warmup',
       downloadLink: 'https://example.com', // رابط وهمي مش هيشتغل
       jobId: 'warmup',
     });
+    }catch(warmupError){
+      console.warn('⚠️ Warm-up failed (not critical):', warmupErr.message);
+    }
 
     startWorker(); // Start worker only AFTER cluster is ready
   } catch (error) {
