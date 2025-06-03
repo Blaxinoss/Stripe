@@ -48,7 +48,7 @@ function startWorker() {
         if (!cluster) {
           throw new Error('Cluster is not ready yet.');
         }
-
+        await cluster.ready();
         const response = await cluster.execute({ userId, downloadLink, jobId });
         console.log(`✅ Cluster execute response:`, response);
 
