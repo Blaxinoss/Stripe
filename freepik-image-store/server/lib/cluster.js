@@ -31,19 +31,25 @@ async function createBrowserPool() {
     // Define the task for the cluster
     await cluster.task(async ({ page, data: { userId, downloadLink, jobId } }) => {
         const startTime = Date.now();
+                      const context = await page.browser().createIncognitoBrowserContext();
+                const incognitoPage = await context.newPage();
+
         try {
             if (!userId) {
                 throw new Error(
                     'Message from the cluster task: userId is required. Go back and check the task you added to the queue and make sure you pass the userId'
                 );
             }
-   
 
-            const result = await downloadWorkerLogic({ userId, downloadLink, jobId, page });
+            const result = await downloadWorkerLogic({ userId, downloadLink, jobId, page:incognitoPage });
             console.log(`Task execution took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
+               await incognitoPage.close();
+    await context.close();
             return result;
         } catch (err) {
             console.error('Error processing job in cluster task:', err);
+             await incognitoPage.close();
+    await context.close();
             throw err;
         }
     });
