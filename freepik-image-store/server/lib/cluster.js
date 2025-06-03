@@ -30,6 +30,7 @@ async function createBrowserPool() {
 
     // Define the task for the cluster
     await cluster.task(async ({ page, data: { userId, downloadLink, jobId } }) => {
+          console.log('Task started: browser is ready');
         const startTime = Date.now();
         try {
             if (!userId) {
