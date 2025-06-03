@@ -139,27 +139,28 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
         } catch (err) {
             throw new Error('Failed to navigate to login page: ' + err.message);
         }
-
         try {
-             await resizeFront(page);
+            await resizeFront(page);
+            // Take screenshot before clicking the email login button
+            await page.screenshot({ path: 'before-email-login.png', fullPage: true });
+
             const buttons = await page.$$('.continue-with > button');
             let emailButton = null;
             await page.mouse.move(120,340);
 
-
             for (const button of buttons) {
-                const span = await button.$('span');
-                if (!span) continue;
+            const span = await button.$('span');
+            if (!span) continue;
 
-                const spanText = await span.evaluate(el => el.textContent.trim());
-                if (spanText === 'Continue with email') {
-                    emailButton = button;
-                    break;
-                }
+            const spanText = await span.evaluate(el => el.textContent.trim());
+            if (spanText === 'Continue with email') {
+                emailButton = button;
+                break;
+            }
             }
 
             if (!emailButton) {
-                throw new Error('Email login button not found');
+            throw new Error('Email login button not found');
             }
 
             await delay(500 + Math.random() * 500);
