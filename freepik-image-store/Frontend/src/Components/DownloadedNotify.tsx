@@ -7,14 +7,20 @@ import { useCoins } from '../context/CoinsContextProvider';
 interface DownloadedNotifyProps {
   jobId: string;
   onLoadingChange?: (isLoading: boolean) => void; // Callback to notify outer component
+  purchasehandler?:()=>void
 }
 
-const DownloadedNotify: React.FC<DownloadedNotifyProps> = ({ jobId, onLoadingChange }) => {
+
+const DownloadedNotify: React.FC<DownloadedNotifyProps> = ({ jobId, onLoadingChange,purchasehandler }) => {
+
+  
   const { user } = useAuth();
   const {coins} = useCoins();
   const [imageDownloadUrl, setImageDownloadUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  
 
   useEffect(() => {
     if (!user?._id) {
@@ -50,6 +56,7 @@ const DownloadedNotify: React.FC<DownloadedNotifyProps> = ({ jobId, onLoadingCha
         if (data.userId !== user._id) {
           setError('User ID mismatch.');
         } else {
+          purchasehandler?.()
           setImageDownloadUrl(data.imageUrl);
           setIsLoading(false);
           onLoadingChange?.(false); 

@@ -22,6 +22,7 @@ const Search = () => {
     const [showConfirm, setShowConfirm] = useState<{ id: number; amount: number; title: string } | null>(null);
     const [jobId, setJobId] = useState<string | null>(null);
     const [isLoadingInner, setIsLoadingInner] = useState<boolean>(false);
+    const[amount, setAmount] = useState<number>(0);
 
     const handleLoadingChange = (loading: boolean) => {
       setIsLoadingInner(loading);
@@ -98,7 +99,7 @@ const downloadImage = async (imageId: number) => {
 
 // Start the handlePurchase function
 
-    const handlePurchase = async (imageId: number, amount: number) => {
+    const handlePurchase = async ( amount: number) => {
         if (!token) {
             setError('You must be logged in to make a purchase.');
             return;
@@ -109,11 +110,10 @@ const downloadImage = async (imageId: number) => {
         setMessage(null);
 
         try {
-          await downloadImage(imageId);
 
             const response = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/api/payment/pay`,
-                { imageId, amount },
+                { amount },
                 {
                     headers: {
                         Authorization: `${token}`,
@@ -141,10 +141,18 @@ const downloadImage = async (imageId: number) => {
     };
 
     const confirmPurchase = () => {
+         if (!token || !showConfirm) return;
+       
         if (showConfirm) {
+                          setAmount(showConfirm.amount);
+            if((user?.coins ?? 0) < showConfirm.amount) {
+            setError('You do not have enough coins to make this purchase.');
+            return;
+        }
             const image = images.find((img) => img.id === showConfirm.id);
             if (image) {
-                handlePurchase(showConfirm.id, showConfirm.amount);
+                // handlePurchase(showConfirm.id, showConfirm.amount);
+                downloadImage(showConfirm.id)
             }
             closeConfirmDialog();
         }
@@ -152,7 +160,7 @@ const downloadImage = async (imageId: number) => {
 
     return (
         <>  {jobId && (
-              <DownloadedNotify jobId={jobId} onLoadingChange={handleLoadingChange} />
+              <DownloadedNotify jobId={jobId} onLoadingChange={handleLoadingChange} purchasehandler={()=>{handlePurchase(amount)}} />
             
           )}      
 
