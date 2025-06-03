@@ -19,6 +19,11 @@ async function initializeCluster() {
   try {
     cluster = await createBrowserPool();
     console.log('✅ Cluster initialized successfully');
+        await cluster.execute({
+      userId: 'warmup',
+      downloadLink: 'https://example.com', // رابط وهمي مش هيشتغل
+      jobId: 'warmup',
+    });
 
     startWorker(); // Start worker only AFTER cluster is ready
   } catch (error) {
@@ -48,7 +53,7 @@ function startWorker() {
         if (!cluster) {
           throw new Error('Cluster is not ready yet.');
         }
-        await cluster.ready();
+
         const response = await cluster.execute({ userId, downloadLink, jobId });
         console.log(`✅ Cluster execute response:`, response);
 
