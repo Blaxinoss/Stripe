@@ -66,7 +66,13 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
         try {
             await page.goto('https://www.freepik.com/login?lang=en', { waitUntil: 'networkidle2' });
                      const context = page.browserContext();
-     
+            await context.deleteCookie();
+            
+
+        await page.evaluate(() => {
+  localStorage.clear();
+  sessionStorage.clear();
+});
             console.log(`Navigation to login page took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
         } catch (err) {
             throw new Error('Failed to navigate to login page: ' + err.message);
@@ -74,7 +80,7 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
         try {
             await resizeFront(page);
             // Take screenshot before clicking the email login button
-            // await page.screenshot({ path: 'before-email-login.png', fullPage: true });
+            await page.screenshot({ path: 'before-email-login.png', fullPage: true });
 
             const buttons = await page.$$('.continue-with > button');
             let emailButton = null;
@@ -104,7 +110,7 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
 
         try {
             await page.waitForSelector('input[name="email"]', { timeout: 10000 });
-            await page.type('input[name="email"]', "abdullahismael078@gmail.com");
+            await page.type('input[name="email"]', "abdullahismael078@gmail.com", { delay: 100 });
             console.log(`Typing email took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
         } catch (err) {
             throw new Error('Failed to type email: ' + err.message);
@@ -121,7 +127,7 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
         try {
             await resizeFront(page);
             await page.waitForSelector('input[name="password"]', { timeout: 10000 });
-            await page.type('input[name="password"]', "Asdqwe123564@");
+            await page.type('input[name="password"]', "Asdqwe123564@", { delay: 100 });
             console.log(`Typing password took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
         } catch (err) {
             throw new Error('Failed to type password: ' + err.message);
@@ -167,18 +173,20 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
         }
 
         try {
-            page.on('response', response => {
-                const url = response.url();
-                if (url.endsWith('.jpg') || url.endsWith('.png')|| url.endsWith('.zip')) {
-                    imageUrlDownload = url;
-                }
-            });
+const response = await page.waitForResponse(
+  response => {
+    const url = response.url();
+    return url.endsWith('.jpg') || url.endsWith('.png') || url.endsWith('.zip');
+  },
+  { timeout: 10000 } // 10 seconds, adjust as needed
+);
 
+imageUrlDownload = response.url();
 
-            if (!imageUrlDownload) {
-                throw new Error('No image URL detected in network responses');
-            }
-            console.log(`Image URL captured: ${imageUrlDownload}`);
+if (!imageUrlDownload) {
+  throw new Error('No image URL detected in network responses');
+}
+console.log(`Image URL captured: ${imageUrlDownload}`);
         } catch (err) {
             throw new Error('Failed to capture image download URL: ' + err.message);
         }
