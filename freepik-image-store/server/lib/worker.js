@@ -58,6 +58,15 @@ const worker = new Worker(
       return response;
     } catch (error) {
       console.error('Error processing job:', error.message);
+await redis.publish(
+  'download:failed',
+  JSON.stringify({
+    userId,
+    jobId,
+    error: error.message,
+  })
+)
+      
       throw error;
     }
   },

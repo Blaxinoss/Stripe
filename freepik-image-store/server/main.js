@@ -98,7 +98,13 @@ redis.on('message', async(channel, message) => {
 } catch (error) {
   console.error('Error saving image to database:', error.message);
 }}
+else if(channel === 'download:failed') {
+    const { userId, jobId,error} = JSON.parse(message);
+    console.error(`Download failed for user ${userId}, job ID: ${jobId} , error: ${error}`);
+    io.to(userId).emit('downloadFailed', { userId, jobId,error });
+  }
 });
+
 server.listen(PORTLOCAL, () => {
   console.log(`Server running on http://localhost:${PORTLOCAL}`);
 });
