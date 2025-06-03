@@ -65,9 +65,17 @@ app.use('/api/images', require('./routes/userImagesRoutes'));
 // Subscribe to Redis channel
 redis.subscribe('download:completed', (err) => {
   if (err) {
-    console.error('Failed to subscribe to Redis channel:', err);
+    console.error('Failed to subscribe to Redis channel download complelte:', err);
   } else {
     console.log('Subscribed to download:completed channel');
+  }
+});
+
+redis.subscribe('download:failed', (err) => {
+  if (err) {
+    console.error('Failed to subscribe to Redis channel the failed chaneel:', err);
+  } else {
+    console.log('Subscribed to download:failed channel');
   }
 });
 
