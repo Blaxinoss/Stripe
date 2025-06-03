@@ -1,6 +1,5 @@
 
 const puppeteer = require('puppeteer-extra');
-const RecaptchaPlugin = require('puppeteer-extra-plugin-recaptcha');
 
 const {default:RecaptchaPlugin,BuiltinSolutionProviders} = require('puppeteer-extra-plugin-recaptcha');
 const NextCaptchaProvider = require('puppeteer-extra-plugin-recaptcha-nextcaptcha');
