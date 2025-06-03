@@ -17,9 +17,6 @@ puppeteer.use(
 );
 
 
-function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 async function resizeFront(page) {
     try {
@@ -42,159 +39,121 @@ async function resizeBack(page) {
 }
 
 
+async function downloadWorkerLogic({ userId, downloadLink, page }) {
+  if (userId === "warmup") {
+    console.log('[Warmup] ✅ Warmup task executed successfully');
+    return { success: true, imageUrl: null };
+  }
 
+  let imageUrlDownload = null;
+  const startTime = Date.now();
+  const logStep = (label) => {
+    const timeElapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+    console.log(`[${label}] ⏱️ ${timeElapsed} seconds`);
+  };
 
-async function downloadWorkerLogic({ userId, downloadLink ,page }) {
+  try {
+    console.log('[Init] 🚀 Starting download worker logic...');
 
-    if(userId === "warmup"){
-        console.log('Warmup task executed successfully');
-        return { success: true, imageUrl: null };}
-    else{
-    let browser;
-    let imageUrlDownload = null;
+    await resizeFront(page);
+    await page.mouse.move(200, 300);
+    logStep('resizeFront (initial)');
 
-    const startTime = Date.now();
+    console.log('[Navigation] 🌐 Navigating to Freepik login page...');
+    await page.goto('https://www.freepik.com/login?lang=en', { waitUntil: 'networkidle2' });
+    logStep('goto(login)');
 
-        try {
-            await resizeFront(page);
-            await page.mouse.move(200,300);
-            console.log(`resizeFront took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
-        } catch (err) {
-            throw new Error('Viewport setup failed (front): ' + err.message);
+    console.log('[Check Login] 🔍 Checking if already logged in...');
+    const loginButtons = await page.$$('.continue-with > button');
+    let isLoggedIn = true;
+
+    for (const button of loginButtons) {
+      const span = await button.$('span');
+      if (span) {
+        const spanText = await span.evaluate(el => el.textContent.trim());
+        if (spanText === 'Continue with email') {
+          isLoggedIn = false;
+          break;
         }
+      }
+    }
 
-        try {
-            await page.goto('https://www.freepik.com/login?lang=en', { waitUntil: 'networkidle2' });
-                     const context = page.browserContext();
-            await context.deleteCookie();
-            
+    if (isLoggedIn) {
+      console.log('[Session] ✅ Already logged in, skipping login.');
+    } else {
+      console.log('[Session] 🔒 Not logged in, performing login...');
+      await page.goto('https://www.freepik.com/login?lang=en', { waitUntil: 'networkidle2' });
+      logStep('goto(login again)');
 
-        await page.evaluate(() => {
-  localStorage.clear();
-  sessionStorage.clear();
-});
-            console.log(`Navigation to login page took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
-        } catch (err) {
-            throw new Error('Failed to navigate to login page: ' + err.message);
-        }
-        try {
-            await resizeFront(page);
-            // Take screenshot before clicking the email login button
-            await page.screenshot({ path: 'before-email-login.png', fullPage: true });
+      await resizeFront(page);
+      await page.mouse.move(120, 340);
 
-            const buttons = await page.$$('.continue-with > button');
-            let emailButton = null;
-            await page.mouse.move(120,340);
+      const emailButton = await page.$x("//span[text()='Continue with email']/parent::button");
+      if (!emailButton[0]) throw new Error('Email login button not found');
+      await page.mouse.move(700, 300);
+      await emailButton[0].click();
+      logStep('click(email button)');
 
-            for (const button of buttons) {
-            const span = await button.$('span');
-            if (!span) continue;
+      await page.waitForSelector('input[name="email"]', { timeout: 10000 });
+      await page.type('input[name="email"]', "abdullahismael078@gmail.com", { delay: 100 });
+      logStep('type(email)');
 
-            const spanText = await span.evaluate(el => el.textContent.trim());
-            if (spanText === 'Continue with email') {
-                emailButton = button;
-                break;
-            }
-            }
+      await resizeBack(page);
+      await page.mouse.move(200, 1000);
+      await resizeFront(page);
 
-            if (!emailButton) {
-            throw new Error('Email login button not found');
-            }
+      await page.waitForSelector('input[name="password"]', { timeout: 10000 });
+      await page.type('input[name="password"]', "Asdqwe123564@", { delay: 100 });
+      logStep('type(password)');
 
-            await page.mouse.move(700,300);
-            await emailButton.click();
-            console.log(`Clicking email login button took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
-        } catch (err) {
-            throw new Error('Failed to click login provider button: ' + err.message);
-        }
+      await page.click('button#submit');
+      logStep('click(submit)');
 
-        try {
-            await page.waitForSelector('input[name="email"]', { timeout: 10000 });
-            await page.type('input[name="email"]', "abdullahismael078@gmail.com", { delay: 100 });
-            console.log(`Typing email took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
-        } catch (err) {
-            throw new Error('Failed to type email: ' + err.message);
-        }
+      console.log('[Captcha] 🧠 Solving reCAPTCHA...');
+      const { solved, error } = await page.solveRecaptchas();
+      if (error) throw new Error('Failed to solve reCAPTCHA: ' + error.message);
+      console.log('[Captcha] ✅ Captcha solved:', solved);
+      logStep('solveRecaptchas');
 
-        try {
-            await resizeBack(page);
-            await page.mouse.move(200,1000);
-            console.log(`resizeBack took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
-        } catch (err) {
-            throw new Error('Viewport setup failed (back): ' + err.message);
-        }
+      await page.waitForNavigation({ waitUntil: 'networkidle2' });
+      logStep('waitForNavigation(after login)');
+    }
 
-        try {
-            await resizeFront(page);
-            await page.waitForSelector('input[name="password"]', { timeout: 10000 });
-            await page.type('input[name="password"]', "Asdqwe123564@", { delay: 100 });
-            console.log(`Typing password took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
-        } catch (err) {
-            throw new Error('Failed to type password: ' + err.message);
-        }
+    await resizeBack(page);
+    await resizeFront(page);
+    logStep('resize for download');
 
+    console.log('[Download] 📦 Navigating to download link...');
+    await page.goto(downloadLink, { waitUntil: 'networkidle2' });
+    logStep('goto(downloadLink)');
 
-        try {
-            await page.click('button#submit');
-            console.log(`Clicking login button took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
-        
-            // Solve reCAPTCHA using the plugin
-            const { solved, error } = await page.solveRecaptchas();
-            if (error) {
-              throw new Error('Failed to solve reCAPTCHA: ' + error.message);
-            }
-            console.log('Captcha solved successfully:', solved);
-        
-            await page.waitForNavigation({ waitUntil: 'networkidle2' });
-            console.log(`Logging in and waiting for navigation took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
-          } catch (err) {
-            throw new Error('Failed to log in or wait for navigation: ' + err.message);
-          }
+    await page.click('[data-cy="download-button"]');
+    logStep('click(download-button)');
 
-        try {
-            await resizeBack(page);
-            console.log(`resizeFront (second time) took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
-        } catch (err) {
-            throw new Error('Viewport setup failed (second front): ' + err.message);
-        }
+    console.log('[Waiting] 📥 Waiting for download URL...');
+    const response = await page.waitForResponse(
+      res => {
+        const url = res.url();
+        return url.endsWith('.jpg') || url.endsWith('.png') || url.endsWith('.zip');
+      },
+      { timeout: 10000 }
+    );
 
-        try {
-            await page.goto(downloadLink, { waitUntil: 'networkidle2' });
-            console.log(`Navigation to download page took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
-        } catch (err) {
-            throw new Error('Failed to navigate to download page: ' + err.message);
-        }
+    imageUrlDownload = response.url();
+    if (!imageUrlDownload) throw new Error('No image URL detected in network responses');
+    console.log('[Success] ✅ Image URL captured:', imageUrlDownload);
+    logStep('capture(download URL)');
 
-        try {
-            await page.click('[data-cy="download-button"]');
-            console.log(`Clicking download button took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
-        } catch (err) {
-            throw new Error('Failed to click download button: ' + err.message);
-        }
+    const totalTime = ((Date.now() - startTime) / 1000).toFixed(2);
+    console.log(`[Done] 🎉 Finished job in ${totalTime} seconds`);
 
-        try {
-const response = await page.waitForResponse(
-  response => {
-    const url = response.url();
-    return url.endsWith('.jpg') || url.endsWith('.png') || url.endsWith('.zip');
-  },
-  { timeout: 10000 } // 10 seconds, adjust as needed
-);
-
-imageUrlDownload = response.url();
-
-if (!imageUrlDownload) {
-  throw new Error('No image URL detected in network responses');
-}
-console.log(`Image URL captured: ${imageUrlDownload}`);
-        } catch (err) {
-            throw new Error('Failed to capture image download URL: ' + err.message);
-        }
-
-      
-
-     
     return { success: true, imageUrl: imageUrlDownload };
-}}
+
+  } catch (err) {
+    console.error('[Error] ❌ Error during worker logic:', err.message);
+    throw new Error('❌ Worker Logic Failed: ' + err.message);
+  }
+}
+
 
 module.exports = { downloadWorkerLogic };

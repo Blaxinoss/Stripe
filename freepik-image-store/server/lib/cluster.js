@@ -8,12 +8,13 @@ puppeteer.use(StealthPlugin());
 async function createBrowserPool() {
    const cluster = await Cluster.launch({
     puppeteer, // ✅ هنا بتمرر puppeteer-extra المعدّل
-    concurrency: Cluster.CONCURRENCY_CONTEXT,
+    concurrency: Cluster.CONCURRENCY_BROWSER,
     maxConcurrency: 3,
    timeout: 120000,
     puppeteerOptions: {
         headless: 'new',
         executablePath: '/usr/bin/chromium',
+          userDataDir: './user-data', // ✅ دا أهم حاجة تحافظ على الكوكيز والجلسة
         args: [
             '--disable-gpu',
             '--disable-setuid-sandbox',
