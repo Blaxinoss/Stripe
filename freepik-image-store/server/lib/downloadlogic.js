@@ -42,76 +42,6 @@ async function resizeBack(page) {
 }
 
 
-// const fetch = require('node-fetch');
-// async function solveRecaptcha2Captcha(page) {
-//     await delay(500 + Math.random() * 500);
-//     console.log('Working directory:', process.cwd());
-//     await page.screenshot({ path: 'debug-captcha.png', fullPage: true });
-  
-//     console.log('Solving reCAPTCHA using 2Captcha....');
-  
-//     // حاول تجيب الـ sitekey من iframe مباشرة
-//     const frames = await page.frames();
-//     const recaptchaFrame = frames.find(f => f.url().includes('api2/bframe'));
-  
-//     if (!recaptchaFrame) {
-//       throw new Error('reCAPTCHA iframe not found');
-//     }
-  
-//     // استخرج sitekey من الـ iframe src
-//     const iframeUrl = recaptchaFrame.url();
-//     const sitekeyMatch = iframeUrl.match(/[?&]k=([^&]+)/);
-//     if (!sitekeyMatch) throw new Error('Sitekey not found in iframe URL');
-//     const sitekey = sitekeyMatch[1];
-  
-//     const pageUrl = page.url();
-  
-//     const apiKey = '5b90d96ceb6d1f90c5c53e29dea93d1f';
-//     const captchaIdRes = await fetch(`http://2captcha.com/in.php?key=${apiKey}&method=userrecaptcha&googlekey=${sitekey}&pageurl=${pageUrl}`);
-//     const captchaIdText = await captchaIdRes.text();
-//     if (!captchaIdText.startsWith('OK|')) throw new Error('Failed to send captcha to 2captcha: ' + captchaIdText);
-//     const captchaId = captchaIdText.split('|')[1];
-  
-//     let recaptchaResponse;
-//     for (let i = 0; i < 24; i++) {
-//       await new Promise(r => setTimeout(r, 5000));
-//       const res = await fetch(`http://2captcha.com/res.php?key=${apiKey}&action=get&id=${captchaId}`);
-//       const text = await res.text();
-//       if (text === 'CAPCHA_NOT_READY') {
-//         console.log('Captcha not ready, retrying...');
-//         continue;
-//       } else if (text.startsWith('OK|')) {
-//         recaptchaResponse = text.split('|')[1];
-//         break;
-//       } else {
-//         throw new Error('Error getting captcha response: ' + text);
-//       }
-//     }
-  
-//     if (!recaptchaResponse) throw new Error('Failed to solve captcha in time');
-  
-//     // Inject g-recaptcha-response if not present
-//     await page.evaluate(() => {
-//       if (!document.getElementById('g-recaptcha-response')) {
-//         const textarea = document.createElement('textarea');
-//         textarea.id = 'g-recaptcha-response';
-//         textarea.name = 'g-recaptcha-response';
-//         textarea.style.display = 'block';
-//         document.body.appendChild(textarea);
-//       }
-//     });
-  
-//     await page.evaluate((token) => {
-//       const el = document.getElementById('g-recaptcha-response');
-//       el.style.display = 'block';
-//       el.value = token;
-//       el.dispatchEvent(new Event('input', { bubbles: true }));
-//       el.dispatchEvent(new Event('change', { bubbles: true }));
-//     }, recaptchaResponse);
-  
-//     console.log('Captcha solved and token set');
-//   }
-  
 
 
 async function downloadWorkerLogic({ userId, downloadLink ,page }) {
@@ -136,13 +66,7 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
         try {
             await page.goto('https://www.freepik.com/login?lang=en', { waitUntil: 'networkidle2' });
                      const context = page.browserContext();
-            await context.deleteCookie();
-            
-
-        await page.evaluate(() => {
-  localStorage.clear();
-  sessionStorage.clear();
-});
+     
             console.log(`Navigation to login page took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
         } catch (err) {
             throw new Error('Failed to navigate to login page: ' + err.message);
@@ -150,7 +74,7 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
         try {
             await resizeFront(page);
             // Take screenshot before clicking the email login button
-            await page.screenshot({ path: 'before-email-login.png', fullPage: true });
+            // await page.screenshot({ path: 'before-email-login.png', fullPage: true });
 
             const buttons = await page.$$('.continue-with > button');
             let emailButton = null;
@@ -171,7 +95,6 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
             throw new Error('Email login button not found');
             }
 
-            await delay(500 + Math.random() * 500);
             await page.mouse.move(700,300);
             await emailButton.click();
             console.log(`Clicking email login button took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
@@ -181,8 +104,7 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
 
         try {
             await page.waitForSelector('input[name="email"]', { timeout: 10000 });
-            await delay(500);
-            await page.type('input[name="email"]', "abdullahismael078@gmail.com", { delay: 100 });
+            await page.type('input[name="email"]', "abdullahismael078@gmail.com");
             console.log(`Typing email took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
         } catch (err) {
             throw new Error('Failed to type email: ' + err.message);
@@ -199,8 +121,7 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
         try {
             await resizeFront(page);
             await page.waitForSelector('input[name="password"]', { timeout: 10000 });
-            await delay(500);
-            await page.type('input[name="password"]', "Asdqwe123564@", { delay: 100 });
+            await page.type('input[name="password"]', "Asdqwe123564@");
             console.log(`Typing password took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
         } catch (err) {
             throw new Error('Failed to type password: ' + err.message);
@@ -210,7 +131,6 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
         try {
             await page.click('button#submit');
             console.log(`Clicking login button took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
-            await delay(500 + Math.random() * 500);
         
             // Solve reCAPTCHA using the plugin
             const { solved, error } = await page.solveRecaptchas();
@@ -240,7 +160,6 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
         }
 
         try {
-            await delay(1000);
             await page.click('[data-cy="download-button"]');
             console.log(`Clicking download button took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
         } catch (err) {
@@ -255,7 +174,6 @@ async function downloadWorkerLogic({ userId, downloadLink ,page }) {
                 }
             });
 
-            await delay(Math.random() * 5000 + 3000);
 
             if (!imageUrlDownload) {
                 throw new Error('No image URL detected in network responses');
