@@ -37,7 +37,11 @@ async function createBrowserPool() {
                     'Message from the cluster task: userId is required. Go back and check the task you added to the queue and make sure you pass the userId'
                 );
             }
-            const result = await downloadWorkerLogic({ userId, downloadLink, jobId, page });
+            
+            const browser = page.browser();
+            const context = await browser.createIncognitoBrowserContext();
+                const incognitoPage = await context.newPage();
+            const result = await downloadWorkerLogic({ userId, downloadLink, jobId, page:incognitoPage });
             console.log(`Task execution took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
             return result;
         } catch (err) {
