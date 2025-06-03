@@ -15,7 +15,7 @@ const DownloadedNotify: React.FC<DownloadedNotifyProps> = ({ jobId, onLoadingCha
 
   
   const { user } = useAuth();
-  const {coins} = useCoins();
+  const {coins,setCoins} = useCoins();
   const [imageDownloadUrl, setImageDownloadUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -61,7 +61,8 @@ const DownloadedNotify: React.FC<DownloadedNotifyProps> = ({ jobId, onLoadingCha
           setIsLoading(false);
           onLoadingChange?.(false); 
           toast.success('Image download complete!, your file has been added to the gallery');
-          toast.warn(`You now have ${coins - 10} coins.`);  // Show success toast
+          toast.warn(`You now have ${coins - 100} coins.`);  // Show success toast
+          setCoins(coins - 100); // Deduct coins after successful download
         }
       }
     });
