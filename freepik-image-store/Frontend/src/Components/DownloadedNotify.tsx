@@ -50,11 +50,11 @@ const DownloadedNotify: React.FC<DownloadedNotifyProps> = ({ jobId, onLoadingCha
         if (data.userId !== user._id) {
           setError('User ID mismatch.');
         } else {
-          setImageDownloadUrl(null);
+          setImageDownloadUrl(data.imageUrl);
           setIsLoading(false);
           onLoadingChange?.(false); 
-          toast.success('an Error occurred while downloading the image.');
-          toast.warn(`Image failed to download`);  // Show success toast
+          toast.success('Image download complete!, your file has been added to the gallery');
+          toast.warn(`You now have ${coins} coins.`);  // Show success toast
         }
       }
     });
@@ -62,10 +62,17 @@ const DownloadedNotify: React.FC<DownloadedNotifyProps> = ({ jobId, onLoadingCha
     socket.on('downloadFailed', (data: { jobId: string, userId: string, error: string }) => {
      if (data.jobId === jobId) {
         if (data.userId !== user._id) {
-                    setError('User ID mismatch.');
-
-    })
-
+          setError('User ID mismatch.');
+        }
+        else {
+        setImageDownloadUrl(null);
+          setIsLoading(false);
+          onLoadingChange?.(false); 
+          toast.error('an Error occurred while downloading the image.'); // Show error toast
+          toast.warn(`failed to download the Image`);  // Show success toast
+      }
+      }
+    });
 
     return () => {
       socket.disconnect();
