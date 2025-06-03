@@ -2,12 +2,16 @@
 const puppeteer = require('puppeteer-extra');
 const RecaptchaPlugin = require('puppeteer-extra-plugin-recaptcha');
 
+const {default:RecaptchaPlugin,BuiltinSolutionProviders} = require('puppeteer-extra-plugin-recaptcha');
+const NextCaptchaProvider = require('puppeteer-extra-plugin-recaptcha-nextcaptcha');
+
+NextCaptchaProvider.use(BuiltinSolutionProviders)
 // Add the Recaptcha plugin and configure it with your 2Captcha API key
 puppeteer.use(
   RecaptchaPlugin({
     provider: {
-      id: '2captcha',
-      token: '5b90d96ceb6d1f90c5c53e29dea93d1f', // Replace with your 2Captcha API key
+      id: 'nextcaptcha',
+      token: 'next_be2382784cebde8c4980cd3f688897dabf', // Replace with your 2Captcha API key
     },
     visualFeedback: true, // Optional: colorize captchas (violet = detected, green = solved)
   })

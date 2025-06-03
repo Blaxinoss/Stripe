@@ -29,6 +29,7 @@
     "puppeteer-cluster": "^0.24.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-recaptcha": "^3.6.8",
+    "puppeteer-extra-plugin-recaptcha-nextcaptcha": "^1.0.0",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "socket.io": "^4.8.1"
   },
