@@ -84,7 +84,7 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
       console.log('[Navigation] ⏳ Waiting for navigation after login...');
       await Promise.race([
         page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 30000 }),
-await new Promise(res => setTimeout(res, 15000))
+        await new Promise(res => setTimeout(res, 15000))
       ]);
 
       console.log('[Navigation] ✅ Login navigation complete or fallback timeout hit');
@@ -99,32 +99,33 @@ await new Promise(res => setTimeout(res, 15000))
       console.error('🟥 Error in page.goto downloadLink:', err);
       throw err;
     }
-                page.screenshot({ path: `s.png`, fullPage: true });
-        fs.writeFileSync(`s.html`,`${downloadLink}`)
+    page.screenshot({ path: `s.png`, fullPage: true });
+    fs.writeFileSync(`s.html`, `${downloadLink}`)
 
     console.log('[Download] ⬇️ Click download button...');
     await page.click('[data-cy="download-button"]');
 
-console.log('[Waiting] 📡 Waiting for download request...');
+    console.log('[Waiting] 📡 Waiting for download request...');
 
-const request = await page.waitForRequest(
-  req => {
-    const url = req.url();
-    return (
-      (url.endsWith('.jpg') || url.endsWith('.png') || url.endsWith('.zip')) &&
-      url.includes('downloadscdn')
+    const request = await page.waitForRequest(
+      req => {
+        const url = req.url();
+        console.log('🔍 Request URL:', url);
+        return (
+          (url.endsWith('.jpg') || url.endsWith('.png') || url.endsWith('.zip')) &&
+          url.includes('downloadscdn')
+        );
+      },
+      { timeout: 30000 }
     );
-  },
-  { timeout: 30000 }
-);
 
-const imageUrlDownload = request.url();
+    const imageUrlDownload = request.url();
 
-if (!imageUrlDownload) {
-  throw new Error('❌ No image URL found in network requests');
-}
+    if (!imageUrlDownload) {
+      throw new Error('❌ No image URL found in network requests');
+    }
 
-console.log('[Success] ✅ Image URL:', imageUrlDownload);
+    console.log('[Success] ✅ Image URL:', imageUrlDownload);
 
     console.log(`[Done] 🎉 Job completed in ${((Date.now() - startTime) / 1000).toFixed(2)}s`);
 
