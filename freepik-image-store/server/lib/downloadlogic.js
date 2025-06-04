@@ -54,9 +54,6 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
 
     console.log('[Init] 🚀 Starting download worker logic...');
 
-    // await resizeFront(page);
-    // await page.mouse.move(200, 300);
-    // logStep('resizeFront (initial)');
 
     console.log('[Navigation] 🌐 Navigating to Freepik login page...');
     await page.goto('https://www.freepik.com/login?lang=en', { waitUntil: 'networkidle2' });
@@ -117,7 +114,6 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
 
     console.log('[Download] 📦 Navigating to download link...');
     await page.goto(downloadLink, { waitUntil: 'networkidle2' });
-    logStep('goto(downloadLink)');
               console.log(`navigating to the download link took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
 
     await page.click('[data-cy="download-button"]');
