@@ -38,7 +38,7 @@ const ImageDownloaded: React.FC = () => {
         }
 
         const data: Image[] = await response.json();
-        setImages(data.filter((img) => img.userId === user._id));
+        setImages(data);
       } catch (err) {
         console.error('Error fetching images:', err);
         setError('Failed to load images. Please try again.');
@@ -113,7 +113,7 @@ const ImageDownloaded: React.FC = () => {
       >
         {images.map((image) => (
           <div
-            key={image.jobId}
+            key={image._id}
             style={{
               border: '1px solid #ddd',
               borderRadius: '8px',
@@ -126,16 +126,18 @@ const ImageDownloaded: React.FC = () => {
               padding: '10px',
             }}
           >
-            <p
-              className="p-2 font-bold text-sm"
-              onError={() => setError(`Failed to load image ${image.jobId}`)}
-            >
-              {image.downloadUrl.split('filename=')[1].split('.jpg')[0]}
+            <p className="p-2 font-bold text-sm">
+              {
+                (() => {
+                  const match = image.downloadUrl.match(/filename=([^&]+)/);
+                  return match ? decodeURIComponent(match[1]) : `Image ${image.jobId}`;
+                })()
+              }
             </p>
             <img
               src={image.downloadUrl}
               alt={`Image ${image.jobId}`}
-              style={{ width: '100%', height: '150px', objectFit: 'cover' ,borderRadius: '20px',marginBottom: '5px' ,marginTop: '5px'}}
+              style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '20px', marginBottom: '5px', marginTop: '5px' }}
               onError={() => setError(`Failed to load image ${image.jobId}`)}
             />
             <div style={{ padding: '10px' }}>
