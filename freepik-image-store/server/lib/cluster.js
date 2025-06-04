@@ -4,12 +4,6 @@ const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('🧨 Unhandled Rejection at:', promise, 'reason:', reason);
-});
-process.on('uncaughtException', (err) => {
-  console.error('🔥 Uncaught Exception thrown:', err);
-});
 
 
 // Function to create the browser pool (cluster)
