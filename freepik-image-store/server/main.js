@@ -94,6 +94,10 @@ redis.on('message', async(channel, message) => {
     throw new Error('Download URL is not set. Cannot save to database.');
   }
 
+  const existingImage = await Image.findOne({ userId, downloadUrl: imageUrl });
+  if (existingImage) {
+    console.log(`Image already exists for user ${userId} with URL ${imageUrl}`); 
+  }else{
   const newImage = new Image({
     userId,
     downloadUrl : imageUrl,
@@ -102,7 +106,7 @@ redis.on('message', async(channel, message) => {
   });
   await newImage.save();
   console.log(`Image saved to database for user ${userId}`);
-
+}
   // Emit to Frontend via Socket.IO
   io.to(userId).emit('downloadedImage', { userId, imageUrl, jobId });
 } catch (error) {
