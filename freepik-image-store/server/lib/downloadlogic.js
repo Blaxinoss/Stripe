@@ -107,9 +107,10 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
 
     console.log('[Waiting] 📡 Waiting for download request...');
 
-    const request = await page.waitForRequest(
-      req => {
-        const url = req.url();
+    const ressponse = await page.waitForResponse(
+      res => {
+        console.log(res);
+        const url = res.url();
         console.log('🔍 Request URL:', url);
         return (
           (url.endsWith('.jpg') || url.endsWith('.png') || url.endsWith('.zip')) &&
