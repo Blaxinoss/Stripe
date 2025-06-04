@@ -113,8 +113,9 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
         const url = res.url();
         console.log('🔍 response URL:', url);
         return (
-          (url.endsWith('.jpg') || url.endsWith('.png') || url.endsWith('.zip')) &&
-          url.includes('downloadscdn')
+          (url.endsWith('.jpg') || url.endsWith('.png') || url.endsWith('.psg') || url.endsWith('.gif') || url.endsWith('.eps')|| url.endsWith('.zip') || url.endsWith('.jpeg') || url.endsWith('.svg') ) &&
+          !url.includes('cdn') &&
+          !url.includes('pricing') 
         );
       },
       { timeout: 30000 }
