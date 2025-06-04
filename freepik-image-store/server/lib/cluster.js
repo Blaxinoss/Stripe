@@ -10,7 +10,7 @@ puppeteer.use(StealthPlugin());
 async function createBrowserPool() {
    const cluster = await Cluster.launch({
     puppeteer, // ✅ هنا بتمرر puppeteer-extra المعدّل
-    concurrency: Cluster.ؤ,
+    concurrency: Cluster.CONCURRENCY_PAGE,
     maxConcurrency: 3,
    timeout: 120000,
     puppeteerOptions: {
