@@ -39,6 +39,7 @@ const ImageDownloaded: React.FC = () => {
 
         const data: Image[] = await response.json();
         setImages(data);
+        console.log('Fetched images:', data);
       } catch (err) {
         console.error('Error fetching images:', err);
         setError('Failed to load images. Please try again.');
