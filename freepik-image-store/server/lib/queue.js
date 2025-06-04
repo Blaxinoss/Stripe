@@ -1,7 +1,12 @@
 const { Queue, QueueEvents } = require('bullmq');
 const Redis = require('ioredis');
+const {createBullBoard} = require('@bull-board/api');
+const {ExpressAdapter} = require('@bull-board/express');
+const { create } = require('../models/ImageModel');
+const Router = require('express').Router();
 
 
+const serverAdapter = new ExpressAdapter();
 // إعداد الاتصال بـ Redis
 const connection = new Redis({
   host: process.env.REDIS_HOST,
@@ -25,10 +30,21 @@ const downloadQueue = new Queue('downloadQueue', {
     connection
 });
 
+const {addqueue,removequeue, getqueue, getallqueue} = createBullBoard({
+    queues: [new (require('@bull-board/api').BullMQAdapter)(downloadQueue)],
+    serverAdapter: new ExpressAdapter(),
+});
+
+serverAdapter.setBasePath('/bull');
+Router.use('/bull', serverAdapter.getRouter());
+
 // إنشاء QueueEvents للاستماع للأحداث
 const queueEvents = new QueueEvents('downloadQueue', {
     connection
 });
+
+
+module.exports.Router = Router;
 
 
 

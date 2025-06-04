@@ -10,6 +10,7 @@ const { connectDB } = require('./configurations/database');
 const Image = require('./models/ImageModel');
 const Redis = require('ioredis');
 const PORTLOCAL = process.env.PORTLOCAL;
+const bullBoardRouter = require('./lib/queue').Router;
 
 const redis = new Redis({
   host: process.env.REDIS_HOST,
@@ -61,6 +62,7 @@ app.use('/api/payment', require('./routes/paymentRoutes'));
 app.use('/api/freepik', require('./routes/downloadRoutes'));
 app.use('/api/search', require('./routes/searchRoutes'));
 app.use('/api/images', require('./routes/userImagesRoutes'));
+app.use('/bull',bullBoardRouter)
 
 // Subscribe to Redis channel
 redis.subscribe('download:completed', (err) => {

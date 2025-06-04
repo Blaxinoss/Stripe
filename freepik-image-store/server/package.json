@@ -11,8 +11,9 @@
   "type": "commonjs",
   "description": "",
   "dependencies": {
+    "@bull-board/express": "^6.9.6",
     "axios": "^1.8.4",
-    "bullmq": "^5.52.1",
+    "bullmq": "^5.53.2",
     "cors": "^2.8.5",
     "depcheck": "^1.4.7",
     "dotenv": "^16.5.0",
