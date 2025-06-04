@@ -131,13 +131,11 @@ try{
     const response = await page.waitForResponse(
       res => {
         const url = res.url();
-        console.log(`Response URL: ${url}`);
         return url.endsWith('.jpg') || url.endsWith('.png') || url.endsWith('.zip');
       },
       { timeout: 15000 }
     );
     imageUrlDownload = response.url();
-        console.log(imageUrlDownload)
 
     if (!imageUrlDownload) throw new Error('No image URL detected in network responses');
     console.log('[Success] ✅ Image URL captured:', imageUrlDownload);
