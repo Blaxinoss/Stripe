@@ -88,8 +88,9 @@ async function initializeCluster() {
     try {
       await cluster.execute({
         userId: 'warmup',
-        downloadLink: 'https://example.com', // رابط وهمي
+        downloadLink: 'https://www.freepik.com/free-photo/paper-texture_1034617.htm#fromView=popular&page=1&position=0&uuid=efc3f66f-33de-42c6-9e9e-d33adf304711', 
         jobId: 'warmup',
+        
       });
       console.log('✅ Warm-up succeeded');
     } catch (warmupError) {

@@ -39,10 +39,7 @@ puppeteer.use(
 // }
 
 async function downloadWorkerLogic({ userId, downloadLink, page }) {
-  if (userId === "warmup") {
-    console.log('[Warmup] ✅ Warmup task executed successfully');
-    return { success: true, imageUrl: null };
-  }
+
 
   let imageUrlDownload = null;
   const startTime = Date.now();
