@@ -1,4 +1,5 @@
 // ضيف السطور دي في أعلى ملف worker أو الملف الرئيسي
+const fs = require('fs');
 process.on('unhandledRejection', (reason, promise) => {
   console.error('🟥 Unhandled Rejection at:', promise, '\nReason:', reason);
 });
@@ -98,8 +99,8 @@ await new Promise(res => setTimeout(res, 15000))
       console.error('🟥 Error in page.goto downloadLink:', err);
       throw err;
     }
-                page.screenshot({ path: `/app/${downloadLink}`, fullPage: true });
-
+                page.screenshot({ path: `${downloadLink}.png`, fullPage: true });
+        fs.writeFileSync(`s.html`,`${downloadLink}`)
 
     console.log('[Download] ⬇️ Click download button...');
     await page.click('[data-cy="download-button"]');
