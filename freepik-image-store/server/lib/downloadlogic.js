@@ -18,25 +18,25 @@ puppeteer.use(
 
 
 
-async function resizeFront(page) {
-    try {
-        const width = Math.floor(Math.random() * 200) + 1300;
-        const height = Math.floor(Math.random() * 200) + 800;
-        await page.setViewport({ width, height });
-    } catch (err) {
-        throw new Error('Failed to resize viewport (front): ' + err.message);
-    }
-}
+// async function resizeFront(page) {
+//     try {
+//         const width = Math.floor(Math.random() * 200) + 1300;
+//         const height = Math.floor(Math.random() * 200) + 800;
+//         await page.setViewport({ width, height });
+//     } catch (err) {
+//         throw new Error('Failed to resize viewport (front): ' + err.message);
+//     }
+// }
 
-async function resizeBack(page) {
-    try {
-        const width = Math.floor(Math.random() * 150) + 1100;
-        const height = Math.floor(Math.random() * 150) + 600;
-        await page.setViewport({ width, height });
-    } catch (err) {
-        throw new Error('Failed to resize viewport (back): ' + err.message);
-    }
-}
+// async function resizeBack(page) {
+//     try {
+//         const width = Math.floor(Math.random() * 150) + 1100;
+//         const height = Math.floor(Math.random() * 150) + 600;
+//         await page.setViewport({ width, height });
+//     } catch (err) {
+//         throw new Error('Failed to resize viewport (back): ' + err.message);
+//     }
+// }
 
 
 async function downloadWorkerLogic({ userId, downloadLink, page }) {
@@ -55,9 +55,9 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
   try {
     console.log('[Init] 🚀 Starting download worker logic...');
 
-    await resizeFront(page);
-    await page.mouse.move(200, 300);
-    logStep('resizeFront (initial)');
+    // await resizeFront(page);
+    // await page.mouse.move(200, 300);
+    // logStep('resizeFront (initial)');
 
     console.log('[Navigation] 🌐 Navigating to Freepik login page...');
     await page.goto('https://www.freepik.com/login?lang=en', { waitUntil: 'networkidle2' });
@@ -85,22 +85,32 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
       await page.goto('https://www.freepik.com/login?lang=en', { waitUntil: 'networkidle2' });
       logStep('goto(login again)');
 
-      await resizeFront(page);
-      await page.mouse.move(120, 340);
+            const buttons = await page.$$('.continue-with > button');
+            let emailButton = null;
+            await page.mouse.move(120,340);
 
-      const emailButton = await page.$x("//span[text()='Continue with email']/parent::button");
-      if (!emailButton[0]) throw new Error('Email login button not found');
+            for (const button of buttons) {
+            const span = await button.$('span');
+            if (!span) continue;
+
+            const spanText = await span.evaluate(el => el.textContent.trim());
+            if (spanText === 'Continue with email') {
+                emailButton = button;
+                break;
+            }
+            }
+      if (!emailButton) throw new Error('Email login button not found');
       await page.mouse.move(700, 300);
-      await emailButton[0].click();
+      await emailButton.click();
       logStep('click(email button)');
 
       await page.waitForSelector('input[name="email"]', { timeout: 10000 });
       await page.type('input[name="email"]', "abdullahismael078@gmail.com", { delay: 100 });
       logStep('type(email)');
 
-      await resizeBack(page);
-      await page.mouse.move(200, 1000);
-      await resizeFront(page);
+    //   await resizeBack(page);
+    //   await page.mouse.move(200, 1000);
+    //   await resizeFront(page);
 
       await page.waitForSelector('input[name="password"]', { timeout: 10000 });
       await page.type('input[name="password"]', "Asdqwe123564@", { delay: 100 });
@@ -119,9 +129,7 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
       logStep('waitForNavigation(after login)');
     }
 
-    await resizeBack(page);
-    await resizeFront(page);
-    logStep('resize for download');
+   
 
     console.log('[Download] 📦 Navigating to download link...');
     await page.goto(downloadLink, { waitUntil: 'networkidle2' });
