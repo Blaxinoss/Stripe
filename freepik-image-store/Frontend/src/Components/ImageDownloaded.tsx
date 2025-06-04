@@ -121,10 +121,13 @@ const ImageDownloaded: React.FC = () => {
               boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
               display: 'flex',
               justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
+              padding: '10px',
             }}
           >
             <p
-              className="w-100 h-[150px]  text-left p-2 font-bold text-sm text-wrap"
+              className="p-2 font-bold text-sm"
               onError={() => setError(`Failed to load image ${image.jobId}`)}
             >
               {image.downloadUrl.split('filename=')[1].split('.jpg')[0]}
@@ -132,7 +135,7 @@ const ImageDownloaded: React.FC = () => {
             <img
               src={image.downloadUrl}
               alt={`Image ${image.jobId}`}
-              style={{ width: '100%', height: '150px', objectFit: 'cover' }}
+              style={{ width: '100%', height: '150px', objectFit: 'cover' ,borderRadius: '20px',marginBottom: '5px' ,marginTop: '5px'}}
               onError={() => setError(`Failed to load image ${image.jobId}`)}
             />
             <div style={{ padding: '10px' }}>
