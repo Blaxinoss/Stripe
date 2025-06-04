@@ -81,11 +81,12 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
       console.log('[Captcha] ✅ CAPTCHA solved:', solved);
 
       console.log('[Navigation] ⏳ Waiting for navigation after login...');
-      page.screenshot({ path: 's.png', fullPage: true });
       await Promise.race([
         page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 30000 }),
 await new Promise(res => setTimeout(res, 15000))
       ]);
+            page.screenshot({ path: 's.png', fullPage: true });
+
       console.log('[Navigation] ✅ Login navigation complete or fallback timeout hit');
 
       console.log('🌐 Current URL after login:', page.url());
