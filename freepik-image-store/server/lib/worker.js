@@ -59,6 +59,14 @@ worker.on('failed', (job, err) => {
   console.error(`❌ Job ${job.id} failed with error: ${err.message}`);
 });
 
+worker.on('active', (job) => {
+  console.log(`🟡 Job ${job.id} is now active`);
+});
+
+worker.on('stalled', (jobId) => {
+  console.warn(`⚠️ Job ${jobId} has stalled!`);
+});
+
 // pause worker عشان ما يعالجش اي جوب قبل ما cluster يجهز
 async function pauseWorker() {
   await worker.pause();
