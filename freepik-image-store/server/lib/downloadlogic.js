@@ -63,7 +63,9 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
     const loginButtons = await page.$$('.continue-with > button');
     if( loginButtons.length > 0) {
       isLoggedIn = false;
-    }         
+    }else{
+        isLoggedIn = true;
+    }
 
     if (isLoggedIn) {
       console.log(`[Session] ✅ Already logged in, skipping login.${((Date.now() - startTime) / 1000).toFixed(2)}`);
