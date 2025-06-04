@@ -127,7 +127,7 @@ const response = await page.waitForResponse(res => {
   );
 }, { timeout: 30000 });
 
-const imageUrlDownload = response.url();
+const imageUrlDownload = url;
 
 if (!imageUrlDownload) {
   throw new Error('❌ No image URL found in network response');
