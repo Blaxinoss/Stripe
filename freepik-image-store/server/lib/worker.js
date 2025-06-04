@@ -48,7 +48,7 @@ const worker = new Worker(
 
     return response;
   },
-  { connection }
+  { connection,attempts:2 }
 );
 
 worker.on('completed', (job, result) => {

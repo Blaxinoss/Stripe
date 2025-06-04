@@ -54,7 +54,14 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
 
     console.log('[Navigation] 🌐 Navigating to Freepik login page...');
     // رفع timeout لـ 60 ثانية عشان نتجنب انتهاء المهلة
-    await page.goto('https://www.freepik.com/login?lang=en', { waitUntil: 'networkidle2', timeout: 60000 });
+
+try{
+     await page.goto('https://www.freepik.com/login?lang=en', { waitUntil: 'networkidle2', timeout: 60000 });
+   
+} catch (err) {
+  console.error('Error in page.goto the login page itself:', err);
+  throw err; 
+}
     console.log(`Navigation to login page took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
 
     console.log('[Check Login] 🔍 Checking if already logged in...');
@@ -102,12 +109,22 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
       console.log(`[Captcha] ✅ Captcha solved: in ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`, solved);
 
       // هنا أرفع timeout التنقل بعد تسجيل الدخول
+      try{
       await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 60000 });
+      } catch (err) {
+  console.error('Error in wait for navigation after captacha:', err);
+  throw err; // لازم ترميه عشان Bull يعرف
+}
       console.log(`waitForNavigation(after login) took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
     }
 
     console.log('[Download] 📦 Navigating to download link...');
+    try{
     await page.goto(downloadLink, { waitUntil: 'networkidle2', timeout: 60000 });
+    } catch (err) {
+  console.error('Error in page.goto:', err);
+  throw err; 
+}
     console.log(`Navigating to the download link took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
 
     await page.click('[data-cy="download-button"]');
