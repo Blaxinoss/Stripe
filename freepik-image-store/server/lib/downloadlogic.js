@@ -47,10 +47,7 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
 
   let imageUrlDownload = null;
   const startTime = Date.now();
-  const logStep = (label) => {
-    const timeElapsed = ((Date.now() - startTime) / 1000).toFixed(2);
-    console.log(`[${label}] ⏱️ ${timeElapsed} seconds`);
-  };
+
 
   try {
         let isLoggedIn = false;
@@ -63,8 +60,7 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
 
     console.log('[Navigation] 🌐 Navigating to Freepik login page...');
     await page.goto('https://www.freepik.com/login?lang=en', { waitUntil: 'networkidle2' });
-    logStep('goto(login)');
-
+     console.log(`Navigation to login page took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
     console.log('[Check Login] 🔍 Checking if already logged in...');
     await page.screenshot({ path: 's.png', fullPage: true });
     const loginButtons = await page.$$('.continue-with > button');
@@ -73,48 +69,48 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
     }         
 
     if (isLoggedIn) {
-      console.log('[Session] ✅ Already logged in, skipping login.');
+      console.log(`[Session] ✅ Already logged in, skipping login.${((Date.now() - startTime) / 1000).toFixed(2)}`);
+
     } else {
-      console.log('[Session] 🔒 Not logged in, performing login...');
+      console.log(`[Session] 🔒 Not logged in, performing login...${((Date.now() - startTime) / 1000).toFixed(2)}`);
 
     await page.waitForSelector('.continue-with > button', { timeout: 10000 });
     let emailButton = null;
-const buttons = await page.$$('.continue-with > button');
+    const buttons = await page.$$('.continue-with > button');
 
-for (const button of buttons) {
-  const span = await button.$('span');
-  if (!span) continue;
+    for (const button of buttons) {
+    const span = await button.$('span');
+    if (!span) continue;
 
-  const spanText = await span.evaluate(el => el.textContent?.trim());
-  if (spanText === 'Continue with email') {
-    emailButton = button;
-    break;
-  }
-}
+    const spanText = await span.evaluate(el => el.textContent?.trim());
+    if (spanText === 'Continue with email') {
+        emailButton = button;
+        break;
+    }
+    }
 
       if (!emailButton) throw new Error('Email login button not found');
       await emailButton.click();
-      logStep('click(email button)');
-
+        console.log(`Clicking email login button took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
       await page.waitForSelector('input[name="email"]', { timeout: 10000 });
       await page.type('input[name="email"]', "abdullahismael078@gmail.com", { delay: 100 });
-      logStep('type(email)');
+        console.log(`Typing email took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
 
       await page.waitForSelector('input[name="password"]', { timeout: 10000 });
       await page.type('input[name="password"]', "Asdqwe123564@", { delay: 100 });
-      logStep('type(password)');
+        console.log(`Typing Password took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
 
       await page.click('button#submit');
-      logStep('click(submit)');
+        console.log(`Clicking sumbit button took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
 
       console.log('[Captcha] 🧠 Solving reCAPTCHA...');
       const { solved, error } = await page.solveRecaptchas();
       if (error) throw new Error('Failed to solve reCAPTCHA: ' + error.message);
-      console.log('[Captcha] ✅ Captcha solved:', solved);
-      logStep('solveRecaptchas');
+      console.log(`[Captcha] ✅ Captcha solved: in ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`, solved);
 
       await page.waitForNavigation({ waitUntil: 'networkidle2' });
-      logStep('waitForNavigation(after login)');
+              console.log(`waitForNavigation(after login) took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
+
     }
 
    
@@ -122,9 +118,10 @@ for (const button of buttons) {
     console.log('[Download] 📦 Navigating to download link...');
     await page.goto(downloadLink, { waitUntil: 'networkidle2' });
     logStep('goto(downloadLink)');
+              console.log(`navigating to the download link took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
 
     await page.click('[data-cy="download-button"]');
-    logStep('click(download-button)');
+              console.log(`clicking to the download button took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
 
     console.log('[Waiting] 📥 Waiting for download URL...');
     const response = await page.waitForResponse(
@@ -138,7 +135,8 @@ for (const button of buttons) {
     imageUrlDownload = response.url();
     if (!imageUrlDownload) throw new Error('No image URL detected in network responses');
     console.log('[Success] ✅ Image URL captured:', imageUrlDownload);
-    logStep('capture(download URL)');
+              console.log(`captured Image successfully after ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
+
 
     const totalTime = ((Date.now() - startTime) / 1000).toFixed(2);
     console.log(`[Done] 🎉 Finished job in ${totalTime} seconds`);
