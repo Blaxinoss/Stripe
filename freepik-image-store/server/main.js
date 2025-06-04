@@ -62,7 +62,7 @@ app.use('/api/payment', require('./routes/paymentRoutes'));
 app.use('/api/freepik', require('./routes/downloadRoutes'));
 app.use('/api/search', require('./routes/searchRoutes'));
 app.use('/api/images', require('./routes/userImagesRoutes'));
-app.use('/bull',bullBoardRouter)
+app.use('/bull', bullBoardRouter)
 
 // Subscribe to Redis channel
 redis.subscribe('download:completed', (err) => {

@@ -31,3 +31,4 @@ dist-ssr
 .idea
 .DS_Store
 /freepik-image-store/node_modules
+/freepik-image-store/server/user-data
