@@ -46,7 +46,7 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
 
   try {
     let isLoggedIn = false;
-
+    console.log(process.env.Login)
     console.log('[Init] 🚀 Starting download worker logic...');
 
     console.log('[Navigation] 🌐 Navigating to Freepik login page...');
