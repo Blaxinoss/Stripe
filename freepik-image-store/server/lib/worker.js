@@ -15,10 +15,67 @@ console.log('🚀 Worker script started, connecting to Redis...');
 
 let cluster; // cluster will be initialized once browser pool is ready
 
+// أنشئ الووركر بس متبدأش تشتغل لسه (بدون callback فاضي)
+const worker = new Worker(
+  'downloadQueue',
+  async job => {
+    if (!cluster) throw new Error('Cluster is not ready yet.');
+
+    const { userId, downloadLink } = job.data;
+    const jobId = job.id;
+
+    console.log(`⚙️  Worker started for job: ${job.id}`);
+
+    if (!downloadLink) {
+      throw new Error(
+        'Worker Says: Invalid download link. Make sure job data includes userId and downloadLink.'
+      );
+    }
+
+    console.log(`🔗 Processing download link: ${downloadLink}`);
+
+    const response = await cluster.execute({ userId, downloadLink, jobId });
+    console.log(`✅ Cluster execute response:`, response);
+
+    await redis.publish(
+      'download:completed',
+      JSON.stringify({
+        userId,
+        imageUrl: response.imageUrl,
+        jobId,
+      })
+    );
+
+    return response;
+  },
+  { connection }
+);
+
+worker.on('completed', (job, result) => {
+  console.log(`✅ Job ${job.id} completed with result:`, result);
+});
+
+worker.on('failed', (job, err) => {
+  console.error(`❌ Job ${job.id} failed with error: ${err.message}`);
+});
+
+// pause worker عشان ما يعالجش اي جوب قبل ما cluster يجهز
+async function pauseWorker() {
+  await worker.pause();
+  console.log('⏸️ Worker paused, waiting for cluster to initialize...');
+}
+
+// resume worker عشان يبدأ يعالج الجوبس بعد تهيئة cluster
+async function resumeWorker() {
+  await worker.resume();
+  console.log('▶️ Worker resumed, now listening for jobs...');
+}
+
+// دالة تهيئة الـ cluster و الـ warm-up
 async function initializeCluster() {
   try {
     cluster = await createBrowserPool();
-     console.log('✅ Cluster initialized successfully');
+    console.log('✅ Cluster initialized successfully');
 
     try {
       await cluster.execute({
@@ -38,84 +95,7 @@ async function initializeCluster() {
   }
 }
 
-
-function startWorker() {
-  const worker = new Worker(
-    'downloadQueue',
-    async job => {
-      const { userId, downloadLink } = job.data;
-      const jobId = job.id;
-
-      console.log(`⚙️  Worker started for job: ${job.id}`);
-      try {
-        if (!downloadLink) {
-          throw new Error(
-            'Worker Says: Invalid download link. Make sure job data includes userId and downloadLink.'
-          );
-        }
-
-        console.log(`🔗 Processing download link: ${downloadLink}`);
-
-        // Wait until cluster is ready (should always be ready at this point)
-        if (!cluster) {
-          throw new Error('Cluster is not ready yet.');
-        }
-
-        const response = await cluster.execute({ userId, downloadLink, jobId });
-        console.log(`✅ Cluster execute response:`, response);
-
-        // Notify via Redis Pub/Sub
-        await redis.publish(
-          'download:completed',
-          JSON.stringify({
-            userId,
-            imageUrl: response.imageUrl,
-            jobId,
-          })
-        );
-
-        return response;
-      } catch (error) {
-        console.error('❌ Error processing job:', error.message);
-
-        await redis.publish(
-          'download:failed',
-          JSON.stringify({
-            userId,
-            jobId,
-            error: error.message,
-          })
-        );
-
-        throw error;
-      }
-    },
-    { connection }
-  );
-
-  worker.on('completed', (job, result) => {
-    console.log(`✅ Job ${job.id} completed with result:`, result);
-  });
-
-  worker.on('failed', (job, err) => {
-    console.error(`❌ Job ${job.id} failed with error: ${err.message}`);
-  });
-
-async function pauseWorker() {
-  await worker.pause();
-  console.log('⏸️ Worker paused, waiting for cluster to initialize...');
-}
-
-// resume worker عشان يبدأ يعالج الجوبس بعد تهيئة cluster
-async function resumeWorker() {
-  await worker.resume();
-  console.log('▶️ Worker resumed, now listening for jobs...');
-}
-
-
-  console.log('🎧 Worker is now listening for jobs...');
-}
-
+// البرنامج يبدأ هنا
 (async () => {
   await pauseWorker();         // علق الووركر مؤقتاً
   await initializeCluster();   // جهز الـ cluster و بعدين شغل الووركر
