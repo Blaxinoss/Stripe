@@ -139,7 +139,6 @@ try{
                 }
             });
 
-            await delay(Math.random() * 5000 + 3000);
 
             if (!imageUrlDownload) {
                 throw new Error('No image URL detected in network responses');
