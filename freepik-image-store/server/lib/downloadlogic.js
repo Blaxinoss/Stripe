@@ -106,8 +106,7 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
 
     console.log('[Waiting] 📡 Waiting for download request...');
     page.screenshot({ path: `s.png`, fullPage: true });
-
-   const response = await page.waitForResponse(res => {
+const response = await page.waitForResponse(res => {
   const url = res.url();
   const pathname = new URL(url).pathname.toLowerCase();
   console.log('🔍 response URL:', url);
@@ -142,4 +141,5 @@ return { success: true, imageUrl: imageUrlDownload };
 } catch (err) {
   console.error('[Error] ❌ Worker logic failed:', err.stack || err);
   throw new Error('❌ Worker Logic Failed: ' + err.message);
-}
+}}
+module.exports = { downloadWorkerLogic };
