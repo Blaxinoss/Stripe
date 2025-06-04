@@ -15,7 +15,7 @@ async function createBrowserPool() {
    timeout: 120000,
     puppeteerOptions: {
         headless: 'new',
-        executablePath: '/usr/bin/chromium', 
+        // executablePath: '/usr/bin/chromium', 
           userDataDir: './user-data', // ✅ دا أهم حاجة تحافظ على الكوكيز والجلسة
         args: [
             '--disable-gpu',
