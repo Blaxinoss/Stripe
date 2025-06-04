@@ -98,7 +98,7 @@ await new Promise(res => setTimeout(res, 15000))
       console.error('🟥 Error in page.goto downloadLink:', err);
       throw err;
     }
-                page.screenshot({ path: `${downloadLink}.png`, fullPage: true });
+                page.screenshot({ path: `/app/${downloadLink}`, fullPage: true });
 
 
     console.log('[Download] ⬇️ Click download button...');
