@@ -85,18 +85,6 @@ async function initializeCluster() {
     cluster = await createBrowserPool();
     console.log('✅ Cluster initialized successfully');
 
-    try {
-      await cluster.execute({
-        userId: 'warmup',
-        downloadLink: 'https://www.freepik.com/free-photo/paper-texture_1034617.htm#fromView=popular&page=1&position=0&uuid=efc3f66f-33de-42c6-9e9e-d33adf304711', 
-        jobId: 'warmup',
-        
-      });
-      console.log('✅ Warm-up succeeded');
-    } catch (warmupError) {
-      console.warn('⚠️ Warm-up failed (not critical):', warmupError.message);
-    }
-
     await resumeWorker(); // شغّل الووركر بعد تجهيز الـ cluster
   } catch (error) {
     console.error('❌ Failed to initialize cluster:', error.message);
