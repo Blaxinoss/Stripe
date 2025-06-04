@@ -53,6 +53,8 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
   };
 
   try {
+        let isLoggedIn = false;
+
     console.log('[Init] 🚀 Starting download worker logic...');
 
     // await resizeFront(page);
@@ -64,30 +66,19 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
     logStep('goto(login)');
 
     console.log('[Check Login] 🔍 Checking if already logged in...');
+    await page.screenshot({ path: 's.png', fullPage: true });
     const loginButtons = await page.$$('.continue-with > button');
-    let isLoggedIn = true;
-
-    for (const button of loginButtons) {
-      const span = await button.$('span');
-      if (span) {
-        const spanText = await span.evaluate(el => el.textContent.trim());
-        if (spanText === 'Continue with email') {
-          isLoggedIn = false;
-          break;
-        }
-      }
-    }
+    if( loginButtons.length > 0) {
+      isLoggedIn = false;
+    }         
 
     if (isLoggedIn) {
       console.log('[Session] ✅ Already logged in, skipping login.');
     } else {
       console.log('[Session] 🔒 Not logged in, performing login...');
-      await page.goto('https://www.freepik.com/login?lang=en', { waitUntil: 'networkidle2' });
-      logStep('goto(login again)');
 
-         await page.waitForSelector('.continue-with > button', { timeout: 10000 });
-
-let emailButton = null;
+    await page.waitForSelector('.continue-with > button', { timeout: 10000 });
+    let emailButton = null;
 const buttons = await page.$$('.continue-with > button');
 
 for (const button of buttons) {
@@ -102,17 +93,12 @@ for (const button of buttons) {
 }
 
       if (!emailButton) throw new Error('Email login button not found');
-      await page.mouse.move(700, 300);
       await emailButton.click();
       logStep('click(email button)');
 
       await page.waitForSelector('input[name="email"]', { timeout: 10000 });
       await page.type('input[name="email"]', "abdullahismael078@gmail.com", { delay: 100 });
       logStep('type(email)');
-
-    //   await resizeBack(page);
-    //   await page.mouse.move(200, 1000);
-    //   await resizeFront(page);
 
       await page.waitForSelector('input[name="password"]', { timeout: 10000 });
       await page.type('input[name="password"]', "Asdqwe123564@", { delay: 100 });
