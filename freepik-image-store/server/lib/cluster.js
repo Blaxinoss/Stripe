@@ -31,6 +31,7 @@ async function createBrowserPool() {
 
     // Define the task for the cluster
     await cluster.task(async ({ page, data: { userId, downloadLink, jobId } }) => {
+          page.setDefaultNavigationTimeout(60000); // ⬅️ هنا لازم تتظبط دايمًا
           console.log('Task started: browser is ready');
         const startTime = Date.now();
         try {
@@ -53,9 +54,15 @@ async function createBrowserPool() {
         console.error('Cluster error:', err);
     });
 
-    cluster.on('taskerror', (err) => {
-        console.error('Task error:', err);
-    });
+cluster.on('taskerror', (err, data, willRetry) => {
+  console.error(`Error in job with data ${JSON.stringify(data)}: ${err.message}`);
+  if (willRetry) {
+    console.log('Job will be retried');
+  } else {
+    console.log('Job failed without retry');
+  }
+});
+
 
     cluster.on('taskfinish', (taskId, result) => {
         console.log(`Task ${taskId} finished with result:`, result);
