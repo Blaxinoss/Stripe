@@ -99,13 +99,13 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
       console.error('🟥 Error in page.goto downloadLink:', err);
       throw err;
     }
-    page.screenshot({ path: `s.png`, fullPage: true });
     fs.writeFileSync(`s.html`, `${downloadLink}`)
 
     console.log('[Download] ⬇️ Click download button...');
     await page.click('[data-cy="download-button"]');
 
     console.log('[Waiting] 📡 Waiting for download request...');
+    page.screenshot({ path: `s.png`, fullPage: true });
 
     const response = await page.waitForResponse(
       res => {
@@ -113,7 +113,14 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
         const url = res.url();
         console.log('🔍 response URL:', url);
         return (
-          (url.includes('.jpg') || url.includes('.png') || url.includes('.psg') || url.includes('.gif') || url.includes('.eps')|| url.includes('.zip') || url.includes('.jpeg') || url.includes('.svg') ) &&
+          ( pathname.endsWith('.jpg') ||
+  pathname.endsWith('.png') ||
+  pathname.endsWith('.psg') ||
+  pathname.endsWith('.gif') ||
+  pathname.endsWith('.eps') ||
+  pathname.endsWith('.zip') ||
+  pathname.endsWith('.jpeg') ||
+  pathname.endsWith('.svg') ) &&
           !url.includes('cdn') &&
           !url.includes('pricing') 
         );
