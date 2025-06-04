@@ -85,20 +85,22 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
       await page.goto('https://www.freepik.com/login?lang=en', { waitUntil: 'networkidle2' });
       logStep('goto(login again)');
 
-            const buttons = await page.$$('.continue-with > button');
-            let emailButton = null;
-            await page.mouse.move(120,340);
+         await page.waitForSelector('.continue-with > button', { timeout: 10000 });
 
-            for (const button of buttons) {
-            const span = await button.$('span');
-            if (!span) continue;
+let emailButton = null;
+const buttons = await page.$$('.continue-with > button');
 
-            const spanText = await span.evaluate(el => el.textContent.trim());
-            if (spanText === 'Continue with email') {
-                emailButton = button;
-                break;
-            }
-            }
+for (const button of buttons) {
+  const span = await button.$('span');
+  if (!span) continue;
+
+  const spanText = await span.evaluate(el => el.textContent?.trim());
+  if (spanText === 'Continue with email') {
+    emailButton = button;
+    break;
+  }
+}
+
       if (!emailButton) throw new Error('Email login button not found');
       await page.mouse.move(700, 300);
       await emailButton.click();
