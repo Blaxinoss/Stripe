@@ -107,45 +107,39 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
     console.log('[Waiting] 📡 Waiting for download request...');
     page.screenshot({ path: `s.png`, fullPage: true });
 
-    const response = await page.waitForResponse(
-      res => {
-        console.log(res);
-        const url = res.url();
-    const pathname = new URL(url).pathname.toLowerCase();
-            console.log('🔍 response URL:', url);
-        return (
-          ( pathname.endsWith('.jpg') ||
-  pathname.endsWith('.png') ||
-  pathname.endsWith('.psg') ||
-    pathname.endsWith('.ico') ||
+   const response = await page.waitForResponse(res => {
+  const url = res.url();
+  const pathname = new URL(url).pathname.toLowerCase();
+  console.log('🔍 response URL:', url);
 
-  pathname.endsWith('.eps') ||
-  pathname.endsWith('.zip') ||
-  pathname.endsWith('.jpeg') ||
-  pathname.endsWith('.svg') ) &&
-          !url.includes('cdn') &&
-          !url.includes('pricing') 
-        );
-      },
-      { timeout: 30000 }
-    );
+  return (
+    (
+      pathname.endsWith('.jpg') ||
+      pathname.endsWith('.png') ||
+      pathname.endsWith('.psg') ||
+      pathname.endsWith('.ico') ||
+      pathname.endsWith('.eps') ||
+      pathname.endsWith('.zip') ||
+      pathname.endsWith('.jpeg') ||
+      pathname.endsWith('.svg')
+    ) &&
+    !url.includes('cdn') &&
+    !url.includes('pricing')
+  );
+}, { timeout: 30000 });
 
-    const imageUrlDownload = response.url();
+const imageUrlDownload = response.url();
 
-    if (!imageUrlDownload) {
-      throw new Error('❌ No image URL found in network response');
-    }
-
-    console.log('[Success] ✅ Image URL:', imageUrlDownload);
-
-    console.log(`[Done] 🎉 Job completed in ${((Date.now() - startTime) / 1000).toFixed(2)}s`);
-
-    return { success: true, imageUrl: imageUrlDownload };
-
-  } catch (err) {
-    console.error('[Error] ❌ Worker logic failed:', err.stack || err);
-    throw new Error('❌ Worker Logic Failed: ' + err.message);
-  }
+if (!imageUrlDownload) {
+  throw new Error('❌ No image URL found in network response');
 }
 
-module.exports = { downloadWorkerLogic };
+console.log('[Success] ✅ Image URL:', imageUrlDownload);
+console.log(`[Done] 🎉 Job completed in ${((Date.now() - startTime) / 1000).toFixed(2)}s`);
+
+return { success: true, imageUrl: imageUrlDownload };
+
+} catch (err) {
+  console.error('[Error] ❌ Worker logic failed:', err.stack || err);
+  throw new Error('❌ Worker Logic Failed: ' + err.message);
+}
