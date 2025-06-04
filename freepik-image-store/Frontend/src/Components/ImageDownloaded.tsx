@@ -119,15 +119,22 @@ const ImageDownloaded: React.FC = () => {
               borderRadius: '8px',
               overflow: 'hidden',
               boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-     
+              display: 'flex',
+              justifyContent: 'center',
             }}
           >
             <p
               className="w-100 h-[150px]  text-left p-2 font-bold text-sm text-wrap"
               onError={() => setError(`Failed to load image ${image.jobId}`)}
             >
-              {image.downloadUrl}
+              {image.downloadUrl.split('filename=')[1].split('.jpg')[0]}
             </p>
+            <img
+              src={image.downloadUrl}
+              alt={`Image ${image.jobId}`}
+              style={{ width: '100%', height: '150px', objectFit: 'cover' }}
+              onError={() => setError(`Failed to load image ${image.jobId}`)}
+            />
             <div style={{ padding: '10px' }}>
                 <button disabled={image.downloadCount >= 3}
                 onClick={() => handleDownload(image)}

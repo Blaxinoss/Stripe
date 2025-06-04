@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom"
+import { isLoggedIn } from "../utils";
 
 
 const Home = () => {
@@ -77,12 +78,15 @@ const Home = () => {
                 <p className="text-xl mb-10 text-blue-100">
                   Join our community of creators downloading premium photos daily.
                 </p>
-                <Link
-                  to="/signup"
-                  className="group inline-flex items-center gap-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white font-medium px-8 py-4 rounded-full text-lg transform hover:-translate-y-1 transition-all duration-300 ease-out shadow-lg hover:shadow-amber-500/25"
-                >
-                  Create Account
-                </Link>
+                {isLoggedIn() ? (
+                  <Link to="/browse" className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-400 to-blue-500 text-white font-medium px-8 py-4 rounded-full text-lg hover:from-cyan-500 hover:to-blue-600 transform hover:-translate-y-1 transition-all duration-300 ease-out shadow-lg hover:shadow-cyan-500/25">
+                    Browse Images
+                  </Link>
+                ) : (
+                  <Link to="/login" className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-400 to-blue-500 text-white font-medium px-8 py-4 rounded-full text-lg hover:from-cyan-500 hover:to-blue-600 transform hover:-translate-y-1 transition-all duration-300 ease-out shadow-lg hover:shadow-cyan-500/25">
+                    Login to Start
+                  </Link>
+                )}
               </div>
             </div>
             
