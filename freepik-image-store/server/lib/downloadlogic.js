@@ -105,22 +105,27 @@ await new Promise(res => setTimeout(res, 15000))
     console.log('[Download] ⬇️ Click download button...');
     await page.click('[data-cy="download-button"]');
 
-    console.log('[Waiting] 📡 Waiting for download response...');
-    const response = await page.waitForResponse(
-      res => {
-        const url = res.url();
-        return url.endsWith('.jpg') || url.endsWith('.png') || url.endsWith('.zip');
-      },
-      { timeout: 30000 }
+console.log('[Waiting] 📡 Waiting for download request...');
+
+const request = await page.waitForRequest(
+  req => {
+    const url = req.url();
+    return (
+      (url.endsWith('.jpg') || url.endsWith('.png') || url.endsWith('.zip')) &&
+      url.includes('downloadscdn')
     );
+  },
+  { timeout: 30000 }
+);
 
-    imageUrlDownload = response.url();
+const imageUrlDownload = request.url();
 
-    if (!imageUrlDownload) {
-      throw new Error('❌ No image URL found in network responses');
-    }
+if (!imageUrlDownload) {
+  throw new Error('❌ No image URL found in network requests');
+}
 
-    console.log('[Success] ✅ Image URL:', imageUrlDownload);
+console.log('[Success] ✅ Image URL:', imageUrlDownload);
+
     console.log(`[Done] 🎉 Job completed in ${((Date.now() - startTime) / 1000).toFixed(2)}s`);
 
     return { success: true, imageUrl: imageUrlDownload };
