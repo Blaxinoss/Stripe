@@ -107,11 +107,11 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
 
     console.log('[Waiting] 📡 Waiting for download request...');
 
-    const ressponse = await page.waitForResponse(
+    const response = await page.waitForResponse(
       res => {
         console.log(res);
         const url = res.url();
-        console.log('🔍 Request URL:', url);
+        console.log('🔍 response URL:', url);
         return (
           (url.endsWith('.jpg') || url.endsWith('.png') || url.endsWith('.zip')) &&
           url.includes('downloadscdn')
@@ -120,10 +120,10 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
       { timeout: 30000 }
     );
 
-    const imageUrlDownload = request.url();
+    const imageUrlDownload = response.url();
 
     if (!imageUrlDownload) {
-      throw new Error('❌ No image URL found in network requests');
+      throw new Error('❌ No image URL found in network response');
     }
 
     console.log('[Success] ✅ Image URL:', imageUrlDownload);
