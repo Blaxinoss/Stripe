@@ -83,7 +83,7 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
       console.log('[Navigation] ⏳ Waiting for navigation after login...');
       await Promise.race([
         page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 30000 }),
-        page.waitForTimeout(15000)
+await new Promise(res => setTimeout(res, 15000))
       ]);
       console.log('[Navigation] ✅ Login navigation complete or fallback timeout hit');
 
