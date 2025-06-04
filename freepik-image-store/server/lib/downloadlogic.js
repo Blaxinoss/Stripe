@@ -117,7 +117,8 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
           ( pathname.endsWith('.jpg') ||
   pathname.endsWith('.png') ||
   pathname.endsWith('.psg') ||
-  pathname.endsWith('.gif') ||
+    pathname.endsWith('.ico') ||
+
   pathname.endsWith('.eps') ||
   pathname.endsWith('.zip') ||
   pathname.endsWith('.jpeg') ||
