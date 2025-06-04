@@ -18,24 +18,26 @@ let cluster; // cluster will be initialized once browser pool is ready
 async function initializeCluster() {
   try {
     cluster = await createBrowserPool();
-    console.log('✅ Cluster initialized successfully');
+     console.log('✅ Cluster initialized successfully');
 
-    try{
-        await cluster.execute({
-      userId: 'warmup',
-      downloadLink: 'https://example.com', // رابط وهمي مش هيشتغل
-      jobId: 'warmup',
-    });
-    }catch(warmupError){
+    try {
+      await cluster.execute({
+        userId: 'warmup',
+        downloadLink: 'https://example.com', // رابط وهمي
+        jobId: 'warmup',
+      });
+      console.log('✅ Warm-up succeeded');
+    } catch (warmupError) {
       console.warn('⚠️ Warm-up failed (not critical):', warmupError.message);
     }
 
-    startWorker(); // Start worker only AFTER cluster is ready
+    await resumeWorker(); // شغّل الووركر بعد تجهيز الـ cluster
   } catch (error) {
     console.error('❌ Failed to initialize cluster:', error.message);
-    process.exit(1); // exit if we can’t even get a browser pool
+    process.exit(1);
   }
 }
+
 
 function startWorker() {
   const worker = new Worker(
@@ -99,8 +101,22 @@ function startWorker() {
     console.error(`❌ Job ${job.id} failed with error: ${err.message}`);
   });
 
+async function pauseWorker() {
+  await worker.pause();
+  console.log('⏸️ Worker paused, waiting for cluster to initialize...');
+}
+
+// resume worker عشان يبدأ يعالج الجوبس بعد تهيئة cluster
+async function resumeWorker() {
+  await worker.resume();
+  console.log('▶️ Worker resumed, now listening for jobs...');
+}
+
+
   console.log('🎧 Worker is now listening for jobs...');
 }
 
-// Start only the cluster first
-initializeCluster();
+(async () => {
+  await pauseWorker();         // علق الووركر مؤقتاً
+  await initializeCluster();   // جهز الـ cluster و بعدين شغل الووركر
+})();
