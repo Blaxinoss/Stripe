@@ -97,6 +97,12 @@ const ImageDownloaded: React.FC = () => {
   };
   }
 
+  const uniqueImages = images.filter(
+  (img, idx, arr) => arr.findIndex(i => i.downloadUrl === img.downloadUrl) === idx
+);
+
+  
+
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Your Image Gallery</h1>
@@ -112,7 +118,7 @@ const ImageDownloaded: React.FC = () => {
           gap: '20px',
         }}
       >
-        {images.map((image) => (
+        {uniqueImages.map((image) => (
           <div
             key={image._id}
             style={{
