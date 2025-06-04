@@ -127,8 +127,8 @@ const response = await page.waitForResponse(res => {
   );
 }, { timeout: 30000 });
 
-const imageUrlDownload = url;
-
+// خُد الـ URL هنا من الـ response مباشرة بعد ما يتحقق الشرط
+const imageUrlDownload = response.url();
 if (!imageUrlDownload) {
   throw new Error('❌ No image URL found in network response');
 }
