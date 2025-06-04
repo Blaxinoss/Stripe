@@ -39,7 +39,10 @@ puppeteer.use(
 // }
 
 async function downloadWorkerLogic({ userId, downloadLink, page }) {
-
+  if (userId === "warmup") {
+    console.log('[Warmup] ✅ Warmup task executed successfully');
+    return { success: true, imageUrl: null };
+  }
 
   let imageUrlDownload = null;
   const startTime = Date.now();
@@ -128,22 +131,25 @@ try{
     console.log(`Clicking to the download button took ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
 
     console.log('[Waiting] 📥 Waiting for download URL...');
-    const response = await page.waitForResponse(
-      res => {
-        const url = res.url();
-        return url.endsWith('.jpg') || url.endsWith('.png') || url.endsWith('.zip');
-      },
-      { timeout: 15000 }
-    );
+         try {
+            page.on('response', response => {
+                const url = response.url();
+                if (url.endsWith('.jpg') || url.endsWith('.png')|| url.endsWith('.zip')) {
+                    imageUrlDownload = url;
+                }
+            });
 
-    imageUrlDownload = response.url();
-    if (!imageUrlDownload) throw new Error('No image URL detected in network responses');
-    console.log('[Success] ✅ Image URL captured:', imageUrlDownload);
-    console.log(`Captured Image successfully after ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
+            await delay(Math.random() * 5000 + 3000);
 
-    const totalTime = ((Date.now() - startTime) / 1000).toFixed(2);
-    console.log(`[Done] 🎉 Finished job in ${totalTime} seconds`);
+            if (!imageUrlDownload) {
+                throw new Error('No image URL detected in network responses');
+            }
+            console.log(`Image URL captured: ${imageUrlDownload}`);
+        } catch (err) {
+            throw new Error('Failed to capture image download URL: ' + err.message);
+        }
 
+    
     return { success: true, imageUrl: imageUrlDownload };
 
   } catch (err) {
