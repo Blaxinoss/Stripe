@@ -111,6 +111,7 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
       res => {
         console.log(res);
         const url = res.url();
+        const pathname = url.pathname.toLowerCase();
         console.log('🔍 response URL:', url);
         return (
           ( pathname.endsWith('.jpg') ||
