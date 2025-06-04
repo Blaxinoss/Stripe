@@ -85,7 +85,6 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
         page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 30000 }),
 await new Promise(res => setTimeout(res, 15000))
       ]);
-            page.screenshot({ path: 's.png', fullPage: true });
 
       console.log('[Navigation] ✅ Login navigation complete or fallback timeout hit');
 
@@ -99,6 +98,8 @@ await new Promise(res => setTimeout(res, 15000))
       console.error('🟥 Error in page.goto downloadLink:', err);
       throw err;
     }
+                page.screenshot({ path: 's.png', fullPage: true });
+
 
     console.log('[Download] ⬇️ Click download button...');
     await page.click('[data-cy="download-button"]');
