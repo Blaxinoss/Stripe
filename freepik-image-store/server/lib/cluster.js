@@ -15,7 +15,7 @@ async function createBrowserPool() {
    timeout: 120000,
     puppeteerOptions: {
         headless: 'new',
-        // executablePath: '/usr/bin/chromium', 
+        executablePath: '/usr/bin/chromium', 
           userDataDir: './user-data', // ✅ دا أهم حاجة تحافظ على الكوكيز والجلسة
         args: [
             '--disable-gpu',
@@ -39,7 +39,7 @@ async function createBrowserPool() {
         try {
             if (!userId) {
                 throw new Error(
-                    'Message from the cluster task: userId is required. Go back and check the task you added to the queue and make sure you pass the userId'
+                    'Message from the ecluster task: userId is required. Go back and check the task you added to the queue and make sure you pass the userId'
                 );
             }
             const result = await downloadWorkerLogic({ userId, downloadLink, jobId, page });
