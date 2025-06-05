@@ -99,44 +99,42 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
       console.error('🟥 Error in page.goto downloadLink:', err);
       throw err;
     }
-    fs.writeFileSync(`s.html`, `${downloadLink}`)
 
     console.log('[Download] ⬇️ Click download button...');
     await page.click('[data-cy="download-button"]');
 
     console.log('[Waiting] 📡 Waiting for download request...');
-    page.screenshot({ path: `s.png`, fullPage: true });
-const response = await page.waitForResponse(res => {
-  const url = res.url();
-  const pathname = new URL(url).pathname.toLowerCase();
-  console.log('🔍 response URL:', url);
+      
 
-  return (
-    (
-      pathname.endsWith('.jpg') ||
-      pathname.endsWith('.png') ||
-      pathname.endsWith('.psg') ||
-      pathname.endsWith('.ico') ||
-      pathname.endsWith('.eps') ||
-      pathname.endsWith('.zip') ||
-      pathname.endsWith('.jpeg') ||
-      pathname.endsWith('.svg')
-    ) &&
-    !url.includes('cdn-front') &&
-    !url.includes('pricing')
-  );
-}, { timeout: 30000 });
 
-const imageUrlDownload = response.url();
-if (!imageUrlDownload) {
+    try {
+    let imageUrlDownload = null;
+          page.on('response', response => {
+                    const url = response.url().toLowerCase();
+                            const validExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.svg', '.zip', '.mp4', '.mov'];
+                             if (
+            validExtensions.some(ext => url.endsWith(ext)) &&
+            !url.includes('cdn-front')
+        ) {
+            imageUrlDownload = url;
+        }
+    });
+
+        await new Promise(res => setTimeout(res,Math.random() * 5000 + 3000))
+   if (!imageUrlDownload) {
   throw new Error('❌ No image URL found in network response');
 }
 
 console.log('[Success] ✅ Image URL:', imageUrlDownload);
 console.log(`[Done] 🎉 Job completed in ${((Date.now() - startTime) / 1000).toFixed(2)}s`);
 
+
 return { success: true, imageUrl: imageUrlDownload };
 
+}catch (err) {
+  console.error('[Error] ❌ Failed to find image URL in network response:', err);
+  throw new Error('❌ Failed to find image URL in network response: ' + err.message); 
+}
 } catch (err) {
   console.error('[Error] ❌ Worker logic failed:', err.stack || err);
   throw new Error('❌ Worker Logic Failed: ' + err.message);

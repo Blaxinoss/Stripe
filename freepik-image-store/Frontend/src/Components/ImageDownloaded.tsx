@@ -132,11 +132,7 @@ const ImageDownloaded: React.FC = () => {
             }}
           >
             <p className="p-2 font-bold text-sm">
-              {
-                (() => {
-                return  new URL(image.downloadUrl).pathname
-                })()
-              }
+              {new URL(image.downloadUrl).searchParams.get('filename')}
             </p>
             <img
               src={image.downloadUrl}
