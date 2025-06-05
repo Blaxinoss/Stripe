@@ -48,7 +48,10 @@ const worker = new Worker(
 
     return response;
   },
-  { connection,attempts:2 }
+  { connection,attempts: 3,
+backoff: { type: 'exponential', delay: 2000 },
+    concurrency: 3,
+ }
 );
 
 worker.on('completed', (job, result) => {
