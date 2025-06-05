@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useAuth } from "../context/AuthContext";
-import io, { Socket } from "socket.io-client";
 import axios from "axios";
+import { useAuth } from "../context/AuthContext";
+import { useSocket } from "../context/SocketContext";
 
 interface Image {
   pageUrl: string;
@@ -14,154 +14,112 @@ interface Image {
 
 const ImageDownloaded: React.FC = () => {
   const { user, token } = useAuth();
+  const socket = useSocket();
+
   const [images, setImages] = useState<Image[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [jobId, setJobId] = useState<string | null>(null);
-  const [imageAskingForDownload, setImageAskingForDownload] = useState<string | null>(null);
-  const socketRef = useRef<Socket | null>(null); // لتخزين مثيل Socket.IO
-  const resolveRef = useRef<((url: string) => void) | null>(null); // لتخزين دالة resolve للـ Promise
-  const rejectRef = useRef<((reason: any) => void) | null>(null); // لتخزين دالة reject للـ Promise
+  const [imageIdForDownload, setImageIdForDownload] = useState<string | null>(null);
 
-  // دالة لجلب الصور
+  const resolveRef = useRef<(url: string) => void | null>(null);
+  const rejectRef = useRef<(reason?: any) => void | null>(null);
+
   const fetchImages = async () => {
-    if (!token) {
-      setError("No authentication token found. Please log in.");
-      setIsLoading(false);
-      return;
-    }
+    if (!token) return setError("No authentication token found. Please log in.");
 
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/images/user-images`,
-        {
-          headers: { Authorization: `${token}` },
-        }
-      );
-      if (!response.ok) throw new Error("Failed to fetch images");
-      const data: Image[] = await response.json();
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/images/user-images`, {
+        headers: { Authorization: token },
+      });
+      if (!res.ok) throw new Error();
+      const data: Image[] = await res.json();
       setImages(data);
       setError(null);
-    } catch (err) {
+    } catch {
       setError("Failed to load images. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  // دالة لتجديد رابط التحميل
   const regenerateDownloadLink = async (image: Image) => {
-    if (!token) throw new Error("No authentication token found.");
-    const response = await axios.post(
+    if (!token || !user?._id) throw new Error("Missing credentials");
+
+    const res = await axios.post(
       `${import.meta.env.VITE_BACKEND_URL}/api/freepik/regenerate-link`,
-      { userId: user?._id, downloadLink: image.pageUrl },
+      { userId: user._id, downloadLink: image.pageUrl },
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${token}`,
+          Authorization: token,
         },
       }
     );
-    if (response.status !== 200) throw new Error("Failed to regenerate link");
-    return response.data.jobId;
+    if (res.status !== 200) throw new Error("Failed to regenerate link");
+    return res.data.jobId;
   };
 
-  // دالة لتحديث عدد التحميلات
   const updateDownloadCount = async (imageId: string) => {
-    if (!token) throw new Error("No authentication token found.");
-    const response = await fetch(
+    if (!token) throw new Error("No token");
+
+    const res = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/api/images/user-images/${imageId}/downloadcounteradd`,
       {
         method: "PUT",
         headers: {
-          Authorization: `${token}`,
+          Authorization: token,
           "Content-Type": "application/json",
         },
       }
     );
-    if (!response.ok) throw new Error("Failed to update download count");
-    return response.json();
+    if (!res.ok) throw new Error();
+    return res.json();
   };
 
-  // دالة لانتظار حدث regenerateLink باستخدام الـ socket الموجود
   const waitForRegenerateLink = () =>
     new Promise<string>((resolve, reject) => {
-      if (!socketRef.current) {
-        reject(new Error("Socket.IO is not connected."));
-        return;
-      }
+      if (!socket) return reject("Socket not connected");
 
       resolveRef.current = resolve;
       rejectRef.current = reject;
 
-      // إعداد timeout لمنع الانتظار إلى الأبد
-      setTimeout(() => {
-        reject(new Error("Timeout waiting for link regeneration"));
-      }, 30000);
+      setTimeout(() => reject("Timeout waiting for regeneration"), 30000);
     });
 
-  // إعداد Socket.IO
   useEffect(() => {
-    if (!user?._id || !token) {
-      setError("User not authenticated. Please log in.");
-      setIsLoading(false);
-      return;
-    }
-
-    const socket = io(import.meta.env.VITE_BACKEND_URL, {
-      withCredentials: true,
-      transports: ["websocket", "polling"],
-    });
-    socketRef.current = socket;
+    if (!user?._id || !token || !socket) return;
 
     socket.emit("join", user._id);
 
-    socket.on("connect", () => {
-      console.log("Connected to Socket.IO server");
-      setError(null);
-    });
-
-    socket.on("connect_error", (err) => {
-      console.error("Socket.IO connection error:", err.message);
-      setError(`Failed to connect to server: ${err.message}`);
-      setIsLoading(false);
-    });
+    socket.on("connect", () => setError(null));
+    socket.on("connect_error", (err) => setError(`Connection error: ${err.message}`));
 
     socket.on("regenerateLink", async (data: { jobId: string; userId: string; imageUrl: string }) => {
-      if (data.jobId === jobId && imageAskingForDownload) {
-        if (data.userId !== user._id) {
-          if (rejectRef.current) {
-            rejectRef.current(new Error("User ID mismatch."));
-          }
-          setError("User ID mismatch.");
-          return;
-        }
+      if (data.jobId === jobId && imageIdForDownload && data.userId === user._id) {
         try {
           await axios.put(
-            `${import.meta.env.VITE_BACKEND_URL}/api/images/user-images/${imageAskingForDownload}/update-download-url`,
+            `${import.meta.env.VITE_BACKEND_URL}/api/images/user-images/${imageIdForDownload}/update-download-url`,
             { newDownloadUrl: data.imageUrl },
             {
               headers: {
-                Authorization: `${token}`,
+                Authorization: token,
                 "Content-Type": "application/json",
               },
             }
           );
+
           setImages((prev) =>
             prev.map((img) =>
-              img._id === imageAskingForDownload ? { ...img, downloadUrl: data.imageUrl } : img
+              img._id === imageIdForDownload ? { ...img, downloadUrl: data.imageUrl } : img
             )
           );
-          if (resolveRef.current) {
-            resolveRef.current(data.imageUrl);
-          }
-        } catch (error) {
-          console.error("Failed to update download URL in database", error);
-          setError("Failed to update download URL in database");
-          if (rejectRef.current) {
-            rejectRef.current(error);
-          }
+
+          resolveRef.current?.(data.imageUrl);
+        } catch (err) {
+          rejectRef.current?.(err);
+          setError("Failed to update download URL");
         }
       }
     });
@@ -170,33 +128,26 @@ const ImageDownloaded: React.FC = () => {
       socket.off("connect");
       socket.off("connect_error");
       socket.off("regenerateLink");
-      socket.disconnect();
-      socketRef.current = null;
     };
-  }, [user?._id, token, jobId, imageAskingForDownload]);
+  }, [user?._id, token, jobId, imageIdForDownload, socket]);
 
-  // جلب الصور عند التحميل الأولي
   useEffect(() => {
-    if (user?._id) {
-      fetchImages();
-    }
+    if (user?._id) fetchImages();
   }, [user?._id, token]);
 
-  // دالة التحميل
   const handleDownload = async (image: Image) => {
-    if (!token) {
-      setError("No authentication token found. Please log in.");
-      return;
-    }
+    if (!token) return setError("No token");
 
-    setImageAskingForDownload(image._id);
+    setImageIdForDownload(image._id);
+
     try {
-      const urlCheckResponse = await fetch(image.downloadUrl, { method: "HEAD" });
+      const headRes = await fetch(image.downloadUrl, { method: "HEAD" });
 
-      if (!urlCheckResponse.ok) {
-        const jobId = await regenerateDownloadLink(image);
-        setJobId(jobId);
+      if (!headRes.ok) {
+        const job = await regenerateDownloadLink(image);
+        setJobId(job);
         const newUrl = await waitForRegenerateLink();
+
         setImages((prev) =>
           prev.map((img) =>
             img._id === image._id ? { ...img, downloadUrl: newUrl } : img
@@ -204,131 +155,99 @@ const ImageDownloaded: React.FC = () => {
         );
       }
 
-      if (image.downloadCount >= 3) {
-        setError("You have reached the maximum download limit for this image.");
-        return;
-      }
+      if (image.downloadCount >= 3) return setError("Max download limit reached.");
 
       const { downloadCount } = await updateDownloadCount(image._id);
-      const link = document.createElement("a");
-      link.href = image.downloadUrl;
-      link.download = image.downloadUrl.split("/").pop() || "image";
-      link.click();
-      setImages((prevImages) =>
-        prevImages.map((img) =>
-          img._id === image._id ? { ...img, downloadCount } : img
-        )
+
+      const a = document.createElement("a");
+      a.href = image.downloadUrl;
+      a.download = image.downloadUrl.split("/").pop() || "image";
+      a.click();
+
+      setImages((prev) =>
+        prev.map((img) => (img._id === image._id ? { ...img, downloadCount } : img))
       );
     } catch (err) {
-      console.error("Error in handleDownload:", err);
-      setError("Failed to download the image. Please try again.");
+      setError("Download failed. Please try again.");
     }
   };
 
-  // دالة لاستخراج تاريخ الانتهاء
-  const getExpiryDate = (urlObj: URL): string | null => {
-    const token = urlObj.searchParams.get("token");
+  const getExpiryDate = (url: URL) => {
+    const token = url.searchParams.get("token");
     const match = token?.match(/exp=(\d+)/);
     const exp = match ? parseInt(match[1]) : null;
-
-    if (!exp) return null;
-
-    const date = new Date(exp * 1000);
-    return date.toLocaleString("en-US", {
-      dateStyle: "short",
-      timeStyle: "short",
-    });
+    return exp ? new Date(exp * 1000).toLocaleString() : null;
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
-      <h1 style={{ textAlign: "center", marginBottom: "20px" }}>
-        Your Image Gallery
-      </h1>
+    <div className="p-5 max-w-6xl mx-auto">
+      <h1 className="text-center mb-5 text-xl font-semibold">Your Image Gallery</h1>
+
       {error && (
-        <div style={{ textAlign: "center", marginBottom: "20px" }}>
-          <p style={{ color: "red" }}>Error: {error}</p>
+        <div className="text-center mb-5">
+          <p className="text-red-500">Error: {error}</p>
           <button
             onClick={fetchImages}
-            style={{
-              padding: "10px",
-              backgroundColor: "#007bff",
-              color: "white",
-              borderRadius: "5px",
-              cursor: "pointer",
-            }}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
             Retry
           </button>
         </div>
       )}
-      {isLoading && <p style={{ textAlign: "center" }}>Loading images...</p>}
-      {images.length === 0 && !isLoading && !error && (
-        <p style={{ textAlign: "center" }}>
-          No images found. Start downloading some!
+
+      {isLoading && <p className="text-center">Loading images...</p>}
+
+      {!isLoading && images.length === 0 && !error && (
+        <p className="text-center">No images found. Start downloading some!</p>
+      )}
+
+<div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-5">
+  {images.map((img) => (
+    <div
+      key={img._id}
+      className="border rounded-lg shadow p-2 flex flex-col items-center"
+    >
+      {img.downloadUrl && (
+        <p className="text-sm truncate">
+          {new URL(img.downloadUrl).searchParams.get("filename")} -{" "}
+          {getExpiryDate(new URL(img.downloadUrl)) || "No expiry"}
         </p>
       )}
-      <div
+
+      <img
+        src={img.downloadUrl}
+        alt={`Image ${img.jobId}`}
+        loading="lazy"
         style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-          gap: "20px",
+          width: "100%",
+          height: "150px",
+          objectFit: "cover",
+          borderRadius: "20px",
+          marginBottom: "5px",
+          marginTop: "5px",
         }}
-      >
-        {images.map((image) => (
-          <div
-            key={image._id}
-            style={{
-              border: "1px solid #ddd",
-              borderRadius: "8px",
-              overflow: "hidden",
-              boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "column",
-              padding: "10px",
-            }}
-          >
-            {image.downloadUrl && (
-              <p>
-                {new URL(image.downloadUrl).searchParams.get("filename")} -{" "}
-                {getExpiryDate(new URL(image.downloadUrl)) || "No expiry date available"}
-              </p>
-            )}
-            <img
-              src={image.downloadUrl}
-              alt={`Image ${image.jobId}`}
-              loading="lazy"
-              style={{
-                width: "100%",
-                height: "150px",
-                objectFit: "cover",
-                borderRadius: "20px",
-                marginBottom: "5px",
-                marginTop: "5px",
-              }}
-              onError={() => setError(`Failed to load image ${image.jobId}`)}
-            />
-            <div style={{ padding: "10px" }}>
-              <button
-                disabled={image.downloadCount >= 3}
-                onClick={() => handleDownload(image)}
-                style={{
-                  backgroundColor: image.downloadCount >= 3 ? "#ccc" : "#3b82f6",
-                  color: "white",
-                  padding: "8px 16px",
-                  borderRadius: "5px",
-                  cursor: image.downloadCount >= 3 ? "not-allowed" : "pointer",
-                  border: "none",
-                }}
-              >
-                Download ({image.downloadCount}/3)
-              </button>
-            </div>
-          </div>
-        ))}
+        onError={() => setError(`Failed to load image ${img.jobId}`)}
+      />
+
+      <div style={{ padding: "10px" }}>
+        <button
+          disabled={img.downloadCount >= 3}
+          onClick={() => handleDownload(img)}
+          style={{
+            backgroundColor: img.downloadCount >= 3 ? "#ccc" : "#3b82f6",
+            color: "white",
+            padding: "8px 16px",
+            borderRadius: "5px",
+            cursor: img.downloadCount >= 3 ? "not-allowed" : "pointer",
+            border: "none",
+          }}
+        >
+          Download ({img.downloadCount}/3)
+        </button>
       </div>
+    </div>
+  ))}
+</div>
     </div>
   );
 };
