@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
-import io from 'socket.io-client';
 import { useAuth } from '../context/AuthContext';
 import { useCoins } from '../context/CoinsContextProvider';
 import { useSocket } from '../context/SocketContext';
