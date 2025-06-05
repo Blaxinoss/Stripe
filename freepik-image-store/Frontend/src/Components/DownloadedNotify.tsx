@@ -3,6 +3,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import io from 'socket.io-client';
 import { useAuth } from '../context/AuthContext';
 import { useCoins } from '../context/CoinsContextProvider';
+import { useSocket } from '../context/SocketContext';
 
 interface DownloadedNotifyProps {
   jobId: string;
@@ -19,7 +20,8 @@ const DownloadedNotify: React.FC<DownloadedNotifyProps> = ({ jobId, onLoadingCha
   const [imageDownloadUrl, setImageDownloadUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-const linkref = React.useRef<HTMLAnchorElement>(null);
+  const linkref = React.useRef<HTMLAnchorElement>(null);
+  const socket = useSocket();
   
 useEffect(()=>{
 if(linkref.current && imageDownloadUrl) {
@@ -28,6 +30,9 @@ if(linkref.current && imageDownloadUrl) {
 }
 },[imageDownloadUrl])
 
+
+
+
   useEffect(() => {
     if (!user?._id) {
       setError('User not authenticated. Please log in.');
@@ -35,16 +40,21 @@ if(linkref.current && imageDownloadUrl) {
       onLoadingChange?.(false); 
       return;
     }
+
+        if (!socket) {
+  setError('Socket not initialized. Please try again later.');
+  setIsLoading(false);
+  onLoadingChange?.(false);
+  return;
+}
+
     if(onLoadingChange) {
       onLoadingChange(true); // Notify outer component that loading has started
     }
-    const socket = io(import.meta.env.VITE_BACKEND_URL, {
-      withCredentials: true,
-      transports: ['websocket', 'polling'],
-    });
-    
+
 
     socket.emit('join', user._id);
+
 
     socket.on('connect', () => {
       console.log('Connected to Socket.IO server Iam the notify system');
@@ -63,12 +73,18 @@ if(linkref.current && imageDownloadUrl) {
         if (data.userId !== user._id) {
           setError('User ID mismatch.');
         } else {
-          purchasehandler?.()
+          try{
+                purchasehandler?.()
+
+          }catch(error) {
+            console.error('purchasehandler threw an error:', error);
+            setError('An error occurred while [purchasing the image]. Please try again later.');
+          }
           setImageDownloadUrl(data.imageUrl);
           setIsLoading(false);
           onLoadingChange?.(false); 
           toast.success('Image download complete!, your file has been added to the gallery');
-          toast.warn(`You now have ${coins - 100} coins.`);  // Show success toast
+toast.info(`100 coins deducted. You now have ${coins - 100} coins.`);
           setCoins(coins - 100); // Deduct coins after successful download
         }
       }
@@ -90,9 +106,12 @@ if(linkref.current && imageDownloadUrl) {
     });
 
     return () => {
-      socket.disconnect();
+      socket.off('downloadedImage');
+      socket.off('downloadFailed');
+      socket.off('connect');
+      socket.off('connect_error');
     };
-  }, [jobId, user?._id]);
+  }, [jobId, user?._id,socket]);
 
   return (
     <div>
@@ -101,11 +120,6 @@ if(linkref.current && imageDownloadUrl) {
       {imageDownloadUrl && (
         <div>
           <h2>Download Complete</h2>
-          {/* <img
-            src={imageDownloadUrl}
-            alt="Downloaded"
-            style={{ maxWidth: '100%', maxHeight: '500px', marginTop: '10px' }}
-          /> */}
           <a ref={linkref} href={imageDownloadUrl} download>If the download didn't start automatically. Click to Download</a>
         </div>
       )}
