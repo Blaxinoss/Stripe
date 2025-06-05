@@ -74,6 +74,7 @@ if(linkref.current && imageDownloadUrl) {
         } else {
           try{
                 purchasehandler?.()
+                console.log("Called purchasehandler inside the notifying system");
 
           }catch(error) {
             console.error('purchasehandler threw an error:', error);

@@ -104,6 +104,7 @@ const downloadImage = async (imageId: number) => {
             setError('You must be logged in to make a purchase.');
             return;
         }
+        console.log('handlePurchase called with amount:', amount);
 
         setLoading(true);
         setError(null);
@@ -118,6 +119,7 @@ const downloadImage = async (imageId: number) => {
                     headers: {
                         Authorization: `${token}`,
                     },
+                            timeout: 50000,
                 }
             );
             // Initiate download after successful purchase
@@ -144,11 +146,12 @@ const downloadImage = async (imageId: number) => {
          if (!token || !showConfirm) return;
        
         if (showConfirm) {
-                          setAmount(showConfirm.amount);
             if((user?.coins ?? 0) < showConfirm.amount) {
             setError('You do not have enough coins to make this purchase.');
             return;
         }
+                                  setAmount(showConfirm.amount);
+
             const image = images.find((img) => img.id === showConfirm.id);
             if (image) {
                 // handlePurchase(showConfirm.id, showConfirm.amount);
@@ -159,10 +162,13 @@ const downloadImage = async (imageId: number) => {
     };
 
     return (
-        <>  {jobId && (
-              <DownloadedNotify jobId={jobId} onLoadingChange={handleLoadingChange} purchasehandler={()=>{handlePurchase(amount)}} />
-            
-          )}      
+        <> {showConfirm && jobId && (
+  <DownloadedNotify
+    jobId={jobId}
+    onLoadingChange={handleLoadingChange}
+    purchasehandler={() => handlePurchase(showConfirm.amount)}
+  />
+)}  
 
         <div className="mx-auto max-w-5xl mt-12 p-8 rounded-3xl border border-gray-100 shadow-2xl bg-black/50">
           {/* Search Input */}
