@@ -32,7 +32,7 @@ async function createBrowserPool() {
     });
 
     // Define the task for the cluster
-    await cluster.task(async ({ page , data: { userId, downloadLink, jobId } }) => {
+    await cluster.task(async ({ page, data: { userId, downloadLink, jobId } }) => {
           page.setDefaultNavigationTimeout(60000); // ⬅️ هنا لازم تتظبط دايمًا
           console.log('Task started: browser is ready');
         const startTime = Date.now();
