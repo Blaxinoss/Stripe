@@ -22,8 +22,6 @@ const Search = () => {
     const [showConfirm, setShowConfirm] = useState<{ id: number; amount: number; title: string } | null>(null);
     const [jobId, setJobId] = useState<string | null>(null);
     const [isLoadingInner, setIsLoadingInner] = useState<boolean>(false);
-    const[amount, setAmount] = useState<number>(0);
-
     const handleLoadingChange = (loading: boolean) => {
       setIsLoadingInner(loading);
     };
@@ -150,7 +148,6 @@ const downloadImage = async (imageId: number) => {
             setError('You do not have enough coins to make this purchase.');
             return;
         }
-                                  setAmount(showConfirm.amount);
 
             const image = images.find((img) => img.id === showConfirm.id);
             if (image) {

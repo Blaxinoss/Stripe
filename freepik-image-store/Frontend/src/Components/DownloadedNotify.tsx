@@ -34,14 +34,14 @@ if(linkref.current && imageDownloadUrl) {
 
   useEffect(() => {
     if (!user?._id) {
-      setError('User not authenticated. Please log in.');
+      setError(prev => (prev ? `${prev} +User not authenticated. Please log in.`: 'User not authenticated. Please log in.'));
       setIsLoading(false);
       onLoadingChange?.(false); 
       return;
     }
 
         if (!socket) {
-  setError('Socket not initialized. Please try again later.');
+  setError(prev => (prev ? `${prev}  +Socket connection not established.`: 'Socket connection not established.'));
   setIsLoading(false);
   onLoadingChange?.(false);
   return;
@@ -62,7 +62,7 @@ if(linkref.current && imageDownloadUrl) {
 
     socket.on('connect_error', (err) => {
       console.error('Socket.IO connection error from notify system:', err.message);
-      setError(`Failed to connect to server from the notify system: ${err.message}`);
+      setError(prev => (prev ? `${prev} + Failed to connect to server from the notify system: ${err.message}`: `Failed to connect to server from the notify system: ${err.message}`));
       setIsLoading(false);
       onLoadingChange?.(false); 
     });
@@ -70,7 +70,7 @@ if(linkref.current && imageDownloadUrl) {
     socket.on('downloadedImage', (data: { jobId: string, userId: string, imageUrl: string }) => {
       if (data.jobId === jobId) {
         if (data.userId !== user._id) {
-          setError('User ID mismatch.');
+          setError(prev => (prev ? `${prev}  + User ID mismatch.` : 'User ID mismatch.'));
         } else {
           try{
                 purchasehandler?.()
@@ -78,7 +78,7 @@ if(linkref.current && imageDownloadUrl) {
 
           }catch(error) {
             console.error('purchasehandler threw an error:', error);
-            setError('An error occurred while [purchasing the image]. Please try again later.');
+            setError(prev => (prev ? `${prev} + Failed to execute purchase handler.`: 'Failed to execute purchase handler.'));
           }
           setImageDownloadUrl(data.imageUrl);
           setIsLoading(false);
@@ -93,7 +93,7 @@ toast.info(`100 coins deducted. You now have ${coins - 100} coins.`);
     socket.on('downloadFailed', (data: { jobId: string, userId: string, error: string }) => {
      if (data.jobId === jobId) {
         if (data.userId !== user._id) {
-          setError('User ID mismatch.');
+          setError(prev => (prev ? `${prev} + User ID mismatch on download failure.`  : 'User ID mismatch on download failure.'));
         }
         else {
         setImageDownloadUrl(null);
