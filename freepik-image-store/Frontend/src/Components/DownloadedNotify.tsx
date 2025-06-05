@@ -19,16 +19,8 @@ const DownloadedNotify: React.FC<DownloadedNotifyProps> = ({ jobId, onLoadingCha
   const [imageDownloadUrl, setImageDownloadUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const linkref = React.useRef<HTMLAnchorElement>(null);
   const socket = useSocket();
   
-useEffect(()=>{
-if(linkref.current && imageDownloadUrl) {
-              linkref.current?.click();
-
-}
-},[imageDownloadUrl])
-
 
 
 
@@ -82,6 +74,13 @@ if(linkref.current && imageDownloadUrl) {
           setImageDownloadUrl(data.imageUrl);
           setIsLoading(false);
           onLoadingChange?.(false); 
+
+          const link = document.createElement('a');
+        link.href = data.imageUrl;
+        link.setAttribute('download', '');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
           toast.success('Image download complete!, your file has been added to the gallery');
 toast.info(`100 coins deducted. You now have ${coins - 100} coins.`);
           setCoins(coins - 100); // Deduct coins after successful download
@@ -119,7 +118,7 @@ toast.info(`100 coins deducted. You now have ${coins - 100} coins.`);
       {imageDownloadUrl && (
         <div>
           <h2>Download Complete</h2>
-          <a ref={linkref} href={imageDownloadUrl} download>If the download didn't start automatically. Click to Download</a>
+          <a  href={imageDownloadUrl} download>If the download didn't start automatically. Click to Download</a>
         </div>
       )}
       <ToastContainer autoClose={5000}/> {/* Render Toast notifications */}
