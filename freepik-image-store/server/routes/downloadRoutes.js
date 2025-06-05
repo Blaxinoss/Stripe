@@ -40,6 +40,28 @@ Router.post('/download/:id', passport.authenticate('jwt', { session: false }), a
     }
 }
 );
+
+
+
+Router.post('/regenerate-link', async (req, res) => {
+  try {
+    const { userId, downloadLink  } = req.body;
+
+    if (!userId || !downloadLink) {
+      return res.status(400).json({ error: 'Missing userId or downloadLink or jobId' });
+    }
+
+    // هنا ممكن تجيب بيانات إضافية من الداتا بيز لو لازم (مثلاً downloadLink الحالي)
+
+    // أضف جوب جديدة في الـ queue للتجديد
+    const job = await downloadQueue.add('regenerateDownloadLink', { userId, downloadLink });
+
+    res.json({ message: 'Download link regeneration job added', jobId: job.id });
+  } catch (error) {
+    console.error('Error in regenerate-link:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
   
 
 module.exports = Router;

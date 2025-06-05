@@ -3,6 +3,7 @@ const { createBrowserPool } = require('./cluster');
 const { connection } = require('./queue');
 const Redis = require('ioredis');
 
+
 const redis = new Redis({
   host: process.env.REDIS_HOST,
   port: process.env.REDIS_PORT,
@@ -37,12 +38,16 @@ const worker = new Worker(
     const response = await cluster.execute({ userId, downloadLink, jobId });
     console.log(`✅ Cluster execute response:`, response);
 
+    
+
     await redis.publish(
       'download:completed',
       JSON.stringify({
         userId,
         imageUrl: response.imageUrl,
         jobId,
+        jobName: job.name,
+        pageUrl:downloadLink,
       })
     );
 

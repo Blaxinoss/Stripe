@@ -47,13 +47,13 @@ if(linkref.current && imageDownloadUrl) {
     socket.emit('join', user._id);
 
     socket.on('connect', () => {
-      console.log('Connected to Socket.IO server');
+      console.log('Connected to Socket.IO server Iam the notify system');
       setError(null);
     });
 
     socket.on('connect_error', (err) => {
-      console.error('Socket.IO connection error:', err.message);
-      setError(`Failed to connect to server: ${err.message}`);
+      console.error('Socket.IO connection error from notify system:', err.message);
+      setError(`Failed to connect to server from the notify system: ${err.message}`);
       setIsLoading(false);
       onLoadingChange?.(false); 
     });

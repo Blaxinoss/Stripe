@@ -25,6 +25,10 @@ const imageSchema = new mongoose.Schema({
         type: Number,
         default: 3, // الحد الأقصى للتحميلات، ممكن تغيره
     },
+    pageUrl:{
+        type: String, 
+        required: true,
+    }
 });
 
 module.exports = mongoose.model('Image', imageSchema);
