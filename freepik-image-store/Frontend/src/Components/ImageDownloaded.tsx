@@ -97,9 +97,7 @@ const ImageDownloaded: React.FC = () => {
   };
   }
 
-  const uniqueImages = images.filter(
-  (img, idx, arr) => arr.findIndex(i => i.downloadUrl === img.downloadUrl) === idx
-);
+
 
   
 
@@ -118,7 +116,7 @@ const ImageDownloaded: React.FC = () => {
           gap: '20px',
         }}
       >
-        {uniqueImages.map((image) => (
+        {images.map((image) => (
           <div
             key={image._id}
             style={{
@@ -136,8 +134,7 @@ const ImageDownloaded: React.FC = () => {
             <p className="p-2 font-bold text-sm">
               {
                 (() => {
-                  const match = image.downloadUrl.match(/filename=([^&]+)/);
-                  return match ? decodeURIComponent(match[1]) : `Image ${image.jobId}`;
+                return  new URL(image.downloadUrl).pathname
                 })()
               }
             </p>

@@ -122,7 +122,7 @@ const response = await page.waitForResponse(res => {
       pathname.endsWith('.jpeg') ||
       pathname.endsWith('.svg')
     ) &&
-    !url.includes('cdn') &&
+    !url.includes('cdn-front') &&
     !url.includes('pricing')
   );
 }, { timeout: 30000 });
