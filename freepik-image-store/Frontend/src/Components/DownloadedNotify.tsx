@@ -22,6 +22,24 @@ const DownloadedNotify: React.FC<DownloadedNotifyProps> = ({ jobId, onLoadingCha
   const socket = useSocket();
   
 
+const blobDownload = async (url: string, filename = 'download.jpg') => {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(blobUrl); // Clean up
+  } catch (err) {
+    console.error('Error downloading image:', err);
+    toast.error('Failed to download image file.');
+  }
+};
 
 
   useEffect(() => {
@@ -75,12 +93,7 @@ const DownloadedNotify: React.FC<DownloadedNotifyProps> = ({ jobId, onLoadingCha
           setIsLoading(false);
           onLoadingChange?.(false); 
 
-          const link = document.createElement('a');
-        link.href = data.imageUrl;
-        link.setAttribute('download', '');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        blobDownload(data.imageUrl, 'image.jpg');
           toast.success('Image download complete!, your file has been added to the gallery');
 toast.info(`100 coins deducted. You now have ${coins - 100} coins.`);
           setCoins(coins - 100); // Deduct coins after successful download
