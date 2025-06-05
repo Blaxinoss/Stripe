@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import ProfilerUser from "./pages/ProfilerUser";
 import SignIn from "./pages/SignIn";
 import ImageDownloaded from "./Components/ImageDownloaded";
+import { SocketProvider } from "./context/SocketContext";
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
             <BrowserRouter>
                 <CoinsContextProvider>
                     <AuthProvider>
+                        <SocketProvider>
                         <Nav />
                         <Routes>
                             <Route path="/" element={<Home />} />
@@ -31,6 +33,7 @@ function App() {
                             <Route path="/browse" element={<ProtectedRoute><Browse /> </ProtectedRoute>} />
                             <Route path="/administration" element={<ProtectedRoute requireHost={true}><Administration /> </ProtectedRoute>} />
                         </Routes>
+                        </SocketProvider>
                     </AuthProvider>
                 </CoinsContextProvider>
 

@@ -85,7 +85,7 @@ const ImageDownloaded: React.FC = () => {
   };
 
   // دالة لانتظار حدث regenerateLink باستخدام الـ socket الموجود
-  const waitForRegenerateLink = (jobId: string) =>
+  const waitForRegenerateLink = () =>
     new Promise<string>((resolve, reject) => {
       if (!socketRef.current) {
         reject(new Error("Socket.IO is not connected."));
@@ -196,7 +196,7 @@ const ImageDownloaded: React.FC = () => {
       if (!urlCheckResponse.ok) {
         const jobId = await regenerateDownloadLink(image);
         setJobId(jobId);
-        const newUrl = await waitForRegenerateLink(jobId);
+        const newUrl = await waitForRegenerateLink();
         setImages((prev) =>
           prev.map((img) =>
             img._id === image._id ? { ...img, downloadUrl: newUrl } : img
