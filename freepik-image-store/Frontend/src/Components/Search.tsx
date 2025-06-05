@@ -159,11 +159,11 @@ const downloadImage = async (imageId: number) => {
     };
 
     return (
-        <> {showConfirm && jobId && (
+        <> {jobId && (
   <DownloadedNotify
     jobId={jobId}
     onLoadingChange={handleLoadingChange}
-    purchasehandler={() => handlePurchase(showConfirm.amount)}
+    purchasehandler={() => handlePurchase(100)}
   />
 )}  
 
