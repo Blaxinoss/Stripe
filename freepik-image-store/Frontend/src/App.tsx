@@ -18,9 +18,10 @@ function App() {
     return (
         <div className="min-h-screen flex justify-center items-center bg-[#003f5c] font-sans  ">
             <BrowserRouter>
+                                    <SocketProvider>
+
                 <CoinsContextProvider>
                     <AuthProvider>
-                        <SocketProvider>
                         <Nav />
                         <Routes>
                             <Route path="/" element={<Home />} />
@@ -33,9 +34,9 @@ function App() {
                             <Route path="/browse" element={<ProtectedRoute><Browse /> </ProtectedRoute>} />
                             <Route path="/administration" element={<ProtectedRoute requireHost={true}><Administration /> </ProtectedRoute>} />
                         </Routes>
-                        </SocketProvider>
                     </AuthProvider>
                 </CoinsContextProvider>
+                        </SocketProvider>
 
             </BrowserRouter>
         </div>

@@ -1,38 +1,37 @@
-import { createContext, useContext, useEffect, useRef } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
 const SocketContext = createContext<Socket | null>(null);
 
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
-  const socketRef = useRef<Socket | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const socket = io(import.meta.env.VITE_BACKEND_URL, {
+    const socketInstance = io(import.meta.env.VITE_BACKEND_URL, {
       withCredentials: true,
       transports: ['websocket', 'polling'],
     });
-    socketRef.current = socket;
 
-    socket.on('connect', () => {
+    setSocket(socketInstance);
+
+    socketInstance.on('connect', () => {
       console.log('✅ Connected to socket server');
     });
 
-    socket.on('disconnect', () => {
+    socketInstance.on('disconnect', () => {
       console.log('❌ Disconnected from socket server');
     });
 
     return () => {
-      socket.disconnect();
+      socketInstance.disconnect();
     };
   }, []);
 
   return (
-    <SocketContext.Provider value={socketRef.current}>
+    <SocketContext.Provider value={socket}>
       {children}
     </SocketContext.Provider>
   );
 };
 
-export const useSocket = () => {
-  return useContext(SocketContext);
-};
+export const useSocket = () => useContext(SocketContext);
