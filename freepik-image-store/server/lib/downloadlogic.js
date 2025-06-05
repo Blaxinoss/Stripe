@@ -111,6 +111,7 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
     let imageUrlDownload = null;
           page.on('response', response => {
                     const url = response.url().toLowerCase();
+                    console.log('[Response] 📡 Response URL:', url);
                             const validExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.svg', '.zip', '.mp4', '.mov'];
                              if (
             validExtensions.some(ext => url.endsWith(ext)) &&
