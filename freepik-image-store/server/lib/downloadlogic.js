@@ -1,5 +1,3 @@
-// ضيف السطور دي في أعلى ملف worker أو الملف الرئيسي
-const fs = require('fs');
 process.on('unhandledRejection', (reason, promise) => {
   console.error('🟥 Unhandled Rejection at:', promise, '\nReason:', reason);
 });
@@ -39,7 +37,6 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
       throw err;
     }
 
-    await page.screenshot({ path: 's.png', fullPage: true });
 
     const loginButtons = await page.$$('.continue-with > button');
     const isLoggedIn = loginButtons.length === 0;

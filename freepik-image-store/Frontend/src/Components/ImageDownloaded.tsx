@@ -197,7 +197,7 @@ const ImageDownloaded: React.FC = () => {
         <p className="text-center">No images found. Start downloading some!</p>
       )}
 
-<div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-5">
+<div className="grid grid-cols-[repeat(auto-fill,minmax(500px,1fr))] gap-5">
   {images.map((img) => (
     <div
       key={img._id}
