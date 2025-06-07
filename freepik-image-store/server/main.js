@@ -9,6 +9,7 @@ const { initSocket, getSocketInstance } = require("./socket");
 const { connectDB } = require("./configurations/database");
 const Image = require("./models/ImageModel");
 const Redis = require("ioredis");
+const { USER } = require("./models/User");
 const PORTLOCAL = process.env.PORTLOCAL;
 const bullBoardRouter = require("./lib/queue").Router;
 
@@ -131,12 +132,8 @@ redis.on("message", async (channel, message) => {
             await newImage.save();
             console.log(`Image saved to database for user ${userId}`);
           } else { 
-            existingImage.downloadCount += 1;
-            if (existingImage.downloadCount > existingImage.maxDownloads) {
-              console.error(`Maximum download limit reached for user ${userId}`);
-              return;
-            }
-            await existingImage.save(); 
+               await USER.updateOne({_id:userId} ,{$inc : {downloadsCount: 1}})
+            await existingImage.save();
             console.log(`Image already exists for user ${userId}`);
           }
 

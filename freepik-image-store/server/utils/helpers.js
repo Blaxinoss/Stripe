@@ -39,7 +39,7 @@ async function CreateSuper() {
             username: "Blaxinoss",
             salt: salt,
             hash: hash,
-            downloadsCount: 100,
+            downloadsCount: 0,
             role: "admin",
             coins: 100,
 
