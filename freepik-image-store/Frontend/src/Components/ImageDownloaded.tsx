@@ -13,8 +13,9 @@ interface Image {
 }
 
 const ImageDownloaded: React.FC = () => {
-  const { user, token } = useAuth();
+  const { user, token ,setUser} = useAuth();
   const socket = useSocket();
+
 
   const [images, setImages] = useState<Image[]>([]);
   const [error, setError] = useState<string | null>('');  
@@ -117,6 +118,11 @@ const ImageDownloaded: React.FC = () => {
           );
 
           resolveRef.current?.(data.imageUrl);
+               setUser(
+                (prev) =>{
+                  if(!prev) return prev;
+                  return {...prev, downloadsCount: (prev.downloadsCount || 0) + 1}
+               })
         } catch (err) {
           rejectRef.current?.(err);
           setError("Failed to update download URL");
