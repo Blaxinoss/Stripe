@@ -130,7 +130,13 @@ redis.on("message", async (channel, message) => {
             });
             await newImage.save();
             console.log(`Image saved to database for user ${userId}`);
-          } else {
+          } else { 
+            existingImage.downloadCount += 1;
+            if (existingImage.downloadCount > existingImage.maxDownloads) {
+              console.error(`Maximum download limit reached for user ${userId}`);
+              return;
+            }
+            await existingImage.save(); 
             console.log(`Image already exists for user ${userId}`);
           }
 
