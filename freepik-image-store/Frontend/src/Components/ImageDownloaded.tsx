@@ -17,11 +17,10 @@ const ImageDownloaded: React.FC = () => {
   const socket = useSocket();
 
   const [images, setImages] = useState<Image[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [jobId, setJobId] = useState<string | null>(null);
   const [imageIdForDownload, setImageIdForDownload] = useState<string | null>(null);
-const [downloadUrls, setDownloadUrls] = useState<{ [id: string]: string }>({});
 
   const resolveRef = useRef<(url: string) => void | null>(null);
   const rejectRef = useRef<(reason?: any) => void | null>(null);
@@ -149,8 +148,9 @@ const [downloadUrls, setDownloadUrls] = useState<{ [id: string]: string }>({});
         const job = await regenerateDownloadLink(image);
         setJobId(job);
         url = await waitForRegenerateLink()
+                fetchImages();
+
       }
-          setDownloadUrls((prev) => ({ ...prev, [image._id]: url }));        fetchImages();
 
       const { downloadCount } = await updateDownloadCount(image._id);
       const a = document.createElement("a");
@@ -181,7 +181,7 @@ const [downloadUrls, setDownloadUrls] = useState<{ [id: string]: string }>({});
 
       {error && (
         <div className="text-center mb-5">
-          <p className="text-red-500">Error: {error}</p>
+          <p className="text-orange-500">Error: {error}</p>
           <button
             onClick={fetchImages}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
@@ -211,22 +211,22 @@ const [downloadUrls, setDownloadUrls] = useState<{ [id: string]: string }>({});
       )}
       
       
-{downloadUrls[img._id] && (
   <img
-    src={downloadUrls[img._id]}
-    alt="Downloaded Image"
+    src={img.downloadUrl}
+    alt="Download Link Expired Click Download to Regenerate"
     loading="lazy"
     style={{
       width: "100%",
+      color:'red',
       height: "250px",
       objectFit: "cover",
       borderRadius: "20px",
       marginBottom: "5px",
       textAlign: "center",
     }}
-    onError={() => setError(`Failed to load image ${img._id}`)}
+    onError={() => setError(`Image ${new URL(img.downloadUrl).searchParams.get("filename")} has expired or is not available`)}
   />
-)}
+
  
 
       <div style={{ padding: "10px" }}>
@@ -252,4 +252,4 @@ const [downloadUrls, setDownloadUrls] = useState<{ [id: string]: string }>({});
   );
 };
 
-export default ImageDownloaded;
+export default ImageDownloaded; 
