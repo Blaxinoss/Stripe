@@ -154,8 +154,8 @@ const ImageDownloaded: React.FC = () => {
 
       const { downloadCount } = await updateDownloadCount(image._id);
       const a = document.createElement("a");
-      a.href = image.downloadUrl;
-      a.download = image.downloadUrl.split("/").pop() || "image";
+      a.href = downloadUrl;
+      a.download = downloadUrl.split("/").pop() || "image";
       a.click();
       
       setImages((prev) =>
