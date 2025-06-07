@@ -103,7 +103,6 @@ const blobDownload = async (url: string, filename = 'download.jpg') => {
         blobDownload(data.imageUrl, 'image.jpg');
           toast.success('Image download complete!, your file has been added to the gallery');
 toast.info(`100 coins deducted. You now have ${coins - 100} coins.`);
-          setCoins(coins - 100); // Deduct coins after successful download
         }
       }
     });

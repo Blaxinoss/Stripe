@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { useAuth } from "../context/AuthContext";
-import { useCoins } from "../context/CoinsContextProvider";
 
 
 type FormData = {
@@ -15,7 +14,6 @@ type FormData = {
 
 const Login = () => {
 
-    const { setCoins } = useCoins();
     const { setAuthData } = useAuth();
     const navigate = useNavigate();
     const [isError, setIsError] = useState<string>('');
@@ -51,7 +49,6 @@ const Login = () => {
                 setMessage(message);
                 setIsError("");
                 setAuthData(user, token, expiresIn);
-                setCoins(response.data.user.coins)
                 reset();
 
                 if (user.role === 'admin') {

@@ -2,6 +2,7 @@
 import axios from 'axios';
 import moment from 'moment';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { useCoins } from './CoinsContextProvider';
 
 interface User {
     _id: string;
@@ -28,6 +29,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(null);
     const [loading, setLoading] = useState(true); // عشان ما تعرضش الـ UI قبل ما تتحقق
+    const { setCoins } = useCoins();
 
 
     //to fix the reload 
@@ -61,6 +63,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         verifyToken();
     }, []);
+
+
+    useEffect(() => {
+      if (user?.coins != null) {
+        setCoins(user.coins);
+      }
+    }, [user]);
 
     const setAuthData = (user: User, token: string, expiresIn: string) => {
         try {
