@@ -139,34 +139,30 @@ const ImageDownloaded: React.FC = () => {
     if (!token) return setError("No token");
 
     setImageIdForDownload(image._id);
+      if (image.downloadCount >= 3) return setError("Max download limit reached.");
 
     try {
       const headRes = await fetch(image.downloadUrl, { method: "HEAD" });
+      let downloadUrl = image.downloadUrl
 
       if (!headRes.ok) {
         const job = await regenerateDownloadLink(image);
         setJobId(job);
-        const newUrl = await waitForRegenerateLink();
-
-        setImages((prev) =>
-          prev.map((img) =>
-            img._id === image._id ? { ...img, downloadUrl: newUrl } : img
-          )
-        );
+         downloadUrl= await waitForRegenerateLink();
+        fetchImages();
       }
 
-      if (image.downloadCount >= 3) return setError("Max download limit reached.");
-
       const { downloadCount } = await updateDownloadCount(image._id);
-
       const a = document.createElement("a");
       a.href = image.downloadUrl;
       a.download = image.downloadUrl.split("/").pop() || "image";
       a.click();
-
+      
       setImages((prev) =>
         prev.map((img) => (img._id === image._id ? { ...img, downloadCount } : img))
       );
+      
+
     } catch (err) {
       setError("Download failed. Please try again.");
     }
