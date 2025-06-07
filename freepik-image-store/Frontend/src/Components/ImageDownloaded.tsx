@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
+import { set } from "react-hook-form";
 
 interface Image {
   pageUrl: string;
@@ -21,6 +22,7 @@ const ImageDownloaded: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [jobId, setJobId] = useState<string | null>(null);
   const [imageIdForDownload, setImageIdForDownload] = useState<string | null>(null);
+const [downloadUrls, setDownloadUrls] = useState<{ [id: string]: string }>({});
 
   const resolveRef = useRef<(url: string) => void | null>(null);
   const rejectRef = useRef<(reason?: any) => void | null>(null);
@@ -143,21 +145,20 @@ const ImageDownloaded: React.FC = () => {
 
     try {
       const headRes = await fetch(image.downloadUrl, { method: "HEAD" });
-      let downloadUrl = image.downloadUrl
-
+      let url = image.downloadUrl;
       if (!headRes.ok) {
         const job = await regenerateDownloadLink(image);
         setJobId(job);
-         downloadUrl= await waitForRegenerateLink();
-        fetchImages();
+        url = await waitForRegenerateLink()
       }
+          setDownloadUrls((prev) => ({ ...prev, [image._id]: url }));        fetchImages();
 
       const { downloadCount } = await updateDownloadCount(image._id);
       const a = document.createElement("a");
-      a.href = downloadUrl;
-      a.download = downloadUrl.split("/").pop() || "image";
-      a.click();
-      
+    a.href = url;
+    a.download = url.split("/").pop() || "image";
+    a.click();
+
       setImages((prev) =>
         prev.map((img) => (img._id === image._id ? { ...img, downloadCount } : img))
       );
@@ -176,7 +177,7 @@ const ImageDownloaded: React.FC = () => {
   };
 
   return (
-    <div className="p-5 max-w-6xl mx-auto">
+    <div className="p-5 ">
       <h1 className="text-center mb-5 text-xl font-semibold">Your Image Gallery</h1>
 
       {error && (
@@ -197,33 +198,37 @@ const ImageDownloaded: React.FC = () => {
         <p className="text-center">No images found. Start downloading some!</p>
       )}
 
-<div className="grid grid-cols-[repeat(auto-fill,minmax(500px,1fr))] gap-5">
+<div className="grid grid-cols-2 gap-5">
   {images.map((img) => (
     <div
       key={img._id}
       className="border rounded-lg shadow p-2 flex flex-col items-center"
     >
       {img.downloadUrl && (
-        <p className="text-sm truncate">
+        <p className="truncate">
           {new URL(img.downloadUrl).searchParams.get("filename")} -{" "}
           {getExpiryDate(new URL(img.downloadUrl)) || "No expiry"}
         </p>
       )}
-
-      <img
-        src={img.downloadUrl}
-        alt={`Image ${img.jobId}`}
-        loading="lazy"
-        style={{
-          width: "100%",
-          height: "150px",
-          objectFit: "cover",
-          borderRadius: "20px",
-          marginBottom: "5px",
-          marginTop: "5px",
-        }}
-        onError={() => setError(`Failed to load image ${img.jobId}`)}
-      />
+      
+      
+{downloadUrls[img._id] && (
+  <img
+    src={downloadUrls[img._id]}
+    alt="Downloaded Image"
+    loading="lazy"
+    style={{
+      width: "100%",
+      height: "250px",
+      objectFit: "cover",
+      borderRadius: "20px",
+      marginBottom: "5px",
+      textAlign: "center",
+    }}
+    onError={() => setError(`Failed to load image ${img._id}`)}
+  />
+)}
+ 
 
       <div style={{ padding: "10px" }}>
         <button
