@@ -17,7 +17,7 @@ const ImageDownloaded: React.FC = () => {
   const socket = useSocket();
 
   const [images, setImages] = useState<Image[]>([]);
-  const [error, setError] = useState<string | null>('');
+  const [error, setError] = useState<string | null>('');  
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [jobId, setJobId] = useState<string | null>(null);
   const [imageIdForDownload, setImageIdForDownload] = useState<string | null>(null);
@@ -148,7 +148,6 @@ const ImageDownloaded: React.FC = () => {
         const job = await regenerateDownloadLink(image);
         setJobId(job);
         url = await waitForRegenerateLink()
-                fetchImages();
 
       }
 
@@ -157,6 +156,8 @@ const ImageDownloaded: React.FC = () => {
     a.href = url;
     a.download = url.split("/").pop() || "image";
     a.click();
+                    fetchImages();
+
 
       setImages((prev) =>
         prev.map((img) => (img._id === image._id ? { ...img, downloadCount } : img))
@@ -224,6 +225,8 @@ const ImageDownloaded: React.FC = () => {
       marginBottom: "5px",
       textAlign: "center",
     }}
+      draggable={false}
+      onContextMenu={(e) => e.preventDefault()}
     onError={() => setError(`Image ${new URL(img.downloadUrl).searchParams.get("filename")} has expired or is not available`)}
   />
 

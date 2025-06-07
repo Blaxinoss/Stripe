@@ -232,6 +232,8 @@ const downloadImage = async (imageId: number) => {
                     alt={img.title}
                     className="w-full h-48 object-cover rounded-md mb-3"
                     loading="lazy"
+                      onContextMenu={(e) => e.preventDefault()}
+                        draggable={false}
                   />
                   <h3 className="text-lg font-semibold text-gray-800 truncate">
                     {img.title}
