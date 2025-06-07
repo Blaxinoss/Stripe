@@ -117,6 +117,8 @@ const ImageDownloaded: React.FC = () => {
             )
           );
 
+
+
           resolveRef.current?.(data.imageUrl);
                setUser(
                 (prev) =>{
@@ -211,7 +213,7 @@ const ImageDownloaded: React.FC = () => {
       className="border rounded-lg shadow p-2 flex flex-col items-center"
     >
       {img.downloadUrl && (
-        <p className="truncate">
+        <p className="text-sm text-gray-500 mb-2">
           {new URL(img.downloadUrl).searchParams.get("filename")} -{" "}
           {getExpiryDate(new URL(img.downloadUrl)) || "No expiry"}
         </p>
