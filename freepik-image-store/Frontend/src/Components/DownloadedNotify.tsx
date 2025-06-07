@@ -85,7 +85,7 @@ const blobDownload = async (url: string, filename = 'download.jpg') => {
         } else {
           try{
                 purchasehandler?.()
-                setCoins(coins - 100);
+                setCoins((prev)=>prev-100);
                setUser(
                 (prev) =>{
                   if(!prev) return prev;

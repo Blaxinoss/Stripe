@@ -3,7 +3,7 @@ import { createContext, ReactNode, useContext, useState } from 'react';
 // النوع اللي هيتم تمريره داخل الـ context
 type CoinsContextType = {
   coins: number;
-  setCoins: (value: number) => void;
+  setCoins: React.Dispatch<React.SetStateAction<number>>;
 };
 
 // أنشئ context بنوع مبدئي
