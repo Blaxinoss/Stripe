@@ -132,10 +132,10 @@ redis.on("message", async (channel, message) => {
             await newImage.save();
             console.log(`Image saved to database for user ${userId}`);
           } else { 
-               await USER.updateOne({_id:userId} ,{$inc : {downloadsCount: 1}})
-            await existingImage.save();
             console.log(`Image already exists for user ${userId}`);
           }
+                         await USER.updateOne({_id:userId} ,{$inc : {downloadsCount: 1}})
+
 
           io.to(userId).emit("downloadedImage", { userId, imageUrl, jobId });
         } catch (error) {
