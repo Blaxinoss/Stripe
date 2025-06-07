@@ -11,10 +11,11 @@ interface DownloadedNotifyProps {
 }
 
 
+
 const DownloadedNotify: React.FC<DownloadedNotifyProps> = ({ jobId, onLoadingChange,purchasehandler }) => {
 
   
-  const { user } = useAuth();
+  const { user ,setUser} = useAuth();
   const {coins,setCoins} = useCoins();
   const [imageDownloadUrl, setImageDownloadUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -84,7 +85,13 @@ const blobDownload = async (url: string, filename = 'download.jpg') => {
         } else {
           try{
                 purchasehandler?.()
-
+                setCoins(coins - 100);
+               setUser(
+                (prev) =>{
+                  if(!prev) return prev;
+                  return {...prev, downloadsCount: (prev.downloadsCount || 0) + 1}
+               })
+                
           }catch(error) {
             console.error('purchasehandler threw an error:', error);
             setError('An error occurred while [purchasing the image]. Please try again later.');
