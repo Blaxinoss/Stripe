@@ -95,6 +95,7 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
 
     console.log('[Download] 📦 Navigating to asset download link...');
     try {
+      page.screenshot({ path: `before_navigate_${userId}.png` });
       await page.goto(downloadLink, { waitUntil: 'networkidle2', timeout: 60000 });
     } catch (err) {
       console.error('🟥 Error in page.goto downloadLink:', err);
@@ -102,6 +103,8 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
     }
 
     console.log('[Download] ⬇️ Click download button...');
+          page.screenshot({ path: `before_download_${userId}.png` });
+
     await page.click('[data-cy="download-button"]');
 
     console.log('[Waiting] 📡 Waiting for download request...');
