@@ -153,7 +153,7 @@ redis.on("message", async (channel, message) => {
 });
     
 
-server.listen(PORTLOCAL, () => {
+server.listen(PORTLOCAL,'0.0.0.0' ,() => {
   console.log(`Server running on http://localhost:${PORTLOCAL}`);
 });
 
