@@ -11,10 +11,11 @@ interface DownloadedNotifyProps {
 }
 
 
+
 const DownloadedNotify: React.FC<DownloadedNotifyProps> = ({ jobId, onLoadingChange,purchasehandler }) => {
 
   
-  const { user } = useAuth();
+  const { user ,setUser} = useAuth();
   const {coins,setCoins} = useCoins();
   const [imageDownloadUrl, setImageDownloadUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -84,7 +85,13 @@ const blobDownload = async (url: string, filename = 'download.jpg') => {
         } else {
           try{
                 purchasehandler?.()
-
+                setCoins((prev)=>prev-100);
+               setUser(
+                (prev) =>{
+                  if(!prev) return prev;
+                  return {...prev, downloadsCount: (prev.downloadsCount || 0) + 1}
+               })
+                
           }catch(error) {
             console.error('purchasehandler threw an error:', error);
             setError('An error occurred while [purchasing the image]. Please try again later.');
@@ -96,21 +103,22 @@ const blobDownload = async (url: string, filename = 'download.jpg') => {
         blobDownload(data.imageUrl, 'image.jpg');
           toast.success('Image download complete!, your file has been added to the gallery');
 toast.info(`100 coins deducted. You now have ${coins - 100} coins.`);
-          setCoins(coins - 100); // Deduct coins after successful download
         }
       }
     });
 
     socket.on('downloadFailed', (data: { jobId: string, userId: string, error: string }) => {
+      console.log('downloadFailed event received:');
      if (data.jobId === jobId) {
         if (data.userId !== user._id) {
           setError('User ID mismatch.');
         }
         else {
+          setError(`Download failed: ${data.error}`);
         setImageDownloadUrl(null);
           setIsLoading(false);
           onLoadingChange?.(false); 
-          toast.error('an Error occurred while downloading the image.'); // Show error toast
+          toast.error(`an Error occurred while downloading the image. ${data.error}`); // Show error toast
           toast.warn(`failed to download the Image`);  // Show success toast
       }
       }
@@ -126,7 +134,7 @@ toast.info(`100 coins deducted. You now have ${coins - 100} coins.`);
 
   return (
     <div>
-      {error && <p style={{ color: 'red', marginBottom: '10px' }}>{error}</p>}
+      {error && <> <p style={{ color: 'red', marginBottom: '10px' }}>{error} </p> <span  onClick ={()=>{setError('')}} className='text-wihte'>Click to hide</span> </>}
       {isLoading && <p>Loading image...</p>}
       {imageDownloadUrl && (
         <div>

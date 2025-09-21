@@ -92,11 +92,7 @@ redis.subscribe("download:failed", (err) => {
 // Listen for messages from Redis
 redis.on("message", async (channel, message) => {
   try {
-    const { userId, imageUrl, jobId, pageUrl, jobName } = JSON.parse(message);
-    if (!userId || !imageUrl || !jobName) {
-      console.error("Missing userId, imageUrl, or jobName in Redis message");
-      return;
-    }
+   
 
     const io = getSocketInstance();
     if (!io) {
@@ -105,6 +101,12 @@ redis.on("message", async (channel, message) => {
     }
 
     if (channel === "download:completed") {
+       const { userId, imageUrl, jobId, pageUrl, jobName } = JSON.parse(message);
+    if (!userId || !imageUrl || !jobName) {
+      console.error("Missing userId, imageUrl, or jobName in Redis message");
+      return;
+    }
+
       console.log(`Emitting downloadedImage to user ${userId}`);
 
       if (jobName === "regenerateDownloadLink") {
@@ -143,7 +145,14 @@ redis.on("message", async (channel, message) => {
         }
       }
     } else if (channel === "download:failed") {
-      const { userId, jobId, error } = JSON.parse(message);
+        const { userId, jobId, jobName, error } = JSON.parse(message);
+
+      if (!userId || !jobId || !error) {
+        console.error("Missing userId, jobId, or error in failed message");
+        return;
+      }
+
+      console.log(`Emitting downloadFailed to user ${userId}`);
       console.error(`Download failed for user ${userId}, job ID: ${jobId}, error: ${error}`);
       io.to(userId).emit("downloadFailed", { userId, jobId, error });
     }

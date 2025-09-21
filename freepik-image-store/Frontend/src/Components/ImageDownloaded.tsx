@@ -13,8 +13,9 @@ interface Image {
 }
 
 const ImageDownloaded: React.FC = () => {
-  const { user, token } = useAuth();
+  const { user, token ,setUser} = useAuth();
   const socket = useSocket();
+
 
   const [images, setImages] = useState<Image[]>([]);
   const [error, setError] = useState<string | null>('');  
@@ -116,7 +117,14 @@ const ImageDownloaded: React.FC = () => {
             )
           );
 
+
+
           resolveRef.current?.(data.imageUrl);
+               setUser(
+                (prev) =>{
+                  if(!prev) return prev;
+                  return {...prev, downloadsCount: (prev.downloadsCount || 0) + 1}
+               })
         } catch (err) {
           rejectRef.current?.(err);
           setError("Failed to update download URL");
@@ -205,7 +213,7 @@ const ImageDownloaded: React.FC = () => {
       className="border rounded-lg shadow p-2 flex flex-col items-center"
     >
       {img.downloadUrl && (
-        <p className="truncate">
+        <p className="text-sm text-gray-500 mb-2">
           {new URL(img.downloadUrl).searchParams.get("filename")} -{" "}
           {getExpiryDate(new URL(img.downloadUrl)) || "No expiry"}
         </p>

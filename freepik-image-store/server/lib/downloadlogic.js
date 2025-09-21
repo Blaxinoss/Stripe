@@ -10,6 +10,7 @@ const puppeteer = require('puppeteer-extra');
 const { default: RecaptchaPlugin, BuiltinSolutionProviders } = require('puppeteer-extra-plugin-recaptcha');
 const NextCaptchaProvider = require('puppeteer-extra-plugin-recaptcha-nextcaptcha');
 
+console.log(process.env.CAP)
 NextCaptchaProvider.use(BuiltinSolutionProviders);
 puppeteer.use(
   RecaptchaPlugin({
@@ -65,13 +66,14 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
       console.log('[Login] 📧 Clicked "Continue with email"');
 
       await page.waitForSelector('input[name="email"]');
-      await page.type('input[name="email"]', 'abdullahismael078@gmail.com', { delay: 100 });
+      await page.type('input[name="email"]', process.env.Login, { delay: 100 });
 
       await page.waitForSelector('input[name="password"]');
-      await page.type('input[name="password"]', 'Asdqwe123564@', { delay: 100 });
+      await page.type('input[name="password"]', process.env.Password, { delay: 100 });
 
       await page.click('button#submit');
       console.log('[Login] 🔐 Submitted login credentials');
+      
 
       console.log('[Captcha] 🧠 Solving CAPTCHA...');
       const { solved, error } = await page.solveRecaptchas();
@@ -79,6 +81,7 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
       console.log('[Captcha] ✅ CAPTCHA solved:', solved);
 
       console.log('[Navigation] ⏳ Waiting for navigation after login...');
+      
       await Promise.race([
         page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 30000 }),
         await new Promise(res => setTimeout(res, 15000))
@@ -87,10 +90,12 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
       console.log('[Navigation] ✅ Login navigation complete or fallback timeout hit');
 
       console.log('🌐 Current URL after login:', page.url());
+      
     }
 
     console.log('[Download] 📦 Navigating to asset download link...');
     try {
+      page.screenshot({ path: `before_navigate_${userId}.png` });
       await page.goto(downloadLink, { waitUntil: 'networkidle2', timeout: 60000 });
     } catch (err) {
       console.error('🟥 Error in page.goto downloadLink:', err);
@@ -98,6 +103,8 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
     }
 
     console.log('[Download] ⬇️ Click download button...');
+          page.screenshot({ path: `before_download_${userId}.png` });
+
     await page.click('[data-cy="download-button"]');
 
     console.log('[Waiting] 📡 Waiting for download request...');
