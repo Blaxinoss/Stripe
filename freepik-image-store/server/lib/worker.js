@@ -63,9 +63,27 @@ worker.on('completed', (job, result) => {
   console.log(`✅ Job ${job.id} completed with result:`, result);
 });
 
-worker.on('failed', (job, err) => {
+worker.on('failed', async (job, err) => {
   console.error(`❌ Job ${job.id} failed with error: ${err.message}`);
+
+  try {
+    // إرسال إشعار للفشل بنفس الطريقة كما في completed
+        console.log('failed published')
+
+    await redis.publish(
+      'download:failed',
+      JSON.stringify({
+        userId: job.data.userId,
+        jobId: job.id,
+        jobName: job.name,
+        error: err.message,
+      })
+    );
+  } catch (pubErr) {
+    console.error('❌ Failed to publish download:failed event:', pubErr.message);
+  }
 });
+
 
 worker.on('active', (job) => {
   console.log(`🟡 Job ${job.id} is now active`);

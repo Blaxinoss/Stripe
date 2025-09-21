@@ -108,15 +108,17 @@ toast.info(`100 coins deducted. You now have ${coins - 100} coins.`);
     });
 
     socket.on('downloadFailed', (data: { jobId: string, userId: string, error: string }) => {
+      console.log('downloadFailed event received:');
      if (data.jobId === jobId) {
         if (data.userId !== user._id) {
           setError('User ID mismatch.');
         }
         else {
+          setError(`Download failed: ${data.error}`);
         setImageDownloadUrl(null);
           setIsLoading(false);
           onLoadingChange?.(false); 
-          toast.error('an Error occurred while downloading the image.'); // Show error toast
+          toast.error(`an Error occurred while downloading the image. ${data.error}`); // Show error toast
           toast.warn(`failed to download the Image`);  // Show success toast
       }
       }
@@ -132,7 +134,7 @@ toast.info(`100 coins deducted. You now have ${coins - 100} coins.`);
 
   return (
     <div>
-      {error && <p style={{ color: 'red', marginBottom: '10px' }}>{error}</p>}
+      {error && <> <p style={{ color: 'red', marginBottom: '10px' }}>{error} </p> <span  onClick ={()=>{setError('')}} className='text-wihte'>Click to hide</span> </>}
       {isLoading && <p>Loading image...</p>}
       {imageDownloadUrl && (
         <div>
