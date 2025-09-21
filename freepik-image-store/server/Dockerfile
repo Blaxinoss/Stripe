@@ -47,19 +47,13 @@ RUN chromium --version
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
-# Create a non-root user
-RUN useradd -m appuser
-USER appuser
-
 # Create working dir
 WORKDIR /app
 
 # Copy and install Node.js dependencies
-COPY --chown=appuser:appuser package*.json ./
+COPY  package*.json ./
 RUN npm ci
-
-# Copy application code
-COPY --chown=appuser:appuser . .
+COPY . .
 
 # Expose port and run app
 EXPOSE 5000

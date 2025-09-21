@@ -16,7 +16,7 @@ puppeteer.use(
   RecaptchaPlugin({
     provider: {
       id: 'nextcaptcha',
-      token: process.env.CAP,
+      token:process.env.CAP,
     },
     visualFeedback: true,
   })
