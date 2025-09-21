@@ -95,7 +95,7 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
 
     console.log('[Download] 📦 Navigating to asset download link...');
     try {
-x      await page.goto(downloadLink, { waitUntil: 'networkidle2', timeout: 60000 });
+     await page.goto(downloadLink, { waitUntil: 'networkidle2', timeout: 60000 });
     } catch (err) {
       console.error('🟥 Error in page.goto downloadLink:', err);
       throw err;
