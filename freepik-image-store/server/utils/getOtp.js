@@ -324,8 +324,8 @@ await page.waitForFunction(() => {
 
     if (verifyButton) {
       console.log('[Verification] 🚀 Clicking submit button...');
-      await verifyButton.click();
-      console.log('[Verification] ✅ Submit button clicked');
+    await page.evaluate(el => el.click(), verifyButton);
+          console.log('[Verification] ✅ Submit button clicked');
       
       // انتظار للنتيجة
       await Promise.race([
