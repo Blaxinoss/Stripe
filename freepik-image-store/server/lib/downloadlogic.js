@@ -124,10 +124,10 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
       console.log('[Navigation] ✅ Login navigation complete');
       console.log('🌐 Current URL after login:', page.url());
     }
-
+    await page.waitForTimeout(3000); // انتظار بسيط قبل الانتقال للتحميل
     console.log('[Download] 📦 Navigating to asset download link...');
     try {
-     await page.goto(downloadLink, { waitUntil: 'networkidle2', timeout: 60000 });
+     await page.goto(downloadLink, { waitUntil: 'networkidle2', timeout: 120000 });
     } catch (err) {
       console.error('🟥 Error in page.goto downloadLink:', err);
       throw err;
