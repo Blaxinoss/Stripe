@@ -12,7 +12,7 @@ async function createBrowserPool() {
     puppeteer, // ✅ هنا بتمرر puppeteer-extra المعدّل
     concurrency: Cluster.CONCURRENCY_PAGE,
     maxConcurrency: 3,
-   timeout: 120000,
+   timeout: 160000,
     puppeteerOptions: {
         headless: 'new',
         executablePath: '/usr/bin/chromium', 

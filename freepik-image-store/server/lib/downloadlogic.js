@@ -1,3 +1,5 @@
+const {getOtpFromEmail, handleVerificationCode} = require('../utils/getOtp'); // ❌ امسح detectVerificationPage
+
 process.on('unhandledRejection', (reason, promise) => {
   console.error('🟥 Unhandled Rejection at:', promise, '\nReason:', reason);
 });
@@ -10,7 +12,6 @@ const puppeteer = require('puppeteer-extra');
 const { default: RecaptchaPlugin, BuiltinSolutionProviders } = require('puppeteer-extra-plugin-recaptcha');
 const NextCaptchaProvider = require('puppeteer-extra-plugin-recaptcha-nextcaptcha');
 
-console.log(process.env.CAP)
 NextCaptchaProvider.use(BuiltinSolutionProviders);
 puppeteer.use(
   RecaptchaPlugin({
@@ -37,7 +38,6 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
       console.error('🟥 Error in page.goto login:', err);
       throw err;
     }
-
 
     const loginButtons = await page.$$('.continue-with > button');
     const isLoggedIn = loginButtons.length === 0;
@@ -73,7 +73,6 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
 
       await page.click('button#submit');
       console.log('[Login] 🔐 Submitted login credentials');
-      
 
       console.log('[Captcha] 🧠 Solving CAPTCHA...');
       const { solved, error } = await page.solveRecaptchas();
@@ -82,15 +81,46 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
 
       console.log('[Navigation] ⏳ Waiting for navigation after login...');
       
+      // ✅ الطريقة الجديدة - جرب verification مباشرة
+      console.log('[Verification] 🔍 Attempting to handle verification if present...');
+      
+      try {
+        // انتظار قصير للتأكد من تحميل الصفحة
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        const otpCode = await getOtpFromEmail(3, 10000); // 3 محاولات، كل 10 ثوان
+        if (!otpCode) {
+          console.log('[Verification] ℹ️ No OTP found, assuming no verification needed');
+        } else {
+          console.log('[Verification] ✅ OTP code retrieved:', otpCode);
+          
+          await handleVerificationCode(page, otpCode);
+          console.log('[Verification] ✅ Verification code submitted successfully');
+        }
+        
+      } catch (verificationError) {
+        // فحص نوع الخطأ
+        if (verificationError.message.includes('Verification code input field not found') ||
+            verificationError.message.includes('No verification emails found')) {
+          console.log('[Verification] ℹ️ No verification page detected, continuing normal flow...');
+          // استكمال عادي - مش مشكلة
+        } else if (verificationError.message.includes('Verification failed')) {
+          console.error('[Verification] ❌ Verification failed with wrong code');
+          throw verificationError; // re-throw لأنه خطأ مهم
+        } else {
+          console.warn('[Verification] ⚠️ Verification error (continuing anyway):', verificationError.message);
+          // استكمال عادي - ممكن يكون خطأ مؤقت
+        }
+      }
+
+      // انتظار navigation بعد login (مع أو بدون verification)
       await Promise.race([
         page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 30000 }),
-        await new Promise(res => setTimeout(res, 15000))
+        new Promise(res => setTimeout(res, 15000))
       ]);
 
-      console.log('[Navigation] ✅ Login navigation complete or fallback timeout hit');
-
+      console.log('[Navigation] ✅ Login navigation complete');
       console.log('🌐 Current URL after login:', page.url());
-      
     }
 
     console.log('[Download] 📦 Navigating to asset download link...');
@@ -102,44 +132,43 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
     }
 
     console.log('[Download] ⬇️ Click download button...');
-
     await page.click('[data-cy="download-button"]');
 
     console.log('[Waiting] 📡 Waiting for download request...');
-      
-
 
     try {
-    let imageUrlDownload = null;
-          page.on('response', response => {
-                    const url = response.url().toLowerCase();
-                    console.log('[Response] 📡 Response URL:', url);
-                            const validExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.svg', '.zip', '.mp4', '.mov'];
-                             if (
-            validExtensions.some(ext => url.endsWith(ext)) &&
-            !url.includes('cdn-front')
-        ) {
-            imageUrlDownload = url;
+      let imageUrlDownload = null;
+      
+      page.on('response', response => {
+        const url = response.url().toLowerCase();
+        console.log('[Response] 📡 Response URL:', url);
+        const validExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.svg', '.zip', '.mp4', '.mov'];
+        
+        if (validExtensions.some(ext => url.endsWith(ext)) && !url.includes('cdn-front')) {
+          imageUrlDownload = url;
         }
-    });
+      });
 
-        await new Promise(res => setTimeout(res,Math.random() * 5000 + 3000))
-   if (!imageUrlDownload) {
-  throw new Error('❌ No image URL found in network response');
+      await new Promise(res => setTimeout(res, Math.random() * 5000 + 3000));
+      
+      if (!imageUrlDownload) {
+        throw new Error('❌ No image URL found in network response');
+      }
+
+      console.log('[Success] ✅ Image URL:', imageUrlDownload);
+      console.log(`[Done] 🎉 Job completed in ${((Date.now() - startTime) / 1000).toFixed(2)}s`);
+
+      return { success: true, imageUrl: imageUrlDownload };
+
+    } catch (err) {
+      console.error('[Error] ❌ Failed to find image URL in network response:', err);
+      throw new Error('❌ Failed to find image URL in network response: ' + err.message); 
+    }
+    
+  } catch (err) {
+    console.error('[Error] ❌ Worker logic failed:', err.stack || err);
+    throw new Error('❌ Worker Logic Failed: ' + err.message);
+  }
 }
 
-console.log('[Success] ✅ Image URL:', imageUrlDownload);
-console.log(`[Done] 🎉 Job completed in ${((Date.now() - startTime) / 1000).toFixed(2)}s`);
-
-
-return { success: true, imageUrl: imageUrlDownload };
-
-}catch (err) {
-  console.error('[Error] ❌ Failed to find image URL in network response:', err);
-  throw new Error('❌ Failed to find image URL in network response: ' + err.message); 
-}
-} catch (err) {
-  console.error('[Error] ❌ Worker logic failed:', err.stack || err);
-  throw new Error('❌ Worker Logic Failed: ' + err.message);
-}}
 module.exports = { downloadWorkerLogic };
