@@ -112,14 +112,14 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
           // استكمال عادي - ممكن يكون خطأ مؤقت
         }
       }
-    page.screenshot({ path: `debug_code_entered_${Date.now()}.png`, fullPage: true });
+    page.screenshot({ path: `debugout_code_entered_${Date.now()}.png`, fullPage: true });
 
       // انتظار navigation بعد login (مع أو بدون verification)
       await Promise.race([
         page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 30000 }),
         new Promise(res => setTimeout(res, 15000))
       ]);
-    page.screenshot({ path: `debug_code_entered_${Date.now()}.png`, fullPage: true });
+    page.screenshot({ path: `debugout_code_entered_${Date.now()}.png`, fullPage: true });
 
       console.log('[Navigation] ✅ Login navigation complete');
       console.log('🌐 Current URL after login:', page.url());
