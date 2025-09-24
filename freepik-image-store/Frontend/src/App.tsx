@@ -16,7 +16,6 @@ import { SocketProvider } from "./context/SocketContext";
 
 function App() {
     return (
-        <div className="min-h-screen flex justify-center items-center bg-[#003f5c] font-sans  ">
             <BrowserRouter>
                                     <SocketProvider>
 
@@ -39,7 +38,6 @@ function App() {
                         </SocketProvider>
 
             </BrowserRouter>
-        </div>
     )
 }
 

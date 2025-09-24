@@ -1,118 +1,223 @@
-import { Link } from "react-router-dom"
-import { isLoggedIn } from "../utils";
+// Note: This component expects Link from react-router-dom and isLoggedIn from utils to be available
+// For demo purposes, I'll simulate these with placeholders
 
+import { Link } from "react-router-dom";
 
 const Home = () => {
-    return (
-        <div className="flex flex-col w-full min-h-screen bg-slate-50">
-          {/* Hero Section */}
-          <section className="relative py-24 md:py-32 overflow-hidden bg-gradient-to-br from-indigo-900 via-blue-800 to-violet-900">
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d')] bg-cover bg-center opacity-10"></div>
-            <div className="absolute inset-0 bg-gradient-to-r from-indigo-900/90 to-violet-900/90"></div>
-            <div className="relative container mx-auto px-6 text-center z-10">
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-100 to-white animate-fade-in">
-                Premium Images <br className="hidden md:block" /> Within Your Reach
-              </h1>
-              <p className="text-xl md:text-2xl mb-12 max-w-2xl mx-auto text-blue-100/90">
-                Unlock thousands of high-quality images with a simple coin system. Fuel your creativity!
-              </p>
-              <a
-                href="#get-started"
-                className="group inline-flex items-center gap-2 bg-gradient-to-r from-cyan-400 to-blue-500 text-white font-medium px-8 py-4 rounded-full text-lg hover:from-cyan-500 hover:to-blue-600 transform hover:-translate-y-1 transition-all duration-300 ease-out shadow-lg hover:shadow-cyan-500/25"
-              >
-                Get Started
-                              </a>
-            </div>
-            
-            {/* Abstract shapes */}
-            <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-violet-600 rounded-full filter blur-3xl opacity-20 animate-pulse"></div>
-            <div className="absolute -top-24 -right-24 w-72 h-72 bg-blue-600 rounded-full filter blur-3xl opacity-20 animate-pulse"></div>
-          </section>
+    // Placeholder for isLoggedIn function - replace with your actual import
+    const isLoggedIn = () => false;
     
+    // Placeholder Link component - replace with your actual react-router-dom Link
+
+
+    return (
+        <div className="flex flex-col w-full min-h-screen bg-black relative overflow-hidden">
+          {/* Animated Background */}
+          <div className="fixed inset-0 z-0">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-black to-cyan-900"></div>
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-pink-500 to-violet-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
+            <div className="absolute top-3/4 right-1/4 w-96 h-96 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
+            <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+          </div>
+
+          {/* Hero Section */}
+          <section className="relative py-12 md:py-40 z-10">
+            <div className="container mx-auto px-6 text-center">
+              <div className="relative">
+                <div className="absolute -inset-4 bg-gradient-to-r from-pink-600 via-purple-600 to-cyan-600 rounded-lg blur-2xl opacity-30 animate-pulse"></div>
+                <h1 className="relative text-6xl md:text-7xl lg:text-8xl font-black mb-8 leading-none">
+                  <span className="block bg-clip-text text-transparent bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400 animate-pulse">
+                    PREMIUM
+                  </span>
+                  <span className="block bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-400 to-violet-400">
+                    ASSETS
+                  </span>
+                  <span className="block text-2xl md:text-3xl font-light text-gray-300 mt-4">
+                    WITHIN YOUR REACH
+                  </span>
+                </h1>
+              </div>
+              
+              <p className="text-xl md:text-2xl mb-16 max-w-3xl mx-auto text-gray-300 font-light leading-relaxed">
+                Unlock thousands of <span className="text-pink-400 font-semibold">high-quality images</span> with our revolutionary coin system, 
+                <span className="text-cyan-400 font-semibold"> Fuel your creativity</span> like never before.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                <a
+                  href="#get-started"
+                  className="group relative inline-flex items-center gap-3 bg-gradient-to-r from-pink-500 via-purple-600 to-cyan-500 text-white font-bold px-12 py-5 rounded-full text-xl hover:scale-110 transition-all duration-500 ease-out shadow-2xl hover:shadow-pink-500/50 overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <span className="relative z-10">GET STARTED</span>
+                  <svg className="relative z-10 w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </a>
+                
+              
+              </div>
+            </div>
+          </section>
+
           {/* Features Section */}
-          <section id="features" className="py-24 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-blue-50 to-slate-50"></div>
-            <div className="container relative mx-auto px-6 z-10">
-              <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-gray-800">
-                Our <span className="text-blue-600">Premium</span> Features
-              </h2>
+          <section id="features" className="relative py-24 z-10">
+            <div className="container mx-auto px-6">
+              <div className="text-center mb-20">
+                <h2 className="text-5xl md:text-6xl font-black mb-6">
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-400 via-pink-500 to-purple-600">
+                    REVOLUTIONARY
+                  </span>
+                  <br />
+                  <span className="text-white">FEATURES</span>
+                </h2>
+                <div className="w-32 h-1 bg-gradient-to-r from-pink-500 to-cyan-500 mx-auto rounded-full"></div>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
                 {/* Feature Card 1 */}
-                <div className="backdrop-blur-sm bg-white/80 p-8 rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition duration-300 transform hover:-translate-y-2">
-                  <div className="flex items-center justify-center w-16 h-16 mb-6 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>
+                <div className="group relative">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-pink-600 to-purple-600 rounded-3xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+                  <div className="relative bg-gray-900 p-10 rounded-3xl border border-gray-800 hover:border-pink-500/50 transition-all duration-500">
+                    <div className="flex items-center justify-center w-20 h-20 mb-8 rounded-2xl bg-gradient-to-br from-pink-500 to-purple-600 text-white group-hover:scale-110 transition-transform duration-500">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path>
+                        <circle cx="12" cy="13" r="3"></circle>
+                      </svg>
+                    </div>
+                    <h3 className="text-2xl font-bold mb-4 text-white group-hover:text-pink-400 transition-colors duration-300">
+                      CURATED COLLECTION
+                    </h3>
+                    <p className="text-gray-400 text-lg leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
+                      Hand-selected professional photos crafted for your most ambitious creative projects and design endeavors.
+                    </p>
                   </div>
-                  <h3 className="text-xl font-semibold mb-3 text-gray-900">Curated Collection</h3>
-                  <p className="text-gray-600">Hand-selected professional photos for any design project or creative endeavor.</p>
                 </div>
-                
+
                 {/* Feature Card 2 */}
-                <div className="backdrop-blur-sm bg-white/80 p-8 rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition duration-300 transform hover:-translate-y-2">
-                  <div className="flex items-center justify-center w-16 h-16 mb-6 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8"><circle cx="12" cy="12" r="8"></circle><path d="M12 2v4"></path><path d="M12 18v4"></path><path d="m4.93 4.93 2.83 2.83"></path><path d="m16.24 16.24 2.83 2.83"></path><path d="M2 12h4"></path><path d="M18 12h4"></path><path d="m4.93 19.07 2.83-2.83"></path><path d="m16.24 7.76 2.83-2.83"></path></svg>
+                <div className="group relative">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-3xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+                  <div className="relative bg-gray-900 p-10 rounded-3xl border border-gray-800 hover:border-cyan-500/50 transition-all duration-500">
+                    <div className="flex items-center justify-center w-20 h-20 mb-8 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 text-white group-hover:scale-110 transition-transform duration-500">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="8"></circle>
+                        <path d="M12 2v4"></path>
+                        <path d="M12 18v4"></path>
+                        <path d="m4.93 4.93 2.83 2.83"></path>
+                        <path d="m16.24 16.24 2.83 2.83"></path>
+                        <path d="M2 12h4"></path>
+                        <path d="M18 12h4"></path>
+                        <path d="m4.93 19.07 2.83-2.83"></path>
+                        <path d="m16.24 7.76 2.83-2.83"></path>
+                      </svg>
+                    </div>
+                    <h3 className="text-2xl font-bold mb-4 text-white group-hover:text-cyan-400 transition-colors duration-300">
+                      SMART COIN SYSTEM
+                    </h3>
+                    <p className="text-gray-400 text-lg leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
+                      Subscribe once and earn coins regularly to unlock your favorite images with our innovative reward system.
+                    </p>
                   </div>
-                  <h3 className="text-xl font-semibold mb-3 text-gray-900">Smart Coin System</h3>
-                  <p className="text-gray-600">Subscribe once and earn coins regularly to download your favorite images.</p>
                 </div>
-                
+
                 {/* Feature Card 3 */}
-                <div className="backdrop-blur-sm bg-white/80 p-8 rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition duration-300 transform hover:-translate-y-2">
-                  <div className="flex items-center justify-center w-16 h-16 mb-6 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8"><path d="M5 8L10 8"></path><path d="M5 12L14 12"></path><path d="M5 16L12 16"></path><path d="M14 16L19 21"></path><path d="M19 16L14 21"></path></svg>
+                <div className="group relative">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-orange-600 to-yellow-600 rounded-3xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+                  <div className="relative bg-gray-900 p-10 rounded-3xl border border-gray-800 hover:border-orange-500/50 transition-all duration-500">
+                    <div className="flex items-center justify-center w-20 h-20 mb-8 rounded-2xl bg-gradient-to-br from-orange-500 to-yellow-600 text-white group-hover:scale-110 transition-transform duration-500">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M5 8L10 8"></path>
+                        <path d="M5 12L14 12"></path>
+                        <path d="M5 16L12 16"></path>
+                        <path d="M14 16L19 21"></path>
+                        <path d="M19 16L14 21"></path>
+                      </svg>
+                    </div>
+                    <h3 className="text-2xl font-bold mb-4 text-white group-hover:text-orange-400 transition-colors duration-300">
+                      INSTANT ACCESS
+                    </h3>
+                    <p className="text-gray-400 text-lg leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
+                      Download ultra high-resolution images in seconds with our lightning-fast, next-generation platform.
+                    </p>
                   </div>
-                  <h3 className="text-xl font-semibold mb-3 text-gray-900">One-Click Access</h3>
-                  <p className="text-gray-600">Download high-resolution images in seconds with our lightning-fast platform.</p>
                 </div>
               </div>
             </div>
           </section>
-    
+
           {/* Call to Action Section */}
-          <section id="get-started" className="relative py-24 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-violet-700"></div>
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518770660439-4636190af475')] bg-cover bg-center mix-blend-overlay opacity-20"></div>
-            
-            <div className="container relative mx-auto px-6 text-center z-10">
-              <div className="max-w-3xl mx-auto backdrop-blur-sm bg-white/10 p-10 rounded-3xl border border-white/20">
-                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">Ready to Elevate Your Projects?</h2>
-                <p className="text-xl mb-10 text-blue-100">
-                  Join our community of creators downloading premium photos daily.
-                </p>
-                {isLoggedIn() ? (
-                  <Link to="/browse" className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-400 to-blue-500 text-white font-medium px-8 py-4 rounded-full text-lg hover:from-cyan-500 hover:to-blue-600 transform hover:-translate-y-1 transition-all duration-300 ease-out shadow-lg hover:shadow-cyan-500/25">
-                    Browse Images
-                  </Link>
-                ) : (
-                  <Link to="/login" className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-400 to-blue-500 text-white font-medium px-8 py-4 rounded-full text-lg hover:from-cyan-500 hover:to-blue-600 transform hover:-translate-y-1 transition-all duration-300 ease-out shadow-lg hover:shadow-cyan-500/25">
-                    Login to Start
-                  </Link>
-                )}
+          <section id="get-started" className="relative py-32 z-10">
+            <div className="container mx-auto px-6 text-center">
+              <div className="relative max-w-4xl mx-auto">
+                <div className="absolute -inset-8 bg-gradient-to-r from-pink-600 via-purple-600 to-cyan-600 rounded-3xl blur-2xl opacity-40 animate-pulse"></div>
+                <div className="relative bg-black/50 backdrop-blur-xl p-16 rounded-3xl border border-white/10">
+                  <h2 className="text-4xl md:text-6xl font-black mb-8">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-cyan-400">
+                      READY TO ELEVATE
+                    </span>
+                    <br />
+                    <span className="text-white">YOUR PROJECTS?</span>
+                  </h2>
+                  <p className="text-2xl mb-12 text-gray-300 max-w-2xl mx-auto leading-relaxed">
+                    Join our exclusive community of 
+                    <span className="text-pink-400 font-bold"> 50K+ creators</span> downloading 
+                    <span className="text-cyan-400 font-bold"> premium photos</span> daily.
+                  </p>
+                  
+                  {isLoggedIn() ? (
+                    <Link 
+                      to="/browse" 
+                      className="group relative inline-flex items-center gap-4 bg-gradient-to-r from-pink-500 via-purple-600 to-cyan-500 text-white font-black px-16 py-6 rounded-full text-2xl hover:scale-110 transition-all duration-500 ease-out shadow-2xl hover:shadow-pink-500/50 overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <span className="relative z-10">BROWSE IMAGES</span>
+                      <svg className="relative z-10 w-8 h-8 group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </svg>
+                    </Link>
+                  ) : (
+                    <Link 
+                      to="/login" 
+                      className="group relative inline-flex items-center gap-4 bg-gradient-to-r from-pink-500 via-purple-600 to-cyan-500 text-white font-black px-16 py-6 rounded-full text-2xl hover:scale-110 transition-all duration-500 ease-out shadow-2xl hover:shadow-pink-500/50 overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <span className="relative z-10">LOGIN TO START</span>
+                      <svg className="relative z-10 w-8 h-8 group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </svg>
+                    </Link>
+                  )}
+                </div>
               </div>
             </div>
-            
-            {/* Abstract shapes */}
-            <div className="absolute -top-24 -left-24 w-72 h-72 bg-indigo-600 rounded-full filter blur-3xl opacity-20 animate-pulse"></div>
-            <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-violet-600 rounded-full filter blur-3xl opacity-20 animate-pulse"></div>
           </section>
-    
+
           {/* Footer */}
-          <footer className="bg-gray-900 text-gray-400 py-12">
+          <footer className="relative bg-black border-t border-gray-800 py-16 z-10">
             <div className="container mx-auto px-6">
               <div className="flex flex-col md:flex-row justify-between items-center">
-                <div className="mb-6 md:mb-0">
-                  <p className="font-medium text-white">Free Pik Photos</p>
-                  <p className="text-sm">© 2025 All rights reserved.</p>
+                <div className="mb-8 md:mb-0 text-center md:text-left">
+                  <h3 className="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-cyan-400 mb-2">
+                    FREE PIK PHOTOS
+                  </h3>
+                  <p className="text-gray-500">© 2025 All rights reserved. Revolutionizing creativity.</p>
                 </div>
-                <div className="flex space-x-6">
-                  <a href="#" className="hover:text-white transition-colors">Terms</a>
-                  <a href="#" className="hover:text-white transition-colors">Privacy</a>
-                  <a href="#" className="hover:text-white transition-colors">Help</a>
+                <div className="flex space-x-8">
+                  <a href="#" className="text-gray-400 hover:text-pink-400 transition-colors duration-300 font-medium text-lg">
+                    Terms
+                  </a>
+                  <a href="#" className="text-gray-400 hover:text-cyan-400 transition-colors duration-300 font-medium text-lg">
+                    Privacy
+                  </a>
+                  <a href="#" className="text-gray-400 hover:text-purple-400 transition-colors duration-300 font-medium text-lg">
+                    Help
+                  </a>
                 </div>
               </div>
             </div>
           </footer>
         </div>
-      );
-    };
+    );
+};
 
 export default Home
