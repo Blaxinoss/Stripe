@@ -16,7 +16,7 @@ async function createBrowserPool() {
     puppeteerOptions: {
         headless: 'new',
         executablePath: '/usr/bin/chromium', 
-          userDataDir: './user-data', // ✅ دا أهم حاجة تحافظ على الكوكيز والجلسة
+//          userDataDir: './user-data', // ✅ دا أهم حاجة تحافظ على الكوكيز والجلسة
         args: [
             '--disable-gpu',
             '--disable-setuid-sandbox',

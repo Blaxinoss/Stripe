@@ -73,19 +73,20 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
 
       await page.click('button#submit');
       console.log('[Login] 🔐 Submitted login credentials');
-      
-
+	page.screenshot({path:`before_cap_${userId}.png`})      
       console.log('[Captcha] 🧠 Solving CAPTCHA...');
       const { solved, error } = await page.solveRecaptchas();
       if (error) throw new Error('❌ Failed to solve reCAPTCHA: ' + error.message);
       console.log('[Captcha] ✅ CAPTCHA solved:', solved);
-
+	page.screenshot({path:`after_cap_${userId}.png`})
       console.log('[Navigation] ⏳ Waiting for navigation after login...');
       
       await Promise.race([
         page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 30000 }),
         await new Promise(res => setTimeout(res, 15000))
       ]);
+	page.screenshot({path:`after_nav_${userId}.png`})
+
 
       console.log('[Navigation] ✅ Login navigation complete or fallback timeout hit');
 
