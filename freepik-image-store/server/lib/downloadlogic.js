@@ -112,6 +112,7 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
           // استكمال عادي - ممكن يكون خطأ مؤقت
         }
       }
+      await page.setViewport({ width: 1280, height: 3000 });
     page.screenshot({ path: `debugout_code_entered_${Date.now()}.png`, fullPage: true });
 
       // انتظار navigation بعد login (مع أو بدون verification)
@@ -119,6 +120,7 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
         page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 30000 }),
         new Promise(res => setTimeout(res, 15000))
       ]);
+      await page.setViewport({ width: 1280, height: 3000 });
     page.screenshot({ path: `debugout_code_entered_${Date.now()}.png`, fullPage: true });
 
       console.log('[Navigation] ✅ Login navigation complete');
