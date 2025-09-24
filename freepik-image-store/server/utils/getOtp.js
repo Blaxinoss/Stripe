@@ -128,7 +128,7 @@ async function handleVerificationCode(page, verificationCode) {
     
     // البحث عن الـ inputs المنفصلة (6 خانات منفصلة)
     let separatedInputs = await page.$$('.input-code input');
-    page.screenshot({ path: `debug_separated_inputs_${Date.now()}.png`, fullPage: true });
+    // page.screenshot({ path: `debug_separated_inputs_${Date.now()}.png`, fullPage: true });
     
     if (separatedInputs.length === 0) {
       const separatedSelectors = [
@@ -182,7 +182,7 @@ async function handleVerificationCode(page, verificationCode) {
       }
       
       console.log('[Verification] ✅ All 6 digits entered in separated fields');
-              page.screenshot({ path: `debug_entered_digit_${Date.now()}.png`, fullPage: true });
+            //   page.screenshot({ path: `debug_entered_digit_${Date.now()}.png`, fullPage: true });
 
       
     } else {
@@ -290,7 +290,7 @@ async function handleVerificationCode(page, verificationCode) {
       console.log('[Verification] ⏳ Waiting for auto-submit...');
       await new Promise(resolve => setTimeout(resolve, 3000));
     }
-    page.screenshot({ path: `debug_code_entered_${Date.now()}.png`, fullPage: true });
+    // page.screenshot({ path: `debug_code_entered_${Date.now()}.png`, fullPage: true });
     
     // انتظار لأي validation أو auto-submission
     await new Promise(resolve => setTimeout(resolve, 1500));
@@ -386,7 +386,7 @@ await page.waitForFunction(() => {
     }
     
     console.log('[Verification] ✅ Verification process completed');
-    page.screenshot({ path: `verification_completed_${Date.now()}.png`, fullPage: true });
+    // page.screenshot({ path: `verification_completed_${Date.now()}.png`, fullPage: true });
     return true;
     
   } catch (error) {
@@ -394,10 +394,10 @@ await page.waitForFunction(() => {
     
     // خذ screenshot للتشخيص
     try {
-      await page.screenshot({ 
-        path: `verification_error_${Date.now()}.png`,
-        fullPage: true 
-      });
+    //   await page.screenshot({ 
+    //     path: `verification_error_${Date.now()}.png`,
+    //     fullPage: true 
+    //   });
       console.log('[Verification] 📷 Screenshot saved for debugging');
     } catch (screenshotError) {
       // مش مشكلة لو ما نفعش نصور

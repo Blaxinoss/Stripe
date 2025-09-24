@@ -113,7 +113,7 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
         }
       }
       await page.setViewport({ width: 1280, height: 3000 });
-    page.screenshot({ path: `debugout_code_entered_${Date.now()}.png`, fullPage: true });
+    // page.screenshot({ path: `debugout_code_entered_${Date.now()}.png`, fullPage: true });
 
       // انتظار navigation بعد login (مع أو بدون verification)
       await Promise.race([
@@ -121,7 +121,7 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
         new Promise(res => setTimeout(res, 15000))
       ]);
       await page.setViewport({ width: 1280, height: 3000 });
-    page.screenshot({ path: `debugout_code_entered_${Date.now()}.png`, fullPage: true });
+    // page.screenshot({ path: `debugout_code_entered_${Date.now()}.png`, fullPage: true });
 
       console.log('[Navigation] ✅ Login navigation complete');
       console.log('🌐 Current URL after login:', page.url());
