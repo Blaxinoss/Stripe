@@ -311,76 +311,20 @@ async function handleVerificationCode(page, verificationCode) {
     // البحث عن زر الإرسال (إذا مافيش auto-submit)
     console.log('[Verification] 🔍 Looking for submit button...');
     
-    const submitSelectors = [
-      'button[type="submit"]',
-      'input[type="submit"]',
-      'button[data-cy*="submit" i]',
-      'button[data-cy*="verify" i]',
-      '.submit-button',
-      '.verify-button',
-      '.btn-submit',
-      '.btn-verify'
-    ];
-    
-    let submitButton = null;
-    
-    for (const selector of submitSelectors) {
-      try {
-        submitButton = await page.$(selector);
-        if (submitButton) {
-          const isVisible = await submitButton.evaluate(el => {
-            const rect = el.getBoundingClientRect();
-            return rect.width > 0 && rect.height > 0 && 
-                   !el.hidden && !el.disabled &&
-                   window.getComputedStyle(el).display !== 'none';
-          });
-          
-          if (isVisible) {
-            console.log('[Verification] ✅ Found submit button with:', selector);
-            break;
-          }
-        }
-      } catch (e) {
-        continue;
-      }
-    }
-    
-    // إذا ما لقيناش زر submit، دور على أي button فيه كلمات معينة
-    if (!submitButton) {
-      console.log('[Verification] 🔍 Searching for buttons with verification text...');
-      const allButtons = await page.$$('button, input[type="button"], input[type="submit"]');
-      
-      for (const button of allButtons) {
-        try {
-          const text = await button.evaluate(el => 
-            el.textContent?.trim().toLowerCase() || el.value?.toLowerCase() || ''
-          );
-          
-          const hasVerifyText = ['verify', 'submit', 'continue', 'confirm', 'send'].some(
-            keyword => text.includes(keyword)
-          );
-          
-          if (hasVerifyText) {
-            const isVisible = await button.evaluate(el => {
-              const rect = el.getBoundingClientRect();
-              return rect.width > 0 && rect.height > 0 && !el.hidden && !el.disabled;
-            });
-            
-            if (isVisible) {
-              submitButton = button;
-              console.log('[Verification] ✅ Found button with text:', text);
-              break;
-            }
-          }
-        } catch (e) {
-          continue;
-        }
-      }
-    }
-    
-    if (submitButton) {
+    const verifyButton = await page.waitForSelector(
+  'button.main-button.button.verify-button.button--blue',
+  { visible: true, timeout: 30000 }
+);
+
+// استنى لحد ما يبطل يبقى Disabled
+await page.waitForFunction(() => {
+  const btn = document.querySelector('button.main-button.button.verify-button.button--blue');
+  return btn && !btn.disabled;
+}, { timeout: 30000 });
+
+    if (verifyButton) {
       console.log('[Verification] 🚀 Clicking submit button...');
-      await submitButton.click();
+      await verifyButton.click();
       console.log('[Verification] ✅ Submit button clicked');
       
       // انتظار للنتيجة
