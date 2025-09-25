@@ -109,7 +109,7 @@ const Search = () => {
                     timeout: 50000,
                 }
             );
-            setMessage(response.data.message || 'Purchase and download completed successfully!');
+            setMessage(`${response.data.message} -, if nothing has been downloaded then you will find your files in the Gallery ready to be downloaded` || 'Purchase and download completed successfully!');
         } catch (err: any) {
             console.error('Purchase or download error:', err);
             setError(
