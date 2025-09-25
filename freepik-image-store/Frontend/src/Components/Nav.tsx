@@ -82,7 +82,7 @@ const NavBar = () => {
                                     <NavLink to="/browse" icon="🔍">Browse</NavLink>
                                     <NavLink to="/cart" icon="🛒">Cart</NavLink>
                                     <NavLink to="/profile" icon="👤">Profile</NavLink>
-                                    <NavLink to="/images" icon="🖼️">Images</NavLink>
+                                    <NavLink to="/images" icon="🎴">Gallery</NavLink>
                                     {isHost() && (
                                         <NavLink to="/administration" icon="⚙️" isSpecial={true}>
                                             Administration

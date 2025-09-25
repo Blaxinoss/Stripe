@@ -3,6 +3,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import { useCoins } from '../context/CoinsContextProvider';
 import { useSocket } from '../context/SocketContext';
+import { useToast } from '../context/ToastContext';
 
 interface DownloadedNotifyProps {
   jobId: string;
@@ -21,6 +22,7 @@ const DownloadedNotify: React.FC<DownloadedNotifyProps> = ({ jobId, onLoadingCha
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const socket = useSocket();
+  const { showToast } = useToast();
   
 
 const blobDownload = async (url: string, filename = 'download.jpg') => {
@@ -38,7 +40,7 @@ const blobDownload = async (url: string, filename = 'download.jpg') => {
     window.URL.revokeObjectURL(blobUrl); // Clean up
   } catch (err) {
     console.error('Error downloading image:', err);
-    toast.error('Failed to download image file.');
+  showToast({ message: 'Failed to download image file.', type: 'error', delay: 5000 });
   }
 };
 
@@ -101,8 +103,11 @@ const blobDownload = async (url: string, filename = 'download.jpg') => {
           onLoadingChange?.(false); 
 
         blobDownload(data.imageUrl, 'image.jpg');
-          toast.success('Image download complete!, your file has been added to the gallery');
-toast.info(`100 coins deducted. You now have ${coins - 100} coins.`);
+        showToast({ message: 'Image download complete!, your file has been added to the gallery', type: 'success', delay: 5000 });
+
+  showToast({ message: `100 coins deducted. You now have ${coins -100} coins.`, type: 'info', delay: 5000 });
+
+
         }
       }
     });
@@ -118,8 +123,9 @@ toast.info(`100 coins deducted. You now have ${coins - 100} coins.`);
         setImageDownloadUrl(null);
           setIsLoading(false);
           onLoadingChange?.(false); 
-          toast.error(`an Error occurred while downloading the image. ${data.error}`); // Show error toast
-          toast.warn(`failed to download the Image`);  // Show success toast
+          showToast({ message: `An error occurred while downloading the image. ${data.error}`, type: 'error', delay: 5000 });
+showToast({ message: 'Failed to download the image', type: 'warn', delay: 5000 });
+
       }
       }
     });
@@ -134,15 +140,7 @@ toast.info(`100 coins deducted. You now have ${coins - 100} coins.`);
 
   return (
     <div>
-      {error && <> <p style={{ color: 'red', marginBottom: '10px' }}>{error} </p> <span  onClick ={()=>{setError('')}} className='text-wihte'>Click to hide</span> </>}
-      {isLoading && <p>Loading image...</p>}
-      {imageDownloadUrl && (
-        <div>
-          <h2>Download Complete</h2>
-          <a  href={imageDownloadUrl} download>If the download didn't start automatically. Click to Download</a>
-        </div>
-      )}
-      <ToastContainer autoClose={5000}/> {/* Render Toast notifications */}
+
     </div>
   );
 };

@@ -12,15 +12,19 @@ import ProfilerUser from "./pages/ProfilerUser";
 import SignIn from "./pages/SignIn";
 import ImageDownloaded from "./Components/ImageDownloaded";
 import { SocketProvider } from "./context/SocketContext";
+import ToastProvider from "./context/ToastContext";
+import { ToastContainer } from "react-toastify";
 
 
 function App() {
     return (
             <BrowserRouter>
                                     <SocketProvider>
+                                       <ToastProvider>
 
                 <CoinsContextProvider>
                     <AuthProvider>
+                        <ToastContainer autoClose={5000} />
                         <Nav />
                         <Routes>
                             <Route path="/" element={<Home />} />
@@ -35,6 +39,7 @@ function App() {
                         </Routes>
                     </AuthProvider>
                 </CoinsContextProvider>
+                </ToastProvider> 
                         </SocketProvider>
 
             </BrowserRouter>
