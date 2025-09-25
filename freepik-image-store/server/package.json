@@ -34,6 +34,7 @@
     "puppeteer-extra-plugin-recaptcha": "^3.6.8",
     "puppeteer-extra-plugin-recaptcha-nextcaptcha": "^1.0.0",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "sharp": "^0.34.4",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
