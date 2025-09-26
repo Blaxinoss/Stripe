@@ -359,16 +359,7 @@ const ImageDownloaded: React.FC = () => {
                   <>
                     {/* Image Container */}
                     <div className="relative overflow-hidden">
-                      <img
-                        src={img.downloadUrl}
-                        alt={getFileName(img.downloadUrl)}
-                        loading="lazy"
-                        className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
-                        draggable={false}
-                        onContextMenu={(e) => e.preventDefault()}
-                        onError={() => setError(`Image ${getFileName(img.downloadUrl)} has expired or is not available`)}
-                      />
-                      
+                    
                       {/* Overlay Gradient */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       
@@ -441,17 +432,7 @@ const ImageDownloaded: React.FC = () => {
                 {viewMode === 'list' && (
                   <div className="flex items-center w-full gap-6">
                     {/* Image Thumbnail */}
-                    <div className="relative overflow-hidden rounded-2xl flex-shrink-0">
-                      <img
-                        src={img.downloadUrl}
-                        alt={getFileName(img.downloadUrl)}
-                        loading="lazy"
-                        className="w-24 h-24 object-cover transition-transform duration-300 hover:scale-110"
-                        draggable={false}
-                        onContextMenu={(e) => e.preventDefault()}
-                        onError={() => setError(`Image ${getFileName(img.downloadUrl)} has expired or is not available`)}
-                      />
-                    </div>
+                  
 
                     {/* Content */}
                     <div className="flex-1">

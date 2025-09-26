@@ -2,11 +2,10 @@
 // For demo purposes, I'll simulate these with placeholders
 
 import { Link } from "react-router-dom";
-
+import { useAuth } from "../context/AuthContext";
 const Home = () => {
     // Placeholder for isLoggedIn function - replace with your actual import
-    const isLoggedIn = () => false;
-    
+  const { user } = useAuth();
     // Placeholder Link component - replace with your actual react-router-dom Link
 
 
@@ -59,6 +58,69 @@ const Home = () => {
               </div>
             </div>
           </section>
+
+
+{/* Formats Section */}
+<section className="relative py-16 z-10">
+  <div className="container mx-auto px-6 text-center">
+    <h2 className="text-3xl md:text-5xl font-black mb-8">
+      <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400">
+        AVAILABLE NOW
+      </span>
+    </h2>
+   <div className="flex flex-wrap justify-center gap-6 text-lg md:text-xl font-medium text-gray-300">
+  {/* AI Images */}
+  <span className="flex items-center gap-2 px-6 py-3 rounded-full bg-gray-900 border border-gray-800 hover:border-pink-500/50 transition">
+    AI Images  
+    <img className="w-5 h-5" src="/verified.png" alt="verified"/>
+  </span>
+
+  {/* Vectors */}
+  <span className="flex items-center gap-2 px-6 py-3 rounded-full bg-gray-900 border border-gray-800 hover:border-cyan-500/50 transition">
+    Vectors
+        <img className="w-5 h-5" src="/verified.png" alt="verified"/>
+
+  </span>
+
+  {/* Illustrations */}
+  <span className="flex items-center gap-2 px-6 py-3 rounded-full bg-gray-900 border border-gray-800 hover:border-purple-500/50 transition">
+    Illustrations
+        <img className="w-5 h-5" src="/verified.png" alt="verified"/>
+
+  </span>
+
+  {/* Photos */}
+  <span className="flex items-center gap-2 px-6 py-3 rounded-full bg-gray-900 border border-gray-800 hover:border-orange-500/50 transition">
+    Photos
+        <img className="w-5 h-5" src="/verified.png" alt="verified"/>
+
+  </span>
+
+  {/* PSD */}
+  <span className="flex items-center gap-2 px-6 py-3 rounded-full bg-gray-900 border border-gray-800 hover:border-yellow-500/50 transition">
+    PSD
+        <img className="w-5 h-5" src="/verified.png" alt="verified"/>
+
+  </span>
+
+  {/* Templates */}
+  <span className="flex items-center gap-2 px-6 py-3 rounded-full bg-gray-900 border border-gray-800 hover:border-green-500/50 transition">
+    Templates
+        <img className="w-5 h-5" src="/verified.png" alt="verified"/>
+
+  </span>
+</div>
+
+
+   <p className="mt-12 text-xl text-gray-400 flex items-center justify-center gap-3">
+  <span className="text-orange-400 font-bold flex items-center gap-2 px-6 py-3 rounded-full bg-gray-900 border border-gray-800 hover:border-red-500/50 transition">
+    Fonts & Videos <span className="text-gray-300 italic"><img className="w-12 bg-black" src="/soon.png"/></span>
+  </span>
+ 
+</p>
+
+  </div>
+</section>
 
           {/* Features Section */}
           <section id="features" className="relative py-24 z-10">
@@ -164,7 +226,7 @@ const Home = () => {
                     <span className="text-cyan-400 font-bold"> premium photos</span> daily.
                   </p>
                   
-                  {isLoggedIn() ? (
+                  {user ? (
                     <Link 
                       to="/browse" 
                       className="group relative inline-flex items-center gap-4 bg-gradient-to-r from-pink-500 via-purple-600 to-cyan-500 text-white font-black px-16 py-6 rounded-full text-2xl hover:scale-110 transition-all duration-500 ease-out shadow-2xl hover:shadow-pink-500/50 overflow-hidden"
@@ -181,7 +243,7 @@ const Home = () => {
                       className="group relative inline-flex items-center gap-4 bg-gradient-to-r from-pink-500 via-purple-600 to-cyan-500 text-white font-black px-16 py-6 rounded-full text-2xl hover:scale-110 transition-all duration-500 ease-out shadow-2xl hover:shadow-pink-500/50 overflow-hidden"
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                      <span className="relative z-10">LOGIN TO START</span>
+                      <span className="relative z-10"  >LOGIN TO START</span>
                       <svg className="relative z-10 w-8 h-8 group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>
@@ -195,26 +257,14 @@ const Home = () => {
           {/* Footer */}
           <footer className="relative bg-black border-t border-gray-800 py-16 z-10">
             <div className="container mx-auto px-6">
-              <div className="flex flex-col md:flex-row justify-between items-center">
-                <div className="mb-8 md:mb-0 text-center md:text-left">
+                <div className="mb-8 md:mb-0 text-center ">
                   <h3 className="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-cyan-400 mb-2">
                     FREE PIK PHOTOS
                   </h3>
                   <p className="text-gray-500">© 2025 All rights reserved. Revolutionizing creativity.</p>
                 </div>
-                <div className="flex space-x-8">
-                  <a href="#" className="text-gray-400 hover:text-pink-400 transition-colors duration-300 font-medium text-lg">
-                    Terms
-                  </a>
-                  <a href="#" className="text-gray-400 hover:text-cyan-400 transition-colors duration-300 font-medium text-lg">
-                    Privacy
-                  </a>
-                  <a href="#" className="text-gray-400 hover:text-purple-400 transition-colors duration-300 font-medium text-lg">
-                    Help
-                  </a>
-                </div>
+                
               </div>
-            </div>
           </footer>
         </div>
     );
