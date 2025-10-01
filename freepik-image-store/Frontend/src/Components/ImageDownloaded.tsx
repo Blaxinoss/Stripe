@@ -10,6 +10,7 @@ interface Image {
   downloadUrl: string;
   jobId: string;
   downloadCount: number;
+  purchasedAt: string;
 }
 
 const ImageDownloaded: React.FC = () => {
@@ -37,7 +38,9 @@ const ImageDownloaded: React.FC = () => {
       });
       if (!res.ok) throw new Error();
       const data: Image[] = await res.json();
-      setImages(data);
+      const sortedData = data.sort((a,b)=> new Date(b.purchasedAt).getTime() - new Date(a.purchasedAt).getTime());
+      setImages(sortedData);
+      console.log(sortedData)
       setError(null);
     } catch {
       setError("Failed to load images. Please try again.");
