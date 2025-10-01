@@ -25,11 +25,11 @@ async function getOtpFromEmail(maxRetries = 3, retryDelay = 10000) {
       // بحث عن إيميلات آخر دقيقة بس (مش 5 دقائق)
       const oneMinuteAgo = new Date(Date.now() - 60 * 1000);
       
-      const searchCriteria = [
-        "UNSEEN",
-        ["SINCE", oneMinuteAgo],
-        ["FROM", "noreply@freepik.com"]
-      ];
+   const searchCriteria = [
+  "UNSEEN",
+  ["SINCE", oneMinuteAgo],
+  [ "FROM", "@freepik.com"] // أي حد من freepik
+];
       
       const fetchOptions = {
         bodies: "TEXT",
@@ -182,7 +182,7 @@ async function handleVerificationCode(page, verificationCode) {
       }
       
       console.log('[Verification] ✅ All 6 digits entered in separated fields');
-            //   page.screenshot({ path: `debug_entered_digit_${Date.now()}.png`, fullPage: true });
+              // page.screenshot({ path: `debug_entered_digit_${Date.now()}.png`, fullPage: true });
 
       
     } else {

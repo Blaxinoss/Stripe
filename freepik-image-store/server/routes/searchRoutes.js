@@ -96,4 +96,76 @@ Router.get('/', async (req, res) => {
     }
 });
 
+Router.get("/video", async (req, res) => {
+  try {
+    const FREEPIK_API_KEY = process.env.FREEPIK_API_KEY;
+    if (typeof FREEPIK_API_KEY !== "string" || !FREEPIK_API_KEY) {
+      return res.status(400).json({ error: "Invalid API Key" });
+    }
+    const { videoId, searchLink, searchTerm, downloadQuality } = req.query;
+    console.log("Received query params:", { videoId, searchLink, searchTerm, downloadQuality });
+    let id = videoId || (searchLink ? extractId(searchLink) : null);
+
+    if (!id || !searchTerm) {
+      return res.status(400).json({ error: "Missing videoId, searchLink or searchTerm" });
+    }
+
+    let video;
+
+   
+      console.log("Searching videos with term:", searchTerm);
+      const searchResp = await axios.get("https://api.freepik.com/v1/videos", {
+        params: {
+          term: searchTerm,
+          
+            filters:{
+              resolution: {
+                "720": downloadQuality == "720p" ? true : false,
+                "1080": downloadQuality == "1080p" ? true : false,
+                "2k": downloadQuality == "2K" ? true : false,
+                "4K": downloadQuality == "4K" ? true : false,
+              }
+            }
+        },
+        headers: {
+          "x-freepik-api-key": FREEPIK_API_KEY,
+          "Accept-Language": "en-US"
+        }
+      });
+
+      if (!searchResp.data.data.length) {
+        return res.status(404).json({ error: "No videos found for this term" });
+      }
+
+      video = searchResp.data.data[0];
+      id = video.id;
+        console.log("Found video:", video);
+
+    // الحصول على رابط التحميل المباشر
+    const downloadResp = await axios.get(`https://api.freepik.com/v1/videos/${id}/download`, {
+      headers: { "x-freepik-api-key": FREEPIK_API_KEY ,  "Accept-Language": "en-US"}
+    });
+
+    console.log("Download API response:", downloadResp.data);
+    const downloadData = downloadResp.data.data;
+
+    res.json({
+      id: video.id,
+      name: video.name,
+      quality: video.quality,
+      duration: video.duration,
+      previews: video.previews,
+      download: downloadData
+    });
+
+  } catch (error) {
+    console.error("Error fetching video:", error.response?.data || error.message);
+    res.status(500).json({ error: "Failed to fetch video" ,errorDetails: error.message});
+  }
+});
+
+
+
+
 module.exports = Router;
+

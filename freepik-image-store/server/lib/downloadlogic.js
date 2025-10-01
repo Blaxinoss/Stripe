@@ -12,8 +12,10 @@ const puppeteer = require('puppeteer-extra');
 const { default: RecaptchaPlugin, BuiltinSolutionProviders } = require('puppeteer-extra-plugin-recaptcha');
 const NextCaptchaProvider = require('puppeteer-extra-plugin-recaptcha-nextcaptcha');
 
+
 NextCaptchaProvider.use(BuiltinSolutionProviders);
-puppeteer.use(
+try {
+  puppeteer.use(
   RecaptchaPlugin({
     provider: {
       id: 'nextcaptcha',
@@ -22,6 +24,10 @@ puppeteer.use(
     visualFeedback: true,
   })
 );
+} catch (error) {
+  console.error('🟥 Error setting up RecaptchaPlugin:', error);
+}
+
 
 async function downloadWorkerLogic({ userId, downloadLink, page }) {
   let detectedDownloads = []; // 📊 تجميع كل الداونلودز المكتشفة
@@ -74,15 +80,65 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
       await page.click('button#submit');
       console.log('[Login] 🔐 Submitted login credentials');
 
-      console.log('[Captcha] 🧠 Solving CAPTCHA...');
+    
+console.log('[Captcha] 🧠 Waiting for CAPTCHA to appear...');
+////await page.screenshot({ path: `debug_before_captcha_${Date.now()}.png`, fullPage: true });
+
+// Wait for either the captcha iframe OR successful navigation
+try {
+  // Give more time for the page to settle after login submission
+  await new Promise(resolve => setTimeout(resolve, 3000));
+  
+  // Check if captcha exists
+  const captchaFrame = await page.$('iframe[src*="recaptcha"]');
+  
+  if (captchaFrame) {
+    console.log('[Captcha] 🎯 reCAPTCHA detected, attempting to solve...');
+    
+    // Wait a bit more for iframe to fully load
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    //await page.screenshot({ path: `debug_captcha_found_${Date.now()}.png`, fullPage: true });
+    
+    try {
       const { solved, error } = await page.solveRecaptchas();
-      if (error) throw new Error('❌ Failed to solve reCAPTCHA: ' + error.message);
-      console.log('[Captcha] ✅ CAPTCHA solved:', solved);
+      
+      if (error) {
+        console.error('[Captcha] ⚠️ Solver error:', error);
+        throw new Error('❌ Failed to solve reCAPTCHA: ' + JSON.stringify(error));
+      }
+      
+      if (solved && solved.length > 0) {
+        console.log('[Captcha] ✅ CAPTCHA solved successfully:', solved);
+        // Wait for the form to process the captcha solution
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      } else {
+        console.log('[Captcha] ⚠️ No CAPTCHA was solved, but no error occurred');
+      }
+      
+      //await page.screenshot({ path: `debug_after_captcha_${Date.now()}.png`, fullPage: true });
+      
+    } catch (solveError) {
+      console.error('[Captcha] ❌ Error during solving:', solveError.message);
+      ////await page.screenshot({ path: `debug_captcha_error_${Date.now()}.png`, fullPage: true });
+      throw solveError;
+    }
+  } else {
+    console.log('[Captcha] ℹ️ No reCAPTCHA detected, proceeding...');
+  }
+  
+} catch (captchaError) {
+  console.error('[Captcha] ❌ CAPTCHA handling failed:', captchaError.message);
+  throw captchaError;
+}
+
+console.log('[Navigation] ⏳ Waiting for navigation after login...');
+
 
       console.log('[Navigation] ⏳ Waiting for navigation after login...');
       
       console.log('[Verification] 🔍 Attempting to handle verification if present...');
-      
+          // page.screenshot({ path: `debug_separated_inputs_${Date.now()}.png`, fullPage: true });
+
       try {
         await new Promise(resolve => setTimeout(resolve, 2000));
         
@@ -107,6 +163,7 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
           console.warn('[Verification] ⚠️ Verification error (continuing anyway):', verificationError.message);
         }
       }
+    // page.screenshot({ path: `debug_separated_inputs_${Date.now()}.png`, fullPage: true });
 
       await Promise.race([
         page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 30000 }),
@@ -159,6 +216,7 @@ async function downloadWorkerLogic({ userId, downloadLink, page }) {
         });
       }
     };
+    // page.screenshot({ path: `debug_separated_inputs_${Date.now()}.png`, fullPage: true });
 
     page.on('response', responseHandler);
 
